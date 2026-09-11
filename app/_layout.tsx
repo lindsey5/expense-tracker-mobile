@@ -5,19 +5,28 @@ import { useEffect } from 'react';
 import { Platform } from 'react-native';
 import { Slot } from 'expo-router';
 import * as NavigationBar from 'expo-navigation-bar';
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
+import Toast from '@/components/Toast';
 
 export default function RootLayout() {
-  useEffect(() => {
-    if (Platform.OS === 'android') {
-      NavigationBar.setVisibilityAsync('hidden');
-    }
+    const queryClient = new QueryClient();
 
-    return () => {
-      if (Platform.OS === 'android') {
-        NavigationBar.setVisibilityAsync('visible');
-      }
-    };
-  }, []);
+    useEffect(() => {
+        if (Platform.OS === 'android') {
+            NavigationBar.setVisibilityAsync('hidden');
+        }
 
-  return <Slot />;
+        return () => {
+            if (Platform.OS === 'android') {
+                NavigationBar.setVisibilityAsync('visible');
+            }
+        };
+    }, []);
+
+    return (
+        <QueryClientProvider client={queryClient}>
+            <Toast />
+            <Slot />
+        </QueryClientProvider>
+    );
 }

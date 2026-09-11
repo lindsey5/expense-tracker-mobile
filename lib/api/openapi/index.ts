@@ -3,20 +3,6 @@ import { z } from "zod";
 
 const CreateUserDto = z.object({}).partial().passthrough();
 const UpdateUserDto = z.object({}).partial().passthrough();
-const UserResponseDto = z
-  .object({
-    id: z.number(),
-    googleId: z.string(),
-    email: z.string(),
-    firstName: z.string(),
-    lastName: z.string(),
-    avatar: z.string().nullable(),
-    isVerified: z.boolean(),
-  })
-  .passthrough();
-const AuthResponseDto = z
-  .object({ accessToken: z.string(), user: UserResponseDto })
-  .passthrough();
 const SignupUserDTO = z
   .object({
     email: z.string(),
@@ -28,22 +14,40 @@ const SignupUserDTO = z
 const SignupResponse = z
   .object({ id: z.string(), message: z.string() })
   .passthrough();
-const VerifyDTO = z.object({ verificationCode: z.string() }).passthrough();
+const VerifyDTO = z
+  .object({ verificationCode: z.string(), email: z.string() })
+  .passthrough();
 const VerifyResponse = z.object({ message: z.string() }).passthrough();
+const ResendDTO = z.object({ email: z.string() }).passthrough();
+const ResendResponse = z.object({ message: z.string() }).passthrough();
 const LoginUserDTO = z
   .object({ email: z.string(), password: z.string() })
+  .passthrough();
+const UserResponseDto = z
+  .object({
+    id: z.string(),
+    email: z.string(),
+    firstName: z.string(),
+    lastName: z.string(),
+    isVerified: z.boolean(),
+  })
+  .passthrough();
+const AuthResponseDto = z
+  .object({ accessToken: z.string(), user: UserResponseDto })
   .passthrough();
 
 export const schemas = {
   CreateUserDto,
   UpdateUserDto,
-  UserResponseDto,
-  AuthResponseDto,
   SignupUserDTO,
   SignupResponse,
   VerifyDTO,
   VerifyResponse,
+  ResendDTO,
+  ResendResponse,
   LoginUserDTO,
+  UserResponseDto,
+  AuthResponseDto,
 };
 
 const endpoints = makeApi([
@@ -117,18 +121,6 @@ const endpoints = makeApi([
     response: z.void(),
   },
   {
-    method: "get",
-    path: "/auth/google",
-    requestFormat: "json",
-    response: z.void(),
-  },
-  {
-    method: "get",
-    path: "/auth/google/callback",
-    requestFormat: "json",
-    response: AuthResponseDto,
-  },
-  {
     method: "post",
     path: "/auth/login",
     requestFormat: "json",
@@ -140,6 +132,19 @@ const endpoints = makeApi([
       },
     ],
     response: AuthResponseDto,
+  },
+  {
+    method: "post",
+    path: "/auth/resend",
+    requestFormat: "json",
+    parameters: [
+      {
+        name: "body",
+        type: "Body",
+        schema: z.object({ email: z.string() }).passthrough(),
+      },
+    ],
+    response: z.object({ message: z.string() }).passthrough(),
   },
   {
     method: "post",
@@ -156,18 +161,13 @@ const endpoints = makeApi([
   },
   {
     method: "post",
-    path: "/auth/verify/:id",
+    path: "/auth/verify",
     requestFormat: "json",
     parameters: [
       {
         name: "body",
         type: "Body",
-        schema: z.object({ verificationCode: z.string() }).passthrough(),
-      },
-      {
-        name: "id",
-        type: "Path",
-        schema: z.string(),
+        schema: VerifyDTO,
       },
     ],
     response: z.object({ message: z.string() }).passthrough(),
