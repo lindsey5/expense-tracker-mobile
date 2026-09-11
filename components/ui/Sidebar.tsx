@@ -33,19 +33,19 @@ export default function Sidebar({
   const pathname = usePathname();
   const colorScheme = useColorScheme() === 'dark' ? 'dark' : 'light';
   const colors = Colors[colorScheme];
-  const translateX = useRef(new Animated.Value(-width)).current;
+  const translateX = useRef(new Animated.Value(width)).current;
 
   useEffect(() => {
     Animated.timing(translateX, {
-      toValue: visible ? 0 : -width,
+      toValue: visible ? 0 : width,
       duration: 250,
       useNativeDriver: true,
     }).start();
   }, [visible, translateX]);
 
   const backdropOpacity = translateX.interpolate({
-    inputRange: [-width, 0],
-    outputRange: [0, 0.4],
+    inputRange: [0, width],
+    outputRange: [0.4, 0],
     extrapolate: 'clamp',
   });
 
@@ -53,17 +53,20 @@ export default function Sidebar({
 
   return (
     <View pointerEvents={visible ? 'auto' : 'none'} className="absolute inset-0 z-50">
-      <Animated.View className="absolute inset-0 bg-black" style={{ opacity: backdropOpacity }}>
+      <Animated.View
+        className="absolute inset-0 bg-black"
+        style={{ opacity: backdropOpacity }}
+      >
         <Pressable className="absolute inset-0" onPress={onClose} />
       </Animated.View>
 
       <Animated.View
-        className="h-full w-[70vw] px-5 pt-14"
+        className="absolute right-0 h-full w-[70vw] px-5 pt-14"
         style={{
           backgroundColor: colors.card,
           transform: [{ translateX }],
           shadowColor: '#000',
-          shadowOffset: { width: 4, height: 0 },
+          shadowOffset: { width: -4, height: 0 },
           shadowOpacity: 0.15,
           shadowRadius: 12,
           elevation: 16,
@@ -85,12 +88,14 @@ export default function Sidebar({
         <View className="gap-1">
           {items.map((item, index) => {
             const isActive = pathname === item.pathname;
-            const activeColor = colors.tint;
 
             return (
               <View key={item.label}>
                 {index === firstDangerIndex && index > 0 && (
-                  <View className="my-2 h-px" style={{ backgroundColor: colors.border }} />
+                  <View
+                    className="my-2 h-px"
+                    style={{ backgroundColor: colors.border }}
+                  />
                 )}
 
                 <TouchableOpacity
@@ -108,13 +113,7 @@ export default function Sidebar({
                       : 'transparent',
                   }}
                 >
-                  {item.icon && (
-                    <View>
-                      {isActive && !item.danger
-                        ? <View>{item.icon}</View>
-                        : item.icon}
-                    </View>
-                  )}
+                  {item.icon}
 
                   <Text
                     className="text-[15px] font-medium"
@@ -122,7 +121,7 @@ export default function Sidebar({
                       color: item.danger
                         ? '#EF4444'
                         : isActive
-                          ? activeColor
+                          ? colors.tint
                           : colors.icon,
                     }}
                   >

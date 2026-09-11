@@ -119,11 +119,7 @@ export default function Signup() {
     };
 
     return (
-        <KeyboardAvoidingView
-            behavior={Platform.OS === 'ios' ? 'padding' : undefined}
-            className="flex-1"
-            style={{ backgroundColor: colors.background }}
-        >
+        <View className='flex-1'>
         <ScrollView
             className="flex-1"
             contentContainerStyle={{
@@ -253,6 +249,6 @@ export default function Signup() {
             )}
             </Animated.View>
         </ScrollView>
-        </KeyboardAvoidingView>
+        </View>
     );
 }

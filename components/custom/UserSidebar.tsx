@@ -1,10 +1,10 @@
 import { useRouter } from 'expo-router';
-import { BarChart3, Home, LogOut, Menu, Settings, Wallet } from 'lucide-react-native';
+import { BarChart3, Bell, ChartNoAxesColumnIncreasing, Home, LogOut, Menu, Settings, Wallet, WalletCards } from 'lucide-react-native';
 import { useColorScheme } from '@/hooks/use-color-scheme';
 import { Colors } from '@/constants/theme';
 import Sidebar from '../ui/Sidebar';
-import { useState } from 'react';
-import { TouchableOpacity, View } from 'react-native';
+import { useMemo, useState } from 'react';
+import { TouchableOpacity } from 'react-native';
 import { useAuthStore } from '@/lib/store/authStore';
 
 export default function UserSidebar() {
@@ -14,7 +14,7 @@ export default function UserSidebar() {
     const colorScheme = useColorScheme() === 'dark' ? 'dark' : 'light';
     const colors = Colors[colorScheme];
 
-    const sidebarItems = [
+    const sidebarItems = useMemo(() => [
         {
             label: 'Dashboard',
             pathname: '/dashboard',
@@ -22,16 +22,34 @@ export default function UserSidebar() {
             onPress: () => router.push('/dashboard'),
         },
         {
-            label: 'Expenses',
-            pathname: '/expenses',
+            label: 'Wallets',
+            pathname: '/wallets',
+            icon: <WalletCards size={21} color={colors.icon} />,
+            onPress: () => router.push('/wallets'),
+        },
+        {
+            label: 'Transactions',
+            pathname: '/transactions',
             icon: <Wallet size={21} color={colors.icon} />,
-            onPress: () => router.push('/expenses'),
+            onPress: () => router.push('/transactions'),
+        },
+        {
+            label: 'Budgets',
+            pathname: '/budgets',
+            icon: <ChartNoAxesColumnIncreasing size={21} color={colors.icon} />,
+            onPress: () => router.push('/budgets'),
         },
         {
             label: 'Reports',
             pathname: '/reports',
             icon: <BarChart3 size={21} color={colors.icon} />,
             onPress: () => router.push('/reports'),
+        },
+        {
+            label: 'Notifications',
+            pathname: '/notifications',
+            icon: <Bell size={21} color={colors.icon} />,
+            onPress: () => router.push('/notifications'),
         },
         {
             label: 'Settings',
@@ -46,13 +64,13 @@ export default function UserSidebar() {
             onPress: logout,
             danger: true,
         },
-    ];
+    ], [])
 
     return (
         <>
         <TouchableOpacity
             onPress={() => setSidebarOpen(true)}
-            className="absolute left-5 top-14 z-40 rounded-xl p-2"
+            className="absolute right-5 top-14 z-40 rounded-xl p-2"
             style={{ backgroundColor: colors.card }}
         >
             <Menu size={24} color={colors.text} />

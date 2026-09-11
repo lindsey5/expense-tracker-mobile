@@ -1,8 +1,6 @@
 import { useEffect, useRef } from 'react';
-import { Animated, KeyboardAvoidingView, Platform, Text, TouchableOpacity, View } from 'react-native';
+import { Animated, KeyboardAvoidingView, Platform, Text, TouchableOpacity, useColorScheme, View } from 'react-native';
 import { Wallet } from 'lucide-react-native';
-import { useColorScheme } from '@/hooks/use-color-scheme';
-import { Colors } from '@/constants/theme';
 import Button from '@/components/ui/Button';
 import InputField from '@/components/ui/InputField';
 import { LoginFormData, loginSchema } from '@/schemas/auth.schema';
@@ -11,6 +9,7 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import useLogin from '@/hooks/auth/use-login.hook';
 import { Link } from 'expo-router';
 import Error from '@/components/custom/Error';
+import { Colors } from '@/constants/theme';
 
 export default function Login() {
   const colorScheme = useColorScheme() === 'dark' ? 'dark' : 'light';
@@ -43,11 +42,7 @@ export default function Login() {
   };
 
   return (
-    <KeyboardAvoidingView
-      behavior={Platform.OS === 'ios' ? 'padding' : undefined}
-      className="flex-1"
-      style={{ backgroundColor: colors.background }}
-    >
+    <View className='flex-1'>
       <Animated.View
         className="flex-1 px-8"
         style={{
@@ -116,6 +111,6 @@ export default function Login() {
           </View>
         </View>
       </Animated.View>
-    </KeyboardAvoidingView>
+    </View>
   );
 }
