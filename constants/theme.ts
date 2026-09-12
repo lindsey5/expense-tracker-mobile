@@ -16,6 +16,7 @@ export const Colors = {
     input: '#FAFAFA',
     card: '#FFFFFF',
     placeholder: '#A1A1AA',
+    surfaceTint: '#F3E8FF',
 
     // Button
     buttonText: '#FFFFFF',
@@ -37,7 +38,8 @@ export const Colors = {
     input: '#27272A',
     card: '#27272A',
     placeholder: '#71717A',
-
+    surfaceTint: '#2E2148',
+    
     // Button
     buttonText: '#FFFFFF',
 

@@ -30,27 +30,27 @@ export default function PersonalStep({
 
             <View className="mt-4">
                 <InputField
-                label="Last name"
-                value={lastname}
-                onChangeText={(text) => setValue('lastname', text)}
-                placeholder="Enter your lastname"
-                autoCapitalize="words"
-                autoCorrect={false}
-                error={errors.lastname?.message}
+                    label="Last name"
+                    value={lastname}
+                    onChangeText={(text) => setValue('lastname', text)}
+                    placeholder="Enter your lastname"
+                    autoCapitalize="words"
+                    autoCorrect={false}
+                    error={errors.lastname?.message}
                 />
             </View>
 
             <View className="mt-4">
                 <InputField
-                label="Email"
-                type="email"
-                value={email}
-                onChangeText={(text) => setValue('email', text)}
-                placeholder="Enter your email address"
-                keyboardType="email-address"
-                autoCapitalize="none"
-                autoCorrect={false}
-                error={errors.email?.message}
+                    label="Email"
+                    type="email"
+                    value={email}
+                    onChangeText={(text) => setValue('email', text)}
+                    placeholder="Enter your email address"
+                    keyboardType="email-address"
+                    autoCapitalize="none"
+                    autoCorrect={false}
+                    error={errors.email?.message}
                 />
             </View>
         </View>
