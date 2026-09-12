@@ -1,42 +1,27 @@
-import Card from "@/components/ui/Card";
-import useGetTransactions, { GetTransactionsParams } from "@/hooks/transaction/use-get-transactions.hook";
-import { useQuery } from "@/hooks/useQuery";
 import { View, Text, useColorScheme, TouchableOpacity } from "react-native";
 import { ArrowDownLeft, ArrowUpRight, Filter, Search } from "lucide-react-native";
 import { Colors } from "@/constants/theme";
 import { formatCurrency } from "@/utils/utils";
 import Pagination from "@/components/ui/Pagination";
+import { Transaction } from "@/types/transaction.type";
 
-export default function TransactionList() {
-    const { query } = useQuery<GetTransactionsParams>();
-    const { data } = useGetTransactions(query);
+type TransactionListProps = {
+    transactions: Transaction[];
+    page?: number;
+    totalPages?: number;
+}
+
+export default function TransactionList({
+    transactions,
+    page,
+    totalPages
+} : TransactionListProps) {
     const colorScheme = useColorScheme() === 'dark' ? 'dark' : 'light';
     const colors = Colors[colorScheme];
 
-    console.log(data)
-
     return (
         <>
-            <View className="mb-3 mt-7 flex-row items-center justify-between">
-                <Text
-                    className="text-lg font-bold"
-                    style={{ color: colors.text }}
-                >
-                    All Transactions
-                </Text>
-
-                <View className="flex-row items-center">
-                    <Filter size={14} color={colors.icon} />
-
-                    <Text
-                        className="ml-1 text-xs"
-                        style={{ color: colors.icon }}
-                    >
-                    {data?.pagination.total ?? 0} records
-                    </Text>
-                </View>
-            </View>
-            {!data?.transactions.length ? (
+            {!transactions.length ? (
                 <View className="items-center px-6 py-12">
                     <Search size={30} color={colors.icon} />
 
@@ -55,7 +40,7 @@ export default function TransactionList() {
                     </Text>
                 </View>
             ) : 
-            data?.transactions.map((transaction, index) => {
+            transactions.map((transaction, index) => {
                 const isIncome = transaction.type === 'INCOME';
 
                 return (
@@ -65,7 +50,7 @@ export default function TransactionList() {
                         className="flex-row items-center px-4 py-4"
                         style={{
                             borderBottomWidth:
-                            index === data.transactions.length - 1 ? 0 : 1,
+                            index === transactions.length - 1 ? 0 : 1,
                             borderBottomColor: colors.border,
                         }}
                     >
@@ -148,8 +133,8 @@ export default function TransactionList() {
                 )
             })}
             <Pagination 
-                page={data?.pagination.page || 1}
-                totalPages={data?.pagination.totalPages || 0}
+                page={page || 1}
+                totalPages={totalPages || 0}
             />
         </>
     )

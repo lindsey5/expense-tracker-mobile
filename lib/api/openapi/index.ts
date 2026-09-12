@@ -336,12 +336,12 @@ const endpoints = makeApi([
       {
         name: "page",
         type: "Query",
-        schema: z.number().optional().default(1),
+        schema: z.number().optional(),
       },
       {
         name: "limit",
         type: "Query",
-        schema: z.number().optional().default(10),
+        schema: z.number().optional(),
       },
       {
         name: "type",
@@ -387,6 +387,11 @@ const endpoints = makeApi([
         name: "year",
         type: "Query",
         schema: z.number().optional(),
+      },
+      {
+        name: "search",
+        type: "Query",
+        schema: z.string().optional(),
       },
     ],
     response: GetTransactionsResponseDto,

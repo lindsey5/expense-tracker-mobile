@@ -1,4 +1,4 @@
-import { useMemo, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import {
   ScrollView,
   Text,
@@ -6,6 +6,7 @@ import {
   View,
 } from 'react-native';
 import {
+    Filter,
   Plus,
 } from 'lucide-react-native';
 import { useColorScheme } from '@/hooks/use-color-scheme';
@@ -17,7 +18,10 @@ import SearchField from '@/components/ui/SearchField';
 import Tabs from '@/components/ui/Tabs';
 import TransactionList from '@/components/custom/Transactions/TransactionList';
 import { useQuery } from '@/hooks/useQuery';
-import { GetTransactionsParams } from '@/hooks/transaction/use-get-transactions.hook';
+import useGetTransactions, { GetTransactionsParams } from '@/hooks/transaction/use-get-transactions.hook';
+import { useDebounce } from '@/hooks/useDebounce';
+import { ExpenseCategories, IncomeCategories, TransactionCategories } from '@/constants/transaction';
+import Select from '@/components/ui/Select';
 
 const filters = [
     { label: 'All', value: 'all' },
@@ -28,12 +32,54 @@ const filters = [
 export default function Transactions() {
     const colorScheme = useColorScheme() === 'dark' ? 'dark' : 'light';
     const colors = Colors[colorScheme];
-    const { query, pushQuery } = useQuery<GetTransactionsParams>();
-    const [search, setSearch] = useState('');
+    const [search, setSearch] = useState("");
+    const debouncedSearch = useDebounce(search);
 
+    const { query, pushQuery } = useQuery<GetTransactionsParams>();
+
+    const { data } = useGetTransactions({ ...query, search: debouncedSearch });
+    
     const setActiveType = (value: string) => {
-        pushQuery({ type: value === 'all' ? undefined : value, page: 1 })
+        pushQuery({ type: value === 'all' ? undefined : value as GetTransactionsParams['type'], page: 1 })
     }
+
+    const setCategory = (value: string) => {
+        pushQuery({ category: !value ? undefined : value as GetTransactionsParams['category'], page: 1 });
+    }
+
+    const categoryOptions = useMemo(() => {
+        let categories = TransactionCategories;
+
+        if (query.type === 'EXPENSE') {
+            categories = ExpenseCategories;
+        }
+
+        if (query.type === 'INCOME') {
+            categories = IncomeCategories;
+        }
+
+        return [
+            { label: 'All', value: '' },
+            ...categories.map((category) => ({
+                label: category.replace(/_/g, ' '),
+                value: category,
+            })),
+        ];
+    }, [query.type]);
+
+    useEffect(() => {
+        if (
+            query.category &&
+            !categoryOptions.some(
+                (option) => option.value === query.category
+            )
+        ) {
+            pushQuery({
+                category: undefined,
+                page: 1,
+            });
+        }
+    }, [query.category, categoryOptions]);
 
     return (
         <View
@@ -65,9 +111,28 @@ export default function Transactions() {
                 setActiveTab={setActiveType}
                 tabs={filters}
             />
+            <View className="mb-3 mt-7 flex-row items-center justify-between">
+                <Text
+                    className="text-lg font-bold"
+                    style={{ color: colors.text }}
+                >
+                    All Transactions
+                </Text>
 
+                <Select
+                    className="w-[50%]"
+                    placeholder='Select Category'
+                    value={query.category}
+                    onChange={setCategory}
+                    options={categoryOptions}
+                />
+            </View>
             {/* Transactions */}
-            <TransactionList />
+            <TransactionList
+                transactions={data?.transactions || []}
+                page={data?.pagination.page}
+                totalPages={data?.pagination.totalPages}
+            />
         </ScrollView>
 
         {/* Floating Add Button */}

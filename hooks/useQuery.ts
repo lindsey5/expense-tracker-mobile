@@ -9,7 +9,7 @@ export function useQuery<T extends Record<string, any>>() {
         router.setParams(updates);
     };
 
-    const pushQuery = (newQuery: Record<string, string | number | (string | number)[] | null | undefined>) => {
+    const pushQuery = (newQuery: T) => {
         setQuery({
             ...query,
             ...newQuery
