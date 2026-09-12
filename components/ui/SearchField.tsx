@@ -1,44 +1,41 @@
-import { TextInput, useColorScheme, View, } from "react-native"
-import { Search } from "lucide-react-native"
-import { Colors } from "@/constants/theme";
-import { cn } from "@/utils/utils";
+import { TextInput, useColorScheme, View } from 'react-native';
+import { Search } from 'lucide-react-native';
+import { Colors } from '@/constants/theme';
+import { cn } from '@/utils/utils';
 
 type SearchFieldProps = {
-    search: string;
-    setSearch: (value: string) => void;
-    className?: string;
-}
+  search: string;
+  setSearch: (value: string) => void;
+  className?: string;
+};
 
-export default function SearchField({
-    search,
-    setSearch,
-    className
-} : SearchFieldProps) {
-    const colorScheme = useColorScheme() === 'dark' ? 'dark' : 'light';
-    const colors = Colors[colorScheme];
+export default function SearchField({ search, setSearch, className }: SearchFieldProps) {
+  const colorScheme = useColorScheme() === 'dark' ? 'dark' : 'light';
+  const colors = Colors[colorScheme];
 
-    return (
-        <View
-          className={cn(
-            "mt-6 flex-row items-center rounded-2xl px-4",
-            className
-          )}
-          style={{
-            backgroundColor: colors.card,
-            borderWidth: 1,
-            borderColor: colors.border,
-          }}
-        >
-          <Search size={19} color={colors.icon} />
+  return (
+    <View
+      className={cn('mt-6 flex-row items-center rounded-[20px] border px-3', className)}
+      style={{
+        backgroundColor: colors.card,
+        borderColor: colors.border,
+      }}
+    >
+      <View
+        className="h-9 w-9 items-center justify-center rounded-xl"
+        style={{ backgroundColor: colors.soft }}
+      >
+        <Search size={18} color={colors.icon} />
+      </View>
 
-          <TextInput
-            value={search}
-            onChangeText={setSearch}
-            placeholder="Search transactions..."
-            placeholderTextColor={colors.placeholder}
-            className="h-12 flex-1 px-3 text-sm"
-            style={{ color: colors.text }}
-          />
-        </View>
-    )
+      <TextInput
+        value={search}
+        onChangeText={setSearch}
+        placeholder="Search transactions..."
+        placeholderTextColor={colors.placeholder}
+        className="h-12 flex-1 px-3 text-sm font-medium"
+        style={{ color: colors.text }}
+      />
+    </View>
+  );
 }

@@ -40,18 +40,23 @@ export default function Button({
 
     return (
         <TouchableOpacity
-        {...props}
-        className={cn(
-            'items-center justify-center rounded-xl px-2 py-4',
-            variant === 'outline' && 'border',
-            className,
-        )}
-        style={{
-            backgroundColor: current.backgroundColor,
-            borderColor: variant === 'outline' ? colors.border : undefined,
-        }}
+            {...props}
+            className={cn(
+                'items-center justify-center rounded-2xl px-2 py-4',
+                variant === 'outline' && 'border',
+                className,
+            )}
+            style={{
+                backgroundColor: current.backgroundColor,
+                borderColor: variant === 'outline' ? colors.border : undefined,
+                shadowColor: '#000',
+                shadowOffset: { width: 0, height: 8 },
+                shadowOpacity: variant === 'primary' ? 0.18 : 0.06,
+                shadowRadius: 12,
+                elevation: variant === 'primary' ? 6 : 2,
+            }}
         >
-        <Text
+            <Text
                 className="text-base font-bold"
                 style={{ color: current.textColor }}
             >

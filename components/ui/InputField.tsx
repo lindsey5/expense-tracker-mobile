@@ -65,10 +65,15 @@ export default function InputField({
 
       {/* Input */}
       <View
-        className="h-[52px] flex-row items-center rounded-xl border"
+        className="h-[54px] flex-row items-center rounded-2xl border"
         style={{
           borderColor: error ? ERROR_COLOR : colors.border,
           backgroundColor: colors.input,
+          shadowColor: '#000',
+          shadowOffset: { width: 0, height: 4 },
+          shadowOpacity: 0.04,
+          shadowRadius: 8,
+          elevation: 2,
         }}
       >
         <TextInput

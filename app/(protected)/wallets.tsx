@@ -94,12 +94,12 @@ export default function Wallets() {
     <ScrollView
       className="flex-1"
       style={{ backgroundColor: colors.background }}
-      contentContainerStyle={{ padding: 20, paddingTop: 60, paddingBottom: 40 }}
+      contentContainerStyle={{ paddingHorizontal: 18, paddingTop: 58, paddingBottom: 40 }}
       showsVerticalScrollIndicator={false}
     >
-      <View className="mb-7 flex-row items-center justify-between">
+      <View className="mb-6 flex-row items-center justify-between">
         <View>
-          <Text className="text-3xl font-bold" style={{ color: colors.text }}>
+          <Text className="text-[30px] font-bold tracking-tight" style={{ color: colors.text }}>
             Wallets
           </Text>
           <Text className="mt-1 text-sm" style={{ color: colors.icon }}>
@@ -108,29 +108,47 @@ export default function Wallets() {
         </View>
 
         <TouchableOpacity
-          className="rounded-xl p-3"
-          style={{ backgroundColor: colors.tint }}
+          className="rounded-2xl border p-3"
+          style={{
+            backgroundColor: colors.card,
+            borderColor: colors.border,
+            shadowColor: '#000',
+            shadowOffset: { width: 0, height: 6 },
+            shadowOpacity: 0.06,
+            shadowRadius: 12,
+            elevation: 2,
+          }}
         >
-          <Plus size={22} color="#FFFFFF" />
+          <Plus size={22} color={colors.tint} />
         </TouchableOpacity>
       </View>
 
       <View
-        className="mb-6 rounded-2xl p-5"
-        style={{ backgroundColor: colors.tint }}
+        className="mb-6 rounded-[26px] border p-5"
+        style={{
+          backgroundColor: colors.card,
+          borderColor: colors.border,
+          shadowColor: '#000',
+          shadowOffset: { width: 0, height: 10 },
+          shadowOpacity: 0.05,
+          shadowRadius: 16,
+          elevation: 2,
+        }}
       >
         <View className="mb-4 flex-row items-center gap-2">
-          <WalletIcon size={20} color="#FFFFFF" />
-          <Text className="text-sm font-medium text-white">
+          <View className="rounded-xl p-2.5" style={{ backgroundColor: colors.softTint }}>
+            <WalletIcon size={20} color={colors.tint} />
+          </View>
+          <Text className="text-sm font-medium" style={{ color: colors.icon }}>
             Total Balance
           </Text>
         </View>
 
-        <Text className="text-3xl font-bold text-white">
+        <Text className="text-[34px] font-bold tracking-tight" style={{ color: colors.text }}>
           {formatCurrency(totalBalance)}
         </Text>
 
-        <Text className="mt-2 text-sm text-white/70">
+        <Text className="mt-2 text-sm" style={{ color: colors.icon }}>
           Across {mockWallets.length} wallets
         </Text>
       </View>
@@ -155,46 +173,33 @@ export default function Wallets() {
             return (
               <TouchableOpacity
                 key={wallet.id}
-                activeOpacity={0.7}
-                className="flex-row items-center rounded-2xl p-4"
+                activeOpacity={0.8}
+                className="flex-row items-center rounded-[22px] border p-4"
                 style={{
                   backgroundColor: colors.card,
-                  borderWidth: 1,
                   borderColor: colors.border,
                 }}
               >
                 <View
-                  className="mr-4 rounded-xl p-3"
+                  className="mr-4 rounded-2xl p-3"
                   style={{
-                    backgroundColor:
-                      colorScheme === 'dark' ? '#3B2A5A' : '#F3E8FF',
+                    backgroundColor: colors.softTint,
                   }}
                 >
                   <Icon size={22} color={colors.tint} />
                 </View>
 
                 <View className="flex-1">
-                  <Text
-                    className="text-base font-semibold"
-                    style={{ color: colors.text }}
-                  >
+                  <Text className="text-base font-semibold" style={{ color: colors.text }}>
                     {wallet.name}
                   </Text>
-                  <Text
-                    className="mt-1 text-xs"
-                    style={{ color: colors.icon }}
-                  >
+                  <Text className="mt-1 text-xs" style={{ color: colors.icon }}>
                     {wallet.type.replace('_', ' ')}
                   </Text>
                 </View>
 
                 <View className="items-end">
-                  <Text
-                    className="text-base font-bold"
-                    style={{
-                      color: isNegative ? '#DC2626' : colors.text,
-                    }}
-                  >
+                  <Text className="text-base font-bold" style={{ color: isNegative ? '#DC2626' : colors.text }}>
                     {formatCurrency(wallet.balance)}
                   </Text>
                   <MoreVertical size={18} color={colors.icon} />
@@ -219,10 +224,9 @@ export default function Wallets() {
         </View>
 
         <View
-          className="rounded-2xl"
+          className="overflow-hidden rounded-[22px] border"
           style={{
             backgroundColor: colors.card,
-            borderWidth: 1,
             borderColor: colors.border,
           }}
         >
@@ -234,8 +238,7 @@ export default function Wallets() {
                 key={item.id}
                 className="flex-row items-center p-4"
                 style={{
-                  borderBottomWidth:
-                    index === recentActivity.length - 1 ? 0 : 1,
+                  borderBottomWidth: index === recentActivity.length - 1 ? 0 : 1,
                   borderBottomColor: colors.border,
                 }}
               >
@@ -253,26 +256,15 @@ export default function Wallets() {
                 </View>
 
                 <View className="flex-1">
-                  <Text
-                    className="text-sm font-semibold"
-                    style={{ color: colors.text }}
-                  >
+                  <Text className="text-sm font-semibold" style={{ color: colors.text }}>
                     {item.title}
                   </Text>
-                  <Text
-                    className="mt-1 text-xs"
-                    style={{ color: colors.icon }}
-                  >
+                  <Text className="mt-1 text-xs" style={{ color: colors.icon }}>
                     {item.wallet}
                   </Text>
                 </View>
 
-                <Text
-                  className="text-sm font-bold"
-                  style={{
-                    color: isIncome ? '#16A34A' : '#DC2626',
-                  }}
-                >
+                <Text className="text-sm font-bold" style={{ color: isIncome ? '#16A34A' : '#DC2626' }}>
                   {isIncome ? '+' : ''}
                   {formatCurrency(item.amount)}
                 </Text>

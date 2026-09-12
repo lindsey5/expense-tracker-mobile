@@ -97,123 +97,115 @@ export default function Dashboard() {
     })}`;
 
   return (
-    <View
-      className="flex-1"
-      style={{ backgroundColor: colors.background }}
-    >
+    <View className="flex-1" style={{ backgroundColor: colors.background }}>
       <ScrollView
         showsVerticalScrollIndicator={false}
         contentContainerStyle={{
-          padding: 20,
+          paddingHorizontal: 18,
           paddingTop: 58,
           paddingBottom: 40,
         }}
       >
-        {/* Header */}
-        <View className="mb-6 flex-row items-center justify-between">
+        <View className="mb-5 flex-row items-center justify-between">
           <View>
             <Text className="text-sm" style={{ color: colors.icon }}>
               Welcome back
             </Text>
 
-            <Text
-              className="mt-1 text-2xl font-bold"
-              style={{ color: colors.text }}
-            >
+            <Text className="mt-1 text-[30px] font-bold tracking-tight" style={{ color: colors.text }}>
               Lindsey 👋
             </Text>
           </View>
 
           <TouchableOpacity
-            className="h-11 w-11 items-center justify-center rounded-full"
+            className="h-11 w-11 items-center justify-center rounded-2xl border"
             style={{
               backgroundColor: colors.card,
-              borderWidth: 1,
               borderColor: colors.border,
+              shadowColor: '#000',
+              shadowOffset: { width: 0, height: 6 },
+              shadowOpacity: 0.06,
+              shadowRadius: 12,
+              elevation: 2,
             }}
           >
             <Bell size={20} color={colors.text} />
           </TouchableOpacity>
         </View>
 
-        {/* Balance Hero */}
         <View
-          className="overflow-hidden rounded-3xl p-6"
-          style={{ backgroundColor: colors.tint }}
+          className="overflow-hidden rounded-[26px] border p-5"
+          style={{
+            backgroundColor: colors.card,
+            borderColor: colors.border,
+            shadowColor: '#000',
+            shadowOffset: { width: 0, height: 10 },
+            shadowOpacity: 0.06,
+            shadowRadius: 18,
+            elevation: 3,
+          }}
         >
-          <View className="flex-row items-center justify-between">
-            <View>
-              <Text className="text-sm text-white/70">
-                Total Balance
-              </Text>
+          <View className="mb-4 flex-row items-center justify-between">
+            <Text className="text-sm font-medium" style={{ color: colors.icon }}>
+              Total Balance
+            </Text>
 
-              <Text className="mt-2 text-3xl font-bold text-white">
-                {formatCurrency(mockData.balance)}
+            <View className="rounded-full border px-2.5 py-1" style={{ borderColor: colors.border, backgroundColor: colors.soft }}>
+              <Text className="text-[10px] font-semibold" style={{ color: colors.tint }}>
+                Sep 2026
               </Text>
-            </View>
-
-            <View className="rounded-2xl bg-white/15 p-3">
-              <Wallet size={25} color="#FFFFFF" />
             </View>
           </View>
 
-          <View className="mt-6 flex-row">
-            {/* Income */}
-            <View className="flex-1">
+          <Text className="text-[34px] font-bold tracking-tight" style={{ color: colors.text }}>
+            {formatCurrency(mockData.balance)}
+          </Text>
+
+          <View className="mt-5 flex-row gap-3">
+            <View className="flex-1 rounded-2xl p-3" style={{ backgroundColor: colors.soft }}>
               <View className="flex-row items-center">
-                <View className="mr-2 rounded-full bg-white/15 p-1.5">
-                  <ArrowDownLeft size={13} color="#FFFFFF" />
+                <View className="mr-2 rounded-full bg-emerald-100 p-1.5">
+                  <ArrowDownLeft size={12} color="#16A34A" />
                 </View>
 
-                <Text className="text-xs text-white/70">
+                <Text className="text-[11px] font-medium" style={{ color: colors.icon }}>
                   Income
                 </Text>
               </View>
 
-              <Text className="mt-2 text-base font-bold text-white">
+              <Text className="mt-2 text-base font-bold" style={{ color: colors.text }}>
                 {formatCurrency(mockData.income)}
               </Text>
             </View>
 
-            <View className="w-px bg-white/20" />
-
-            {/* Expenses */}
-            <View className="flex-1 pl-5">
+            <View className="flex-1 rounded-2xl p-3" style={{ backgroundColor: colors.soft }}>
               <View className="flex-row items-center">
-                <View className="mr-2 rounded-full bg-white/15 p-1.5">
-                  <ArrowUpRight size={13} color="#FFFFFF" />
+                <View className="mr-2 rounded-full bg-rose-100 p-1.5">
+                  <ArrowUpRight size={12} color="#DC2626" />
                 </View>
 
-                <Text className="text-xs text-white/70">
+                <Text className="text-[11px] font-medium" style={{ color: colors.icon }}>
                   Expenses
                 </Text>
               </View>
 
-              <Text className="mt-2 text-base font-bold text-white">
+              <Text className="mt-2 text-base font-bold" style={{ color: colors.text }}>
                 {formatCurrency(mockData.expenses)}
               </Text>
             </View>
           </View>
         </View>
 
-        {/* Wallets */}
         <View className="mt-7">
           <View className="mb-3 flex-row items-center justify-between">
-            <Text
-              className="text-lg font-bold"
-              style={{ color: colors.text }}
-            >
-              My Wallets
+            <Text className="text-lg font-bold" style={{ color: colors.text }}>
+              Wallets
             </Text>
 
             <TouchableOpacity className="flex-row items-center">
-              <Text
-                className="mr-1 text-sm font-semibold"
-                style={{ color: colors.tint }}
-              >
+              <Text className="mr-1 text-sm font-semibold" style={{ color: colors.tint }}>
                 Manage
               </Text>
-
               <ChevronRight size={16} color={colors.tint} />
             </TouchableOpacity>
           </View>
@@ -229,311 +221,206 @@ export default function Dashboard() {
               <TouchableOpacity
                 key={wallet.id}
                 activeOpacity={0.9}
-                className="h-44 w-[288px] justify-between rounded-3xl p-5"
-                style={{ backgroundColor: colors.tint }}
+                className="h-44 w-[288px] justify-between rounded-[24px] border p-4"
+                style={{
+                  backgroundColor: colors.card,
+                  borderColor: colors.border,
+                  shadowColor: '#000',
+                  shadowOffset: { width: 0, height: 8 },
+                  shadowOpacity: 0.05,
+                  shadowRadius: 14,
+                  elevation: 2,
+                }}
               >
                 <View className="flex-row items-start justify-between">
                   <View>
-                    <Text className="text-xs font-medium text-white/70">
+                    <Text className="text-[11px] font-medium" style={{ color: colors.icon }}>
                       {wallet.type}
                     </Text>
 
-                    <Text className="mt-1 text-lg font-bold text-white">
+                    <Text className="mt-1 text-lg font-bold" style={{ color: colors.text }}>
                       {wallet.name}
                     </Text>
                   </View>
 
-                  <View className="rounded-xl bg-white/15 p-2.5">
-                    <Wallet size={20} color="#FFFFFF" />
+                  <View className="rounded-xl p-2.5" style={{ backgroundColor: colors.softTint }}>
+                    <Wallet size={18} color={colors.tint} />
                   </View>
                 </View>
 
                 <View>
-                  <Text className="text-xs text-white/60">
+                  <Text className="text-[11px]" style={{ color: colors.icon }}>
                     {wallet.number}
                   </Text>
 
-                  <Text className="mt-1 text-2xl font-bold text-white">
+                  <Text className="mt-1 text-2xl font-bold" style={{ color: colors.text }}>
                     {formatCurrency(wallet.balance)}
                   </Text>
                 </View>
               </TouchableOpacity>
             ))}
           </ScrollView>
-
-          {/* Wallet Pagination */}
-          <View className="mt-3 flex-row justify-center gap-1.5">
-            <View
-              className="h-1.5 w-5 rounded-full"
-              style={{ backgroundColor: colors.tint }}
-            />
-
-            <View
-              className="h-1.5 w-1.5 rounded-full"
-              style={{ backgroundColor: colors.border }}
-            />
-
-            <View
-              className="h-1.5 w-1.5 rounded-full"
-              style={{ backgroundColor: colors.border }}
-            />
-
-            <View
-              className="h-1.5 w-1.5 rounded-full"
-              style={{ backgroundColor: colors.border }}
-            />
-          </View>
         </View>
 
-        {/* Quick Actions */}
-        <View className="mt-5 flex-row gap-3">
+        <View className="mt-6 flex-row gap-3">
           <TouchableOpacity
-            className="flex-1 flex-row items-center justify-center rounded-2xl py-3.5"
+            className="flex-1 flex-row items-center justify-center rounded-2xl border py-3.5"
             style={{
               backgroundColor: colors.card,
-              borderWidth: 1,
               borderColor: colors.border,
             }}
           >
             <Plus size={18} color={colors.tint} />
-
-            <Text
-              className="ml-2 text-sm font-semibold"
-              style={{ color: colors.text }}
-            >
+            <Text className="ml-2 text-sm font-semibold" style={{ color: colors.text }}>
               Add Expense
             </Text>
           </TouchableOpacity>
 
           <TouchableOpacity
-            className="flex-1 flex-row items-center justify-center rounded-2xl py-3.5"
+            className="flex-1 flex-row items-center justify-center rounded-2xl border py-3.5"
             style={{
               backgroundColor: colors.card,
-              borderWidth: 1,
               borderColor: colors.border,
             }}
           >
             <ArrowDownLeft size={18} color={colors.tint} />
-
-            <Text
-              className="ml-2 text-sm font-semibold"
-              style={{ color: colors.text }}
-            >
+            <Text className="ml-2 text-sm font-semibold" style={{ color: colors.text }}>
               Add Income
             </Text>
           </TouchableOpacity>
         </View>
 
-        {/* Monthly Budget */}
         <View className="mt-7">
           <View className="mb-3 flex-row items-center justify-between">
             <View>
-              <Text
-                className="text-lg font-bold"
-                style={{ color: colors.text }}
-              >
+              <Text className="text-lg font-bold" style={{ color: colors.text }}>
                 Monthly Budget
               </Text>
-
-              <Text
-                className="mt-1 text-xs"
-                style={{ color: colors.icon }}
-              >
+              <Text className="mt-1 text-xs" style={{ color: colors.icon }}>
                 September 2026
               </Text>
             </View>
 
             <TouchableOpacity className="flex-row items-center">
-              <Text
-                className="mr-1 text-sm font-semibold"
-                style={{ color: colors.tint }}
-              >
+              <Text className="mr-1 text-sm font-semibold" style={{ color: colors.tint }}>
                 Manage
               </Text>
-
               <ChevronRight size={16} color={colors.tint} />
             </TouchableOpacity>
           </View>
 
           <View
-            className="rounded-2xl p-5"
+            className="rounded-[24px] border p-5"
             style={{
               backgroundColor: colors.card,
-              borderWidth: 1,
               borderColor: colors.border,
+              shadowColor: '#000',
+              shadowOffset: { width: 0, height: 8 },
+              shadowOpacity: 0.04,
+              shadowRadius: 12,
+              elevation: 2,
             }}
           >
             <View className="flex-row items-end justify-between">
               <View>
-                <Text
-                  className="text-2xl font-bold"
-                  style={{ color: colors.text }}
-                >
+                <Text className="text-[30px] font-bold tracking-tight" style={{ color: colors.text }}>
                   {formatCurrency(mockData.expenses)}
                 </Text>
-
-                <Text
-                  className="mt-1 text-xs"
-                  style={{ color: colors.icon }}
-                >
+                <Text className="mt-1 text-xs" style={{ color: colors.icon }}>
                   of {formatCurrency(mockData.budget)} used
                 </Text>
               </View>
 
-              <Text
-                className="text-lg font-bold"
-                style={{ color: colors.tint }}
-              >
+              <Text className="text-lg font-bold" style={{ color: colors.tint }}>
                 {mockData.budgetUsed}%
               </Text>
             </View>
 
-            <View
-              className="mt-4 h-2.5 overflow-hidden rounded-full"
-              style={{ backgroundColor: colors.input }}
-            >
-              <View
-                className="h-full rounded-full"
-                style={{
-                  width: `${mockData.budgetUsed}%`,
-                  backgroundColor: colors.tint,
-                }}
-              />
+            <View className="mt-4 h-2.5 overflow-hidden rounded-full" style={{ backgroundColor: colors.soft }}>
+              <View className="h-full rounded-full" style={{ width: `${mockData.budgetUsed}%`, backgroundColor: colors.tint }} />
             </View>
 
             <View className="mt-3 flex-row justify-between">
-              <Text
-                className="text-xs"
-                style={{ color: colors.icon }}
-              >
+              <Text className="text-xs" style={{ color: colors.icon }}>
                 ₱4,580.50 remaining
               </Text>
-
-              <Text
-                className="text-xs"
-                style={{ color: colors.icon }}
-              >
+              <Text className="text-xs" style={{ color: colors.icon }}>
                 69.46% used
               </Text>
             </View>
           </View>
         </View>
 
-        {/* Spending */}
         <View className="mt-7">
           <View className="mb-3 flex-row items-center justify-between">
             <View className="flex-row items-center">
-              <BarChart3 size={19} color={colors.tint} />
-
-              <Text
-                className="ml-2 text-lg font-bold"
-                style={{ color: colors.text }}
-              >
+              <BarChart3 size={18} color={colors.tint} />
+              <Text className="ml-2 text-lg font-bold" style={{ color: colors.text }}>
                 Spending
               </Text>
             </View>
 
             <TouchableOpacity className="flex-row items-center">
-              <Text
-                className="mr-1 text-sm font-semibold"
-                style={{ color: colors.tint }}
-              >
+              <Text className="mr-1 text-sm font-semibold" style={{ color: colors.tint }}>
                 Details
               </Text>
-
               <ChevronRight size={16} color={colors.tint} />
             </TouchableOpacity>
           </View>
 
           <View
-            className="rounded-2xl p-5"
+            className="rounded-[24px] border p-5"
             style={{
               backgroundColor: colors.card,
-              borderWidth: 1,
               borderColor: colors.border,
             }}
           >
             {mockData.categories.map((category, index) => (
-              <View
-                key={category.name}
-                className={index === 0 ? '' : 'mt-5'}
-              >
+              <View key={category.name} className={index === 0 ? '' : 'mt-5'}>
                 <View className="mb-2 flex-row items-center justify-between">
                   <View className="flex-row items-center">
-                    <View
-                      className="mr-2 h-2.5 w-2.5 rounded-full"
-                      style={{ backgroundColor: colors.tint }}
-                    />
-
-                    <Text
-                      className="text-sm font-medium"
-                      style={{ color: colors.text }}
-                    >
+                    <View className="mr-2 h-2.5 w-2.5 rounded-full" style={{ backgroundColor: colors.tint }} />
+                    <Text className="text-sm font-medium" style={{ color: colors.text }}>
                       {category.name}
                     </Text>
                   </View>
 
                   <View className="flex-row items-center">
-                    <Text
-                      className="mr-2 text-xs"
-                      style={{ color: colors.icon }}
-                    >
+                    <Text className="mr-2 text-xs" style={{ color: colors.icon }}>
                       {category.percentage}%
                     </Text>
-
-                    <Text
-                      className="text-sm font-semibold"
-                      style={{ color: colors.text }}
-                    >
+                    <Text className="text-sm font-semibold" style={{ color: colors.text }}>
                       {formatCurrency(category.amount)}
                     </Text>
                   </View>
                 </View>
 
-                <View
-                  className="h-1.5 overflow-hidden rounded-full"
-                  style={{ backgroundColor: colors.input }}
-                >
-                  <View
-                    className="h-full rounded-full"
-                    style={{
-                      width: `${category.percentage}%`,
-                      backgroundColor: colors.tint,
-                    }}
-                  />
+                <View className="h-1.5 overflow-hidden rounded-full" style={{ backgroundColor: colors.soft }}>
+                  <View className="h-full rounded-full" style={{ width: `${category.percentage}%`, backgroundColor: colors.tint }} />
                 </View>
               </View>
             ))}
           </View>
         </View>
 
-        {/* Recent Transactions */}
         <View className="mt-7">
           <View className="mb-3 flex-row items-center justify-between">
-            <Text
-              className="text-lg font-bold"
-              style={{ color: colors.text }}
-            >
+            <Text className="text-lg font-bold" style={{ color: colors.text }}>
               Recent Transactions
             </Text>
 
             <TouchableOpacity className="flex-row items-center">
-              <Text
-                className="mr-1 text-sm font-semibold"
-                style={{ color: colors.tint }}
-              >
+              <Text className="mr-1 text-sm font-semibold" style={{ color: colors.tint }}>
                 See all
               </Text>
-
               <ChevronRight size={16} color={colors.tint} />
             </TouchableOpacity>
           </View>
 
           <View
-            className="overflow-hidden rounded-2xl"
+            className="overflow-hidden rounded-[24px] border"
             style={{
               backgroundColor: colors.card,
-              borderWidth: 1,
               borderColor: colors.border,
             }}
           >
@@ -543,24 +430,17 @@ export default function Dashboard() {
               return (
                 <TouchableOpacity
                   key={transaction.id}
-                  activeOpacity={0.7}
+                  activeOpacity={0.8}
                   className="flex-row items-center px-4 py-4"
                   style={{
-                    borderBottomWidth:
-                      index === mockData.transactions.length - 1 ? 0 : 1,
+                    borderBottomWidth: index === mockData.transactions.length - 1 ? 0 : 1,
                     borderBottomColor: colors.border,
                   }}
                 >
                   <View
                     className="h-11 w-11 items-center justify-center rounded-2xl"
                     style={{
-                      backgroundColor: isIncome
-                        ? colorScheme === 'dark'
-                          ? '#163A27'
-                          : '#DCFCE7'
-                        : colorScheme === 'dark'
-                          ? '#3F2024'
-                          : '#FEE2E2',
+                      backgroundColor: isIncome ? '#DCFCE7' : '#FEE2E2',
                     }}
                   >
                     {isIncome ? (
@@ -571,29 +451,16 @@ export default function Dashboard() {
                   </View>
 
                   <View className="ml-3 flex-1">
-                    <Text
-                      className="text-sm font-semibold"
-                      style={{ color: colors.text }}
-                    >
+                    <Text className="text-sm font-semibold" style={{ color: colors.text }}>
                       {transaction.title}
                     </Text>
-
-                    <Text
-                      className="mt-1 text-xs"
-                      style={{ color: colors.icon }}
-                    >
+                    <Text className="mt-1 text-xs" style={{ color: colors.icon }}>
                       {transaction.category} · {transaction.date}
                     </Text>
                   </View>
 
-                  <Text
-                    className="text-sm font-bold"
-                    style={{
-                      color: isIncome ? '#16A34A' : colors.text,
-                    }}
-                  >
-                    {isIncome ? '+' : '-'}
-                    {formatCurrency(Math.abs(transaction.amount))}
+                  <Text className="text-sm font-bold" style={{ color: isIncome ? '#16A34A' : colors.text }}>
+                    {isIncome ? '+' : '-'}{formatCurrency(Math.abs(transaction.amount))}
                   </Text>
                 </TouchableOpacity>
               );
@@ -601,16 +468,12 @@ export default function Dashboard() {
           </View>
         </View>
 
-        {/* Add Transaction */}
         <TouchableOpacity
           className="mt-6 flex-row items-center justify-center rounded-2xl py-4"
-          style={{ backgroundColor: colors.tint }}
+          style={{ backgroundColor: colors.tint, shadowColor: '#000', shadowOffset: { width: 0, height: 8 }, shadowOpacity: 0.12, shadowRadius: 14, elevation: 4 }}
         >
           <Plus size={20} color="#FFFFFF" />
-
-          <Text className="ml-2 font-bold text-white">
-            Add Transaction
-          </Text>
+          <Text className="ml-2 font-bold text-white">Add Transaction</Text>
         </TouchableOpacity>
       </ScrollView>
     </View>

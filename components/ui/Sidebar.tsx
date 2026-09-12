@@ -61,7 +61,7 @@ export default function Sidebar({
       </Animated.View>
 
       <Animated.View
-        className="absolute right-0 h-full w-[70vw] px-5 pt-14"
+        className="absolute right-0 h-full w-[72vw] px-5 pt-14"
         style={{
           backgroundColor: colors.card,
           transform: [{ translateX }],
@@ -72,16 +72,18 @@ export default function Sidebar({
           elevation: 16,
         }}
       >
-        <View className="mb-10 flex-row items-center justify-between">
+        <View className="mb-8 flex-row items-center justify-between">
           <View className="flex-row items-center gap-3">
-            {logo}
+            <View className="h-11 w-11 items-center justify-center rounded-2xl" style={{ backgroundColor: colors.softTint }}>
+              {logo}
+            </View>
             <Text className="text-xl font-bold" style={{ color: colors.text }}>
               {title}
             </Text>
           </View>
 
-          <TouchableOpacity onPress={onClose} hitSlop={8}>
-            <X size={24} color={colors.icon} />
+          <TouchableOpacity onPress={onClose} hitSlop={8} className="h-9 w-9 items-center justify-center rounded-full" style={{ backgroundColor: colors.soft }}>
+            <X size={20} color={colors.icon} />
           </TouchableOpacity>
         </View>
 
@@ -92,10 +94,7 @@ export default function Sidebar({
             return (
               <View key={item.label}>
                 {index === firstDangerIndex && index > 0 && (
-                  <View
-                    className="my-2 h-px"
-                    style={{ backgroundColor: colors.border }}
-                  />
+                  <View className="my-2 h-px" style={{ backgroundColor: colors.border }} />
                 )}
 
                 <TouchableOpacity
@@ -103,26 +102,20 @@ export default function Sidebar({
                     item.onPress();
                     onClose();
                   }}
-                  activeOpacity={0.7}
-                  className="flex-row items-center gap-4 rounded-xl px-4 py-3.5"
+                  activeOpacity={0.8}
+                  className="flex-row items-center gap-4 rounded-[18px] px-4 py-3.5"
                   style={{
-                    backgroundColor: isActive
-                      ? colorScheme === 'dark'
-                        ? '#3B2A5A'
-                        : '#F3E8FF'
-                      : 'transparent',
+                    backgroundColor: isActive ? colors.softTint : 'transparent',
                   }}
                 >
-                  {item.icon}
+                  <View className="h-9 w-9 items-center justify-center rounded-xl" style={{ backgroundColor: isActive ? colors.soft : colors.soft }}>
+                    {item.icon}
+                  </View>
 
                   <Text
                     className="text-[15px] font-medium"
                     style={{
-                      color: item.danger
-                        ? '#EF4444'
-                        : isActive
-                          ? colors.tint
-                          : colors.icon,
+                      color: item.danger ? '#EF4444' : isActive ? colors.tint : colors.text,
                     }}
                   >
                     {item.label}

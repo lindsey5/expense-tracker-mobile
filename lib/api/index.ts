@@ -35,6 +35,8 @@ api.axios.interceptors.response.use(
 
             const message = error.response?.data?.message;
 
+            console.log("Error message", message)
+
             useErrorStore.getState().setError(
                 Array.isArray(message)
                 ? message.join(', ')

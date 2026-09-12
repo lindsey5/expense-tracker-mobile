@@ -1,5 +1,5 @@
 import { TransactionCategory } from "@/types/transaction.type";
-import { api } from "@/lib/api/api";
+import { api } from "@/lib/api";
 import { schemas } from "@/lib/api/openapi";
 import { PaginationParams, PaginationResponse } from "@/types/pagination.type";
 import { useQuery } from "@tanstack/react-query";

@@ -1,5 +1,5 @@
 import { useMutation } from '@tanstack/react-query';
-import { api } from '@/lib/api/api';
+import { api } from '@/lib/api';
 import z from 'zod';
 import { schemas } from '@/lib/api/openapi';
 

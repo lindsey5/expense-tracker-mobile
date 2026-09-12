@@ -7,16 +7,19 @@ export const Colors = {
   light: {
     // Main
     text: '#18181B',
-    background: '#FFFFFF',
+    background: '#F5F3FF',
     tint: tintColorLight,
 
     // UI
     icon: '#71717A',
-    border: '#D4D4D8',
-    input: '#FAFAFA',
+    border: '#E4E4E7',
+    input: '#FFFFFF',
     card: '#FFFFFF',
     placeholder: '#A1A1AA',
     surfaceTint: '#F3E8FF',
+    panel: '#F8F7FF',
+    soft: '#F4F4F5',
+    softTint: '#F1E9FF',
 
     // Button
     buttonText: '#FFFFFF',
@@ -29,17 +32,20 @@ export const Colors = {
   dark: {
     // Main
     text: '#F4F4F5',
-    background: '#18181B',
+    background: '#121216',
     tint: tintColorDark,
 
     // UI
     icon: '#A1A1AA',
-    border: '#3F3F46',
-    input: '#27272A',
-    card: '#27272A',
+    border: '#2C2C33',
+    input: '#1D1D23',
+    card: '#1A1A20',
     placeholder: '#71717A',
     surfaceTint: '#2E2148',
-    
+    panel: '#17171C',
+    soft: '#202027',
+    softTint: '#2A2142',
+
     // Button
     buttonText: '#FFFFFF',
 

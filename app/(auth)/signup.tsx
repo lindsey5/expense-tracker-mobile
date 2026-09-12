@@ -8,7 +8,7 @@ import {
   TouchableOpacity,
   View,
 } from 'react-native';
-import { Wallet } from 'lucide-react-native';
+import { PiggyBank } from 'lucide-react-native';
 import { Link } from 'expo-router';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
@@ -35,220 +35,237 @@ import Error from '@/components/custom/Error';
 const steps = ['Personal', 'Security', 'Verification'];
 
 export default function Signup() {
-    const colorScheme = useColorScheme() === 'dark' ? 'dark' : 'light';
-    const colors = Colors[colorScheme];
+  const colorScheme = useColorScheme() === 'dark' ? 'dark' : 'light';
+  const colors = Colors[colorScheme];
 
-    const [step, setStep] = useState(1);
+  const [step, setStep] = useState(1);
 
-    const {
-        handleSubmit,
-        formState: { errors },
-        watch,
-        setValue,
-        trigger,
-    } = useForm<SignupFormData>({
-        resolver: zodResolver(signupSchema),
-        defaultValues: {
-        firstname: '',
-        lastname: '',
-        email: '',
-        password: '',
-        confirmPassword: '',
+  const {
+    handleSubmit,
+    formState: { errors },
+    watch,
+    setValue,
+    trigger,
+  } = useForm<SignupFormData>({
+    resolver: zodResolver(signupSchema),
+    defaultValues: {
+      firstname: '',
+      lastname: '',
+      email: '',
+      password: '',
+      confirmPassword: '',
+    },
+  });
+
+  const signupMutation = useSignup();
+  const verifyMutation = useVerify();
+  const resendMutation = useResendVerification();
+
+  const contentOpacity = useRef(new Animated.Value(0)).current;
+  const contentTranslate = useRef(new Animated.Value(12)).current;
+
+  useEffect(() => {
+    Animated.parallel([
+      Animated.timing(contentOpacity, {
+        toValue: 1,
+        duration: 500,
+        useNativeDriver: true,
+      }),
+      Animated.timing(contentTranslate, {
+        toValue: 0,
+        duration: 500,
+        useNativeDriver: true,
+      }),
+    ]).start();
+  }, []);
+
+  const handleNext = async () => {
+    const valid = await trigger(['firstname', 'lastname', 'email']);
+
+    if (valid) setStep(2);
+  };
+
+  const handleBack = () => {
+    setStep((prev) => prev - 1);
+  };
+
+  const onSubmit = (data: SignupFormData) => {
+    signupMutation.mutate(
+      {
+        email: data.email,
+        firstName: data.firstname,
+        lastName: data.lastname,
+        password: data.password,
+      },
+      {
+        onSuccess: () => {
+          setStep(3);
         },
-    });
+      },
+    );
+  };
 
-    const signupMutation = useSignup();
-    const verifyMutation = useVerify();
-    const resendMutation = useResendVerification();
+  const handleVerify = (code: string) => {
+    verifyMutation.mutate({ email: watch('email'), verificationCode: code });
+  };
 
-    const contentOpacity = useRef(new Animated.Value(0)).current;
-    const contentTranslate = useRef(new Animated.Value(12)).current;
+  const handleResend = () => {
+    resendMutation.mutate({ email: watch('email') });
+  };
 
-    useEffect(() => {
-        Animated.parallel([
-        Animated.timing(contentOpacity, {
-            toValue: 1,
-            duration: 500,
-            useNativeDriver: true,
-        }),
-        Animated.timing(contentTranslate, {
-            toValue: 0,
-            duration: 500,
-            useNativeDriver: true,
-        }),
-        ]).start();
-    }, []);
-
-    const handleNext = async () => {
-        const valid = await trigger([
-            'firstname',
-            'lastname',
-            'email',
-        ]);
-
-        if (valid) setStep(2);
-    };
-
-    const handleBack = () => {
-        setStep(prev => prev -1);
-    };
-
-    const onSubmit = (data: SignupFormData) => {
-        signupMutation.mutate(
-        {
-            email: data.email,
-            firstName: data.firstname,
-            lastName: data.lastname,
-            password: data.password,
-        },
-        {
-            onSuccess: () => {
-            setStep(3);
-            },
-        },
-        );
-    };
-
-    const handleVerify = (code: string) => {
-        verifyMutation.mutate({ email: watch('email'), verificationCode: code},
-        );
-    };
-
-    const handleResend = () => {
-        resendMutation.mutate({ email: watch('email') });
-    };
-
-    return (
-        <View className='flex-1'>
-        <ScrollView
-            className="flex-1"
-            contentContainerStyle={{
-                flexGrow: 1,
-                paddingHorizontal: 32,
-            }}
-            keyboardShouldPersistTaps="handled"
-            showsVerticalScrollIndicator={false}
+  return (
+    <View className="flex-1" style={{ backgroundColor: colors.background }}>
+      <ScrollView
+        className="flex-1"
+        contentContainerStyle={{
+          flexGrow: 1,
+          paddingHorizontal: 24,
+          paddingBottom: 32,
+        }}
+        keyboardShouldPersistTaps="handled"
+        showsVerticalScrollIndicator={false}
+      >
+        <Animated.View
+          className="flex-1"
+          style={{
+            opacity: contentOpacity,
+            transform: [{ translateY: contentTranslate }],
+          }}
         >
-            <Animated.View
-                className="flex-1"
-                style={{
-                    opacity: contentOpacity,
-                    transform: [{ translateY: contentTranslate }],
-                }}
+          <View className="pt-16 pb-8">
+            <View
+              className="rounded-[30px] border p-6"
+              style={{
+                backgroundColor: colors.card,
+                borderColor: colors.border,
+                shadowColor: '#000',
+                shadowOffset: { width: 0, height: 16 },
+                shadowOpacity: 0.09,
+                shadowRadius: 22,
+                elevation: 6,
+              }}
             >
-            <View className="mb-8 mt-16">
-                <Wallet
-                    size={26}
-                    color={colors.text}
-                    strokeWidth={1.5}
-                />
+              <View className="mb-6 flex-row items-center justify-between">
+                <View className="h-14 w-14 items-center justify-center rounded-2xl" style={{ backgroundColor: colors.softTint }}>
+                  <PiggyBank size={26} color={colors.tint} strokeWidth={1.5} />
+                </View>
 
-                <Text
-                    className="mt-8 text-[28px] font-semibold tracking-tight"
-                    style={{ color: colors.text }}
-                >
+                <View className="rounded-full border px-3 py-1.5" style={{ backgroundColor: colors.soft, borderColor: colors.border }}>
+                  <Text className="text-[11px] font-semibold" style={{ color: colors.tint }}>
+                    New account
+                  </Text>
+                </View>
+              </View>
+
+              <Text className="text-[32px] font-bold tracking-tight" style={{ color: colors.text }}>
                 Create account
-                </Text>
+              </Text>
 
-                <Text
-                    className="mt-1.5 text-[15px]"
-                    style={{ color: colors.icon }}
-                >
-                Sign up to get started with Gastador
-                </Text>
+              <Text className="mt-2 text-[15px]" style={{ color: colors.icon }}>
+                Sign up to get started with Expense Tracker.
+              </Text>
+
+              <View className="mt-6 flex-row gap-2">
+                {['Easy setup', 'Secure', 'Insights'].map((item) => (
+                  <View key={item} className="rounded-full border px-2.5 py-1.5" style={{ backgroundColor: colors.soft, borderColor: colors.border }}>
+                    <Text className="text-[10px] font-semibold uppercase" style={{ color: colors.tint }}>
+                      {item}
+                    </Text>
+                  </View>
+                ))}
+              </View>
             </View>
 
-            <Stepper
-                steps={steps}
-                currentStep={step}
-                colors={colors}
-            />
+            <View className="mt-6">
+              <Stepper steps={steps} currentStep={step} colors={colors} />
+            </View>
 
-            <Error />
+            <View
+              className="mt-6 rounded-[26px] border p-5"
+              style={{
+                backgroundColor: colors.card,
+                borderColor: colors.border,
+                shadowColor: '#000',
+                shadowOffset: { width: 0, height: 8 },
+                shadowOpacity: 0.06,
+                shadowRadius: 16,
+                elevation: 4,
+              }}
+            >
+              <Error />
 
-            {step === 1 && (
+              {step === 1 && (
                 <>
-                <PersonalStep
+                  <PersonalStep
                     firstname={watch('firstname')}
                     lastname={watch('lastname')}
                     email={watch('email')}
                     errors={errors}
                     setValue={setValue}
-                />
+                  />
 
-                <View className="mt-8">
-                    <Button
-                    title="Continue"
-                    onPress={handleNext}
-                    />
-                </View>
+                  <View className="mt-8">
+                    <Button title="Continue" onPress={handleNext} />
+                  </View>
                 </>
-            )}
+              )}
 
-            {step === 2 && (
+              {step === 2 && (
                 <>
-                <SecurityStep
+                  <SecurityStep
                     password={watch('password')}
                     confirmPassword={watch('confirmPassword')}
                     errors={errors}
                     setValue={setValue}
-                />
+                  />
 
-                <View className="mt-8 flex-row gap-3">
+                  <View className="mt-8 flex-row gap-3">
                     <View className="flex-1">
-                    <Button
-                        title="Back"
-                        variant='secondary'
-                        onPress={handleBack}
-                    />
+                      <Button title="Back" variant="secondary" onPress={handleBack} />
                     </View>
 
                     <View className="flex-1">
-                    <Button
+                      <Button
                         title="Create account"
                         disabled={signupMutation.isPending}
                         onPress={handleSubmit(onSubmit)}
-                    />
+                      />
                     </View>
-                </View>
+                  </View>
                 </>
-            )}
+              )}
 
-            {step === 3 && (
+              {step === 3 && (
                 <VerificationStep
-                    email={watch('email')}
-                    colors={colors}
-                    onVerify={handleVerify}
-                    onResend={handleResend}
-                    loading={verifyMutation.isPending}
-                    resendLoading={resendMutation.isPending}
-                    onBack={handleBack}
+                  email={watch('email')}
+                  colors={colors}
+                  onVerify={handleVerify}
+                  onResend={handleResend}
+                  loading={verifyMutation.isPending}
+                  resendLoading={resendMutation.isPending}
+                  onBack={handleBack}
                 />
-            )}
+              )}
+            </View>
 
             {step !== 3 && (
-                <View className="mb-10 mt-10 flex-row justify-center">
-                <Text
-                    className="text-[13px]"
-                    style={{ color: colors.icon }}
-                >
-                    Already have an account?{' '}
+              <View className="mb-10 mt-8 flex-row justify-center">
+                <Text className="text-[13px]" style={{ color: colors.icon }}>
+                  Already have an account?{' '}
                 </Text>
 
                 <Link href="/" asChild>
-                    <TouchableOpacity activeOpacity={0.6}>
-                    <Text
-                        className="text-[13px] font-semibold"
-                        style={{ color: colors.text }}
-                    >
-                        Login
+                  <TouchableOpacity activeOpacity={0.6}>
+                    <Text className="text-[13px] font-semibold" style={{ color: colors.text }}>
+                      Login
                     </Text>
-                    </TouchableOpacity>
+                  </TouchableOpacity>
                 </Link>
-                </View>
+              </View>
             )}
-            </Animated.View>
-        </ScrollView>
-        </View>
-    );
+          </View>
+        </Animated.View>
+      </ScrollView>
+    </View>
+  );
 }

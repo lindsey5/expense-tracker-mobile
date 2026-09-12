@@ -1,14 +1,6 @@
 import { useEffect, useMemo, useState } from 'react';
-import {
-  ScrollView,
-  Text,
-  TouchableOpacity,
-  View,
-} from 'react-native';
-import {
-    Filter,
-  Plus,
-} from 'lucide-react-native';
+import { ScrollView, Text, TouchableOpacity, View } from 'react-native';
+import { Plus } from 'lucide-react-native';
 import { useColorScheme } from '@/hooks/use-color-scheme';
 import { Colors } from '@/constants/theme';
 import Header from '@/components/custom/Header';
@@ -24,135 +16,155 @@ import { ExpenseCategories, IncomeCategories, TransactionCategories } from '@/co
 import Select from '@/components/ui/Select';
 
 const filters = [
-    { label: 'All', value: 'all' },
-    { label: 'Expense', value: 'EXPENSE' },
-    { label: 'Income', value: 'INCOME' }
+  { label: 'All', value: 'all' },
+  { label: 'Expense', value: 'EXPENSE' },
+  { label: 'Income', value: 'INCOME' },
 ];
 
 export default function Transactions() {
-    const colorScheme = useColorScheme() === 'dark' ? 'dark' : 'light';
-    const colors = Colors[colorScheme];
-    const [search, setSearch] = useState("");
-    const debouncedSearch = useDebounce(search);
+  const colorScheme = useColorScheme() === 'dark' ? 'dark' : 'light';
+  const colors = Colors[colorScheme];
+  const [search, setSearch] = useState('');
+  const debouncedSearch = useDebounce(search);
 
-    const { query, pushQuery } = useQuery<GetTransactionsParams>();
+  const { query, pushQuery } = useQuery<GetTransactionsParams>();
 
-    const { data } = useGetTransactions({ ...query, search: debouncedSearch });
-    
-    const setActiveType = (value: string) => {
-        pushQuery({ type: value === 'all' ? undefined : value as GetTransactionsParams['type'], page: 1 })
+  const { data } = useGetTransactions({ ...query, search: debouncedSearch });
+
+  const setActiveType = (value: string) => {
+    pushQuery({
+      type: value === 'all' ? undefined : (value as GetTransactionsParams['type']),
+      page: 1,
+    });
+  };
+
+  const setCategory = (value: string) => {
+    pushQuery({
+      category: !value ? undefined : (value as GetTransactionsParams['category']),
+      page: 1,
+    });
+  };
+
+  const categoryOptions = useMemo(() => {
+    let categories = TransactionCategories;
+
+    if (query.type === 'EXPENSE') {
+      categories = ExpenseCategories;
     }
 
-    const setCategory = (value: string) => {
-        pushQuery({ category: !value ? undefined : value as GetTransactionsParams['category'], page: 1 });
+    if (query.type === 'INCOME') {
+      categories = IncomeCategories;
     }
 
-    const categoryOptions = useMemo(() => {
-        let categories = TransactionCategories;
+    return [
+      { label: 'All', value: '' },
+      ...categories.map((category) => ({
+        label: category.replace(/_/g, ' '),
+        value: category,
+      })),
+    ];
+  }, [query.type]);
 
-        if (query.type === 'EXPENSE') {
-            categories = ExpenseCategories;
-        }
+  useEffect(() => {
+    if (
+      query.category &&
+      !categoryOptions.some((option) => option.value === query.category)
+    ) {
+      pushQuery({
+        category: undefined,
+        page: 1,
+      });
+    }
+  }, [query.category, categoryOptions]);
 
-        if (query.type === 'INCOME') {
-            categories = IncomeCategories;
-        }
+  return (
+    <View className="flex-1" style={{ backgroundColor: colors.background }}>
+      <ScrollView
+        showsVerticalScrollIndicator={false}
+        contentContainerStyle={{
+          paddingHorizontal: 18,
+          paddingTop: 58,
+          paddingBottom: 110,
+        }}
+      >
+        <Header title="Transactions" description="Track your income and expenses" />
 
-        return [
-            { label: 'All', value: '' },
-            ...categories.map((category) => ({
-                label: category.replace(/_/g, ' '),
-                value: category,
-            })),
-        ];
-    }, [query.type]);
+        <View className="mb-4 flex-row items-center justify-between">
+          <Text className="text-base font-bold" style={{ color: colors.text }}>
+            Overview
+          </Text>
 
-    useEffect(() => {
-        if (
-            query.category &&
-            !categoryOptions.some(
-                (option) => option.value === query.category
-            )
-        ) {
-            pushQuery({
-                category: undefined,
-                page: 1,
-            });
-        }
-    }, [query.category, categoryOptions]);
-
-    return (
-        <View
-            className="flex-1"
-            style={{ backgroundColor: colors.background }}
-        >
-        <ScrollView
-            showsVerticalScrollIndicator={false}
-            contentContainerStyle={{
-                padding: 20,
-                paddingTop: 58,
-                paddingBottom: 110,
-            }}
-        >
-            <Header 
-                title='Transactions'
-                description='Track your income and expenses'
-            />
-            <Summary />
-            <NetBalance />
-            <SearchField 
-                search={search}
-                setSearch={setSearch}
-            />
-
-            {/* Filters */}
-            <Tabs 
-                activeTab={query.type ?? "all"}
-                setActiveTab={setActiveType}
-                tabs={filters}
-            />
-            <View className="mb-3 mt-7 flex-row items-center justify-between">
-                <Text
-                    className="text-lg font-bold"
-                    style={{ color: colors.text }}
-                >
-                    All Transactions
-                </Text>
-
-                <Select
-                    className="w-[50%]"
-                    placeholder='Select Category'
-                    value={query.category}
-                    onChange={setCategory}
-                    options={categoryOptions}
-                />
-            </View>
-            {/* Transactions */}
-            <TransactionList
-                transactions={data?.transactions || []}
-                page={data?.pagination.page}
-                totalPages={data?.pagination.totalPages}
-            />
-        </ScrollView>
-
-        {/* Floating Add Button */}
-        <TouchableOpacity
-            className="absolute bottom-6 right-5 flex-row items-center rounded-full px-5 py-4"
+          <TouchableOpacity
+            activeOpacity={0.8}
+            className="rounded-full border px-3 py-1.5"
             style={{
-                backgroundColor: colors.tint,
-                elevation: 6,
-                shadowColor: '#000',
-                shadowOffset: { width: 0, height: 3 },
-                shadowOpacity: 0.2,
-                shadowRadius: 6,
+              backgroundColor: colors.soft,
+              borderColor: colors.border,
             }}
-        >
-            <Plus size={20} color="#FFFFFF" />
-
-            <Text className="ml-2 font-bold text-white">
-                Add Transaction
+          >
+            <Text className="text-xs font-semibold" style={{ color: colors.tint }}>
+              This month
             </Text>
-        </TouchableOpacity>
+          </TouchableOpacity>
         </View>
-    );
+
+        <Summary />
+        <NetBalance />
+
+        <View className="mt-6 mb-3 flex-row items-center justify-between">
+          <Text className="text-base font-bold" style={{ color: colors.text }}>
+            Activity
+          </Text>
+
+          <View className="rounded-full border px-2.5 py-1.5" style={{ backgroundColor: colors.soft, borderColor: colors.border }}>
+            <Text className="text-[10px] font-semibold" style={{ color: colors.icon }}>
+              {data?.transactions?.length ?? 0} entries
+            </Text>
+          </View>
+        </View>
+
+        <SearchField search={search} setSearch={setSearch} className="mt-0" />
+
+        <View className="mt-5">
+          <Tabs activeTab={query.type ?? 'all'} setActiveTab={setActiveType} tabs={filters} />
+        </View>
+
+        <View className="mb-3 mt-6 flex-row items-center justify-between">
+          <Text className="text-lg font-bold" style={{ color: colors.text }}>
+            All Transactions
+          </Text>
+
+          <Select
+            className="w-[52%]"
+            placeholder="Select Category"
+            value={query.category}
+            onChange={setCategory}
+            options={categoryOptions}
+          />
+        </View>
+
+        <TransactionList
+          transactions={data?.transactions || []}
+          page={data?.pagination.page}
+          totalPages={data?.pagination.totalPages}
+        />
+      </ScrollView>
+
+      <TouchableOpacity
+        className="absolute bottom-6 right-5 flex-row items-center rounded-full px-5 py-4"
+        style={{
+          backgroundColor: colors.tint,
+          elevation: 6,
+          shadowColor: '#000',
+          shadowOffset: { width: 0, height: 3 },
+          shadowOpacity: 0.2,
+          shadowRadius: 6,
+        }}
+      >
+        <Plus size={20} color="#FFFFFF" />
+
+        <Text className="ml-2 font-bold text-white">Add Transaction</Text>
+      </TouchableOpacity>
+    </View>
+  );
 }

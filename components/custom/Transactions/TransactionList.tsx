@@ -1,142 +1,115 @@
-import { View, Text, useColorScheme, TouchableOpacity } from "react-native";
-import { ArrowDownLeft, ArrowUpRight, Filter, Search } from "lucide-react-native";
-import { Colors } from "@/constants/theme";
-import { formatCurrency } from "@/utils/utils";
-import Pagination from "@/components/ui/Pagination";
-import { Transaction } from "@/types/transaction.type";
+import { View, Text, useColorScheme, TouchableOpacity } from 'react-native';
+import { ArrowDownLeft, ArrowUpRight, Search } from 'lucide-react-native';
+import { Colors } from '@/constants/theme';
+import { formatCurrency } from '@/utils/utils';
+import Pagination from '@/components/ui/Pagination';
+import { Transaction } from '@/types/transaction.type';
 
 type TransactionListProps = {
-    transactions: Transaction[];
-    page?: number;
-    totalPages?: number;
-}
+  transactions: Transaction[];
+  page?: number;
+  totalPages?: number;
+};
 
-export default function TransactionList({
-    transactions,
-    page,
-    totalPages
-} : TransactionListProps) {
-    const colorScheme = useColorScheme() === 'dark' ? 'dark' : 'light';
-    const colors = Colors[colorScheme];
+export default function TransactionList({ transactions, page, totalPages }: TransactionListProps) {
+  const colorScheme = useColorScheme() === 'dark' ? 'dark' : 'light';
+  const colors = Colors[colorScheme];
 
-    return (
-        <>
-            {!transactions.length ? (
-                <View className="items-center px-6 py-12">
-                    <Search size={30} color={colors.icon} />
+  return (
+    <View className="gap-3">
+      {!transactions.length ? (
+        <View
+          className="items-center rounded-[24px] border px-6 py-12"
+          style={{ borderColor: colors.border, backgroundColor: colors.card }}
+        >
+          <View className="h-14 w-14 items-center justify-center rounded-full" style={{ backgroundColor: colors.soft }}>
+            <Search size={28} color={colors.icon} />
+          </View>
 
-                    <Text
-                        className="mt-3 text-base font-semibold"
-                        style={{ color: colors.text }}
-                    >
-                        No transactions found
-                    </Text>
+          <Text className="mt-4 text-base font-semibold" style={{ color: colors.text }}>
+            No transactions found
+          </Text>
 
-                    <Text
-                        className="mt-1 text-center text-sm"
-                        style={{ color: colors.icon }}
-                    >
-                        Try changing your search or filter.
-                    </Text>
+          <Text className="mt-1 text-center text-sm" style={{ color: colors.icon }}>
+            Try changing your search or filter.
+          </Text>
+        </View>
+      ) : (
+        transactions.map((transaction) => {
+          const isIncome = transaction.type === 'INCOME';
+
+          return (
+            <TouchableOpacity
+              key={transaction.id}
+              activeOpacity={0.85}
+              className="rounded-[22px] border p-3"
+              style={{
+                backgroundColor: colors.card,
+                borderColor: colors.border,
+              }}
+            >
+              <View className="flex-row items-center">
+                <View
+                  className="h-12 w-12 items-center justify-center rounded-2xl"
+                  style={{
+                    backgroundColor: isIncome
+                      ? colorScheme === 'dark'
+                        ? '#163A27'
+                        : '#DCFCE7'
+                      : colorScheme === 'dark'
+                        ? '#3F2024'
+                        : '#FEE2E2',
+                  }}
+                >
+                  {isIncome ? (
+                    <ArrowDownLeft size={19} color="#16A34A" />
+                  ) : (
+                    <ArrowUpRight size={19} color="#DC2626" />
+                  )}
                 </View>
-            ) : 
-            transactions.map((transaction, index) => {
-                const isIncome = transaction.type === 'INCOME';
 
-                return (
-                    <TouchableOpacity
-                        key={transaction.id}
-                        activeOpacity={0.7}
-                        className="flex-row items-center px-4 py-4"
-                        style={{
-                            borderBottomWidth:
-                            index === transactions.length - 1 ? 0 : 1,
-                            borderBottomColor: colors.border,
-                        }}
-                    >
-                    {/* Icon */}
-                    <View
-                        className="h-11 w-11 items-center justify-center rounded-2xl"
-                        style={{
-                        backgroundColor: isIncome
-                            ? colorScheme === 'dark'
-                            ? '#163A27'
-                            : '#DCFCE7'
-                            : colorScheme === 'dark'
-                            ? '#3F2024'
-                            : '#FEE2E2',
-                        }}
-                    >
-                        {isIncome ? <ArrowDownLeft size={19} color="#16A34A"/> : <ArrowUpRight size={19} color="#DC2626" />}
-                    </View>
+                <View className="ml-3 flex-1">
+                  <Text className="text-[15px] font-semibold" style={{ color: colors.text }}>
+                    {transaction.title}
+                  </Text>
 
-                    {/* Details */}
-                    <View className="ml-3 flex-1">
-                        <Text
-                            className="text-sm font-semibold"
-                            style={{ color: colors.text }}
-                        >
-                        {transaction.title}
-                        </Text>
+                  <View className="mt-1 flex-row items-center">
+                    <Text className="text-xs" style={{ color: colors.icon }}>
+                      {transaction.category}
+                    </Text>
 
-                        <View className="mt-1 flex-row items-center">
-                            <Text
-                                className="text-xs"
-                                style={{ color: colors.icon }}
-                            >
-                                {transaction.category}
-                            </Text>
+                    <Text className="mx-1 text-xs" style={{ color: colors.border }}>
+                      •
+                    </Text>
 
-                            <Text
-                                className="mx-1 text-xs"
-                                style={{ color: colors.border }}
-                            >
-                                •
-                            </Text>
+                    <Text className="text-xs" style={{ color: colors.icon }}>
+                      {transaction.wallet.name}
+                    </Text>
+                  </View>
+                </View>
 
-                            <Text
-                                className="text-xs"
-                                style={{ color: colors.icon }}
-                            >
-                                {transaction.wallet.name}
-                            </Text>
-                        </View>
+                <View className="items-end">
+                  <Text
+                    className="text-sm font-bold"
+                    style={{
+                      color: isIncome ? '#16A34A' : colors.text,
+                    }}
+                  >
+                    {isIncome ? '+' : '-'}
+                    {formatCurrency(transaction.amount)}
+                  </Text>
 
-                        <Text
-                            className="mt-1 text-[11px]"
-                            style={{ color: colors.icon }}
-                        >
-                            {transaction.date}
-                        </Text>
-                    </View>
+                  <Text className="mt-1 text-[10px]" style={{ color: colors.icon }}>
+                    {transaction.date}
+                  </Text>
+                </View>
+              </View>
+            </TouchableOpacity>
+          );
+        })
+      )}
 
-                    {/* Amount */}
-                    <View className="items-end">
-                        <Text
-                            className="text-sm font-bold"
-                            style={{
-                                color: isIncome ? '#16A34A' : colors.text,
-                            }}
-                        >
-                        {isIncome ? '+' : '-'}
-                        {formatCurrency(transaction.amount)}
-                        </Text>
-
-                        <Text
-                            className="mt-1 text-[10px]"
-                            style={{ color: colors.icon }}
-                        >
-                        {isIncome ? 'Income' : 'Expense'}
-                        </Text>
-                    </View>
-                    </TouchableOpacity>
-                )
-            })}
-            <Pagination 
-                page={page || 1}
-                totalPages={totalPages || 0}
-            />
-        </>
-    )
-
+      <Pagination page={page || 1} totalPages={totalPages || 0} />
+    </View>
+  );
 }

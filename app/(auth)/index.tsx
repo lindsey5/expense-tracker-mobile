@@ -1,6 +1,6 @@
 import { useEffect, useRef } from 'react';
 import { Animated, KeyboardAvoidingView, Platform, Text, TouchableOpacity, useColorScheme, View } from 'react-native';
-import { Wallet } from 'lucide-react-native';
+import { PiggyBank } from 'lucide-react-native';
 import Button from '@/components/ui/Button';
 import InputField from '@/components/ui/InputField';
 import { LoginFormData, loginSchema } from '@/schemas/auth.schema';
@@ -42,72 +42,124 @@ export default function Login() {
   };
 
   return (
-    <View className='flex-1'>
+    <View className="flex-1" style={{ backgroundColor: colors.background }}>
       <Animated.View
-        className="flex-1 px-8"
+        className="flex-1 px-6"
         style={{
           opacity: contentOpacity,
           transform: [{ translateY: contentTranslate }],
         }}
       >
-        <View className="mt-20 mb-14">
-          <Wallet size={26} color={colors.text} strokeWidth={1.5} />
-          <Text className="mt-8 text-[28px] font-semibold tracking-tight" style={{ color: colors.text }}>
-            Welcome back
-          </Text>
-          <Text className="mt-1.5 text-[15px]" style={{ color: colors.icon }}>
-            Sign in to continue to Gastador
-          </Text>
-        </View>
+        <View className="flex-1 pt-16 pb-8">
+          <View
+            className="rounded-[30px] border p-6"
+            style={{
+              backgroundColor: colors.card,
+              borderColor: colors.border,
+              shadowColor: '#000',
+              shadowOffset: { width: 0, height: 16 },
+              shadowOpacity: 0.09,
+              shadowRadius: 22,
+              elevation: 6,
+            }}
+          >
+            <View className="mb-8 flex-row items-center justify-between">
+              <View className="h-14 w-14 items-center justify-center rounded-2xl" style={{ backgroundColor: colors.softTint }}>
+                <PiggyBank size={26} color={colors.tint} strokeWidth={1.5} />
+              </View>
 
-        <View>
-          <Error />
-          <InputField
-            label="Email"
-            type="email"
-            value={watch('email')}
-            onChangeText={(text: string) => setValue('email', text)}
-            placeholder="Enter your email address"
-            keyboardType="email-address"
-            autoCapitalize="none"
-            error={errors.email?.message}
-            autoCorrect={false}
-          />
+              <View className="rounded-full border px-3 py-1.5" style={{ backgroundColor: colors.soft, borderColor: colors.border }}>
+                <Text className="text-[11px] font-semibold" style={{ color: colors.tint }}>
+                  Expense Tracker
+                </Text>
+              </View>
+            </View>
 
-          <View className="mt-4">
-            <InputField
-              label="Password"
-              type="password"
-              value={watch('password')}
-              onChangeText={(text: string) => setValue('password', text)}
-              error={errors.password?.message}
-              placeholder="Enter your password"
-            />
+            <Text className="text-[32px] font-bold tracking-tight" style={{ color: colors.text }}>
+              Welcome back
+            </Text>
+
+            <Text className="mt-2 text-[15px]" style={{ color: colors.icon }}>
+              Sign in to continue to your finance workspace.
+            </Text>
+
+            <View className="mt-6 flex-row gap-2">
+              {['Secure', 'Fast', 'Smart'].map((item) => (
+                <View key={item} className="rounded-full border px-2.5 py-1.5" style={{ backgroundColor: colors.soft, borderColor: colors.border }}>
+                  <Text className="text-[10px] font-semibold uppercase" style={{ color: colors.tint }}>
+                    {item}
+                  </Text>
+                </View>
+              ))}
+            </View>
           </View>
 
-          <TouchableOpacity className="mt-3 self-end" activeOpacity={0.6}>
-            <Text className="text-[13px] font-medium" style={{ color: colors.icon }}>
-              Forgot password?
+          <View
+            className="mt-6 rounded-[26px] border p-5"
+            style={{
+              backgroundColor: colors.card,
+              borderColor: colors.border,
+              shadowColor: '#000',
+              shadowOffset: { width: 0, height: 8 },
+              shadowOpacity: 0.06,
+              shadowRadius: 16,
+              elevation: 4,
+            }}
+          >
+            <Text className="mb-4 text-lg font-bold" style={{ color: colors.text }}>
+              Sign in
             </Text>
-          </TouchableOpacity>
 
-          <Button 
-            className='mt-5'
-            title={loginMutation.isPending ? 'Logging in...' : 'Log in'}
-            onPress={handleSubmit(onSubmit)} 
-            disabled={loginMutation.isPending}
-          />
-          <View className="mt-10 flex-row justify-center">
-            <Text className="text-[13px]" style={{ color: colors.icon }}>
-              Don't have an account?{' '}
-            </Text>
-            <Link href="/signup" asChild>
-              <TouchableOpacity activeOpacity={0.6}>
-                <Text className="text-[13px] font-semibold" style={{ color: colors.text }}>
-                  Sign up
-                </Text>
-              </TouchableOpacity>
-            </Link>
+            <Error />
+
+            <InputField
+              label="Email"
+              type="email"
+              value={watch('email')}
+              onChangeText={(text: string) => setValue('email', text)}
+              placeholder="Enter your email address"
+              keyboardType="email-address"
+              autoCapitalize="none"
+              error={errors.email?.message}
+              autoCorrect={false}
+            />
+
+            <View className="mt-1">
+              <InputField
+                label="Password"
+                type="password"
+                value={watch('password')}
+                onChangeText={(text: string) => setValue('password', text)}
+                error={errors.password?.message}
+                placeholder="Enter your password"
+              />
+            </View>
+
+            <TouchableOpacity className="mt-3 self-end" activeOpacity={0.6}>
+              <Text className="text-[13px] font-medium" style={{ color: colors.icon }}>
+                Forgot password?
+              </Text>
+            </TouchableOpacity>
+
+            <Button
+              className="mt-5"
+              title={loginMutation.isPending ? 'Logging in...' : 'Log in'}
+              onPress={handleSubmit(onSubmit)}
+              disabled={loginMutation.isPending}
+            />
+
+            <View className="mt-8 flex-row justify-center">
+              <Text className="text-[13px]" style={{ color: colors.icon }}>
+                Don't have an account?{' '}
+              </Text>
+              <Link href="/signup" asChild>
+                <TouchableOpacity activeOpacity={0.6}>
+                  <Text className="text-[13px] font-semibold" style={{ color: colors.text }}>
+                    Sign up
+                  </Text>
+                </TouchableOpacity>
+              </Link>
+            </View>
           </View>
         </View>
       </Animated.View>

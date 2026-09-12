@@ -1,5 +1,5 @@
 import { useRouter } from 'expo-router';
-import { BarChart3, Bell, ChartNoAxesColumnIncreasing, Home, LogOut, Menu, Settings, Wallet, WalletCards } from 'lucide-react-native';
+import { BarChart3, ChartNoAxesColumnIncreasing, Home, LogOut, Menu, Wallet, WalletCards } from 'lucide-react-native';
 import { useColorScheme } from '@/hooks/use-color-scheme';
 import { Colors } from '@/constants/theme';
 import Sidebar from '../ui/Sidebar';
@@ -46,32 +46,28 @@ export default function UserSidebar() {
             onPress: () => router.push('/reports'),
         },
         {
-            label: 'Notifications',
-            pathname: '/notifications',
-            icon: <Bell size={21} color={colors.icon} />,
-            onPress: () => router.push('/notifications'),
-        },
-        {
-            label: 'Settings',
-            pathname: '/settings',
-            icon: <Settings size={21} color={colors.icon} />,
-            onPress: () => router.push('/settings'),
-        },
-        {
             label: 'Log out',
             pathname: '',
             icon: <LogOut size={21} color="#EF4444" />,
             onPress: logout,
             danger: true,
         },
-    ], [])
+    ], [colors.icon, colors, logout, router])
 
     return (
         <>
         <TouchableOpacity
             onPress={() => setSidebarOpen(true)}
-            className="absolute right-5 top-14 z-40 rounded-xl p-2"
-            style={{ backgroundColor: colors.card }}
+            className="absolute right-5 top-14 z-40 rounded-2xl border p-2"
+            style={{
+                backgroundColor: colors.card,
+                borderColor: colors.border,
+                shadowColor: '#000',
+                shadowOffset: { width: 0, height: 6 },
+                shadowOpacity: 0.06,
+                shadowRadius: 12,
+                elevation: 2,
+            }}
         >
             <Menu size={24} color={colors.text} />
         </TouchableOpacity>
@@ -81,7 +77,7 @@ export default function UserSidebar() {
             onClose={() => setSidebarOpen(false)}
             visible={sidebarOpen}
             logo={<Wallet size={26} color={colors.text} strokeWidth={1.5} />}
-            title="Gastador"
+            title="Expense Tracker"
         />
         </>
     );
