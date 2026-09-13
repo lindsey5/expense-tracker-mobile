@@ -5,8 +5,7 @@ import z from "zod";
 
 type UpdateWalletDto = z.infer<typeof schemas.UpdateWalletDto>;
 
-const updateWallet = ({ id, data }: { id: string; data: UpdateWalletDto; }) =>
-    api.patch("/wallet/:id", data, { params: { id } });
+const updateWallet = ({ id, data }: { id: string; data: UpdateWalletDto; }) => api.patch("/wallet/:id", data, { params: { id } });
 
 export default function useUpdateWallet() {
     return useMutation({

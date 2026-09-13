@@ -1,5 +1,6 @@
 import { Colors } from '@/constants/theme';
 import useGetWallets from '@/hooks/wallet/use-get-wallets.hook';
+import { Wallet } from '@/types/wallet.type';
 import { formatCurrency } from '@/utils/utils';
 import {
     Banknote,
@@ -19,12 +20,17 @@ export const walletIcons = {
     OTHER: Ellipsis,
 };
 
-export default function WalletList() {
+export default function WalletList({
+    handleEdit,
+    wallets
+} : { 
+    handleEdit: (wallet: Wallet) => void;
+    wallets: Wallet[];
+}) {
     const colorScheme = useColorScheme() === 'dark' ? 'dark' : 'light';
     const colors = Colors[colorScheme];
-    const { data } = useGetWallets();
 
-    if (!data?.wallets?.length) {
+    if (!wallets.length) {
         return (
         <View
             className="items-center justify-center rounded-[22px] border px-6 py-10"
@@ -52,7 +58,7 @@ export default function WalletList() {
 
     return (
         <View className="gap-3">
-        {data.wallets.map((wallet) => {
+        {wallets.map((wallet) => {
             const Icon = walletIcons[wallet.type];
             const isNegative = wallet.balance < 0;
 
@@ -65,6 +71,7 @@ export default function WalletList() {
                         backgroundColor: colors.card,
                         borderColor: colors.border,
                     }}
+                    onPress={() => handleEdit(wallet)}
                 >
                     <View
                         className="mr-4 rounded-2xl p-3"
@@ -90,7 +97,7 @@ export default function WalletList() {
                         </Text>
                     </View>
 
-                    <View className="items-end">
+                    <View className="items-center flex-row gap-3">
                         <Text
                             className="text-base font-bold"
                             style={{

@@ -1,6 +1,6 @@
 import InputField from "@/components/ui/InputField";
 import { Colors } from "@/constants/theme";
-import { Modal, Pressable, useColorScheme, View, Text, TouchableOpacity, ScrollView } from "react-native";
+import { Modal, Pressable, useColorScheme, View, Text, TouchableOpacity, ScrollView, ActivityIndicator } from "react-native";
 import {
   Banknote,
   Building2,
@@ -17,6 +17,11 @@ import { WalletFormData, WalletSchema } from "@/schemas/wallet.schema";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import Button from "@/components/ui/Button";
+import useCreateWallet from "@/hooks/wallet/use-create-wallet.hook";
+import useUpdateWallet from "@/hooks/wallet/use-update-wallet.hook";
+import Error from "../Error";
+import { useEffect } from "react";
+import { useErrorStore } from "@/lib/store/errorStore";
 
 type Wallet = z.infer<typeof schemas.WalletDto>;
 
@@ -63,6 +68,11 @@ export default function WalletModal({
     const colorScheme = useColorScheme() === 'dark' ? 'dark' : 'light';
     const colors = Colors[colorScheme];
 
+    const { clearError } = useErrorStore();
+
+    const createWalletMutation = useCreateWallet();
+    const updateWalletMutation = useUpdateWallet();
+
     const { handleSubmit, formState: { errors }, watch, setValue, reset } = useForm<WalletFormData>({
         resolver: zodResolver(WalletSchema),
         defaultValues: {
@@ -72,17 +82,46 @@ export default function WalletModal({
         }
     });
 
-    const onSubmit = (data: WalletFormData) => {
-        
+    useEffect(() => {
+        if(wallet) {
+            reset({
+                name: wallet.name,
+                balance: wallet.balance,
+                type: wallet.type
+            })
+        }
+    }, [wallet])
+
+    const onSubmit = async (data: WalletFormData) => {
+        wallet ? await updateWalletMutation
+            .mutateAsync({
+                id: wallet.id,
+                data: {
+                    balance: data.balance,
+                    name: data.name,
+                    type: data.type as WalletType,
+                }
+            })
+        : await createWalletMutation
+            .mutateAsync({
+                balance: data.balance,
+                name: data.name,
+                type: data.type as WalletType,
+            })
+
+        onClose();
     }
     
     const handleClose = () => {
+        if(createWalletMutation.isPending || updateWalletMutation.isPending) return;
+
         reset({
             balance: 0,
             name: '',
             type: ''
         });
         onClose();
+        clearError();
     }
     
     return (
@@ -97,7 +136,7 @@ export default function WalletModal({
                 onPress={handleClose}
             >
                 <Pressable
-                    className="max-h-[90%] rounded-t-3xl p-5"
+                    className="max-h-[90%] rounded-t-3xl px-5 pt-5 pb-20"
                     style={{ backgroundColor: colors.background }}
                 >
                     <View className="mb-5 flex-row items-center justify-between">
@@ -121,9 +160,13 @@ export default function WalletModal({
                         showsVerticalScrollIndicator={false}
                         keyboardShouldPersistTaps="handled"
                     >
+                        <Error />
                         <InputField 
                             label="Wallet Name"
                             placeholder="e.g GCash"
+                            value={watch('name')}
+                            onChangeText={(text) => setValue('name', text)}
+                            error={errors.name?.message}
                         />
 
                         <View className="gap-2">
@@ -131,60 +174,81 @@ export default function WalletModal({
                                 className="text-sm font-medium"
                                 style={{ color: colors.text }}
                             >
-                            Wallet Type
+                                Wallet Type
                             </Text>
-                            <View className="flex flex-row gap-2 flex-wrap">
-                                {walletOptions.map((option) => {
-                                    const Icon = option.icon;
-                                    const selected = watch('type') === option.value;
 
-                                    return (
-                                        <TouchableOpacity
-                                            key={option.value}
-                                            onPress={() => setValue('type', option.value)}
-                                            className="flex-row items-center rounded-xl border p-3"
-                                            style={{
+                            <View className="flex-row flex-wrap gap-2">
+                                {walletOptions.map((option) => {
+                                const Icon = option.icon;
+                                const selected = watch('type') === option.value;
+
+                                return (
+                                    <TouchableOpacity
+                                        key={option.value}
+                                        onPress={() => setValue('type', option.value)}
+                                        className="min-h-[52px] flex-row items-center rounded-xl border p-3"
+                                        style={{
+                                            width: '48%',
                                             backgroundColor: selected
-                                                ? colors.surfaceTint[0]
-                                                : colors.input,
+                                            ? colors.surfaceTint[0]
+                                            : colors.input,
                                             borderColor: selected
-                                                ? colors.tint
-                                                : colors.border,
+                                            ? colors.tint
+                                            : colors.border,
+                                        }}
+                                        activeOpacity={0.7}
+                                    >
+                                        <Icon
+                                            size={20}
+                                            color={selected ? colors.tint : colors.icon}
+                                        />
+
+                                        <Text
+                                            className="ml-2 flex-1 text-sm font-medium"
+                                            numberOfLines={1}
+                                            style={{
+                                            color: selected ? colors.tint : colors.text,
                                             }}
                                         >
-                                            <Icon
-                                                size={20}
-                                                color={selected ? colors.tint : colors.icon}
-                                            />
-
-                                            <Text
-                                            className="ml-3 flex-1 text-sm font-medium"
-                                            style={{
-                                                color: selected ? colors.tint : colors.text,
-                                            }}
-                                            >
                                             {option.label}
-                                            </Text>
+                                        </Text>
 
-                                            {selected && (
-                                            <Check size={20} color={colors.tint} />
-                                            )}
-                                        </TouchableOpacity>
-                                    );
+                                        {selected && (
+                                            <Check
+                                            size={18}
+                                            color={colors.tint}
+                                            />
+                                        )}
+                                    </TouchableOpacity>
+                                );
                                 })}
                             </View>
+
+                            {errors.type && (
+                                <Text
+                                    className="text-xs"
+                                    style={{ color: '#EF4444' }}
+                                >
+                                {errors.type.message}
+                                </Text>
+                            )}
                         </View>
                         <InputField 
                             label="Initial Balance (Optional)"
                             placeholder="0.00"
                             keyboardType="number-pad"
-                           textContentType="oneTimeCode"
+                            onChangeText={(text) => setValue('balance', Number(text))}
+                            error={errors.balance?.message}
                         />
-                        <Button
-                            className="mt-5"
-                            title={wallet ? "Update" : "Create"}
-                            onPress={handleSubmit(onSubmit)}
-                        />
+                        {(createWalletMutation.isPending || updateWalletMutation.isPending) ? (
+                            <ActivityIndicator color={colors.text}/>
+                        ) : (
+                            <Button
+                                className="mt-5"
+                                title={wallet ? "Update" : "Create"}
+                                onPress={handleSubmit(onSubmit)}
+                            />
+                        )}
                     </ScrollView>
 
                 </Pressable>

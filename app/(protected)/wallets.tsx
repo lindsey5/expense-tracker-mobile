@@ -8,12 +8,29 @@ import Header from '@/components/custom/Header';
 import WalletList from '@/components/custom/Wallet/WalletList';
 import { useState } from 'react';
 import WalletModal from '@/components/custom/Wallet/WalletModal';
+import { Wallet } from '@/types/wallet.type';
+import useGetWallets from '@/hooks/wallet/use-get-wallets.hook';
 
 export default function Wallets() {
     const colorScheme = useColorScheme() === 'dark' ? 'dark' : 'light';
     const colors = Colors[colorScheme];
 
+    const { data, refetch } = useGetWallets();
+
+    const [selectedWallet, setSelectedWallet] = useState<Wallet>();
+
     const [showModal, setShowModal] = useState(false);
+
+    const handleEdit = (wallet: Wallet) => {
+        setSelectedWallet(wallet);
+        setShowModal(true);
+    }
+
+    const handleClose = () => {
+        refetch();
+        setSelectedWallet(undefined);
+        setShowModal(false);
+    }
 
     return (
         <ScrollView
@@ -42,10 +59,14 @@ export default function Wallets() {
                 </View>
             </View>
 
-            <WalletList />
-            <WalletModal 
+            <WalletList 
+                wallets={data?.wallets ?? []}
+                handleEdit={handleEdit}
+            />
+            <WalletModal
+                wallet={selectedWallet} 
                 visible={showModal}
-                onClose={() => setShowModal(false)}
+                onClose={handleClose}
             />
         </ScrollView>
     );
