@@ -13,7 +13,6 @@ import {
   CalendarDays,
   ChevronDown,
   CircleDollarSign,
-  CreditCard,
   Lightbulb,
   PieChart,
   TrendingDown,

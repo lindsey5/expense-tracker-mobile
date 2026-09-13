@@ -1,15 +1,19 @@
 import { Colors } from '@/constants/theme';
-import { Check, ChevronDown, X } from 'lucide-react-native';
+import { Check, ChevronDown } from 'lucide-react-native';
 import { useState } from 'react';
 import {
-  Modal,
-  Pressable,
-  ScrollView,
   Text,
   TouchableOpacity,
-  View,
   useColorScheme,
+  View,
 } from 'react-native';
+import {
+  CustomModal,
+  CustomModalBody,
+  CustomModalContent,
+  CustomModalHeader,
+  CustomModalTitle,
+} from './Modal';
 
 type Option = {
   label: string;
@@ -17,18 +21,22 @@ type Option = {
 };
 
 type SelectProps = {
+  label?: string;
   value?: string;
   options: Option[];
   onChange: (value: string) => void;
   placeholder?: string;
+  error?: string;
   className?: string;
 };
 
 export default function Select({
+  label,
   value,
   options,
   onChange,
   placeholder = 'Select option',
+  error,
   className,
 }: SelectProps) {
   const [visible, setVisible] = useState(false);
@@ -44,89 +52,87 @@ export default function Select({
 
   return (
     <>
-      <TouchableOpacity
-        onPress={() => setVisible(true)}
-        className={`h-12 flex-row items-center justify-between rounded-xl px-4 ${className ?? ''}`}
-        style={{
-          backgroundColor: colors.input,
-          borderWidth: 1,
-          borderColor: colors.border,
-        }}
-      >
-        <Text
-          className="text-sm"
+      <View>
+        {label && (
+          <Text
+            className="mb-2 text-sm font-medium"
+            style={{ color: colors.text }}
+          >
+            {label}
+          </Text>
+        )}
+
+        <TouchableOpacity
+          onPress={() => setVisible(true)}
+          className={`h-12 flex-row items-center justify-between rounded-xl px-4 ${className ?? ''}`}
           style={{
-            color: selected ? colors.text : colors.placeholder,
+            backgroundColor: colors.input,
+            borderWidth: 1,
+            borderColor: error ? '#EF4444' : colors.border,
           }}
         >
-          {selected?.label ?? placeholder}
-        </Text>
-
-        <ChevronDown size={20} color={colors.icon} />
-      </TouchableOpacity>
-
-      <Modal
-        visible={visible}
-        transparent
-        animationType="fade"
-        onRequestClose={() => setVisible(false)}
-      >
-        <Pressable
-          className="flex-1 justify-end bg-black/40"
-          onPress={() => setVisible(false)}
-        >
-          <Pressable
-            className="rounded-t-3xl p-5"
-            style={{ backgroundColor: colors.card }}
+          <Text
+            className="text-sm"
+            style={{
+              color: selected ? colors.text : colors.placeholder,
+            }}
           >
-            <View className="mb-4 flex-row items-center justify-between">
-              <Text
-                className="text-lg font-bold"
-                style={{ color: colors.text }}
-              >
-                Select option
-              </Text>
+            {selected?.label ?? placeholder}
+          </Text>
 
-              <TouchableOpacity onPress={() => setVisible(false)}>
-                <X size={22} color={colors.icon} />
-              </TouchableOpacity>
-            </View>
+          <ChevronDown size={20} color={error ? '#EF4444' : colors.icon} />
+        </TouchableOpacity>
 
-            <ScrollView className="max-h-80">
-              {options.map((option) => {
-                const isSelected = option.value === value;
+        {error && (
+          <Text className="mt-1.5 text-xs" style={{ color: '#EF4444' }}>
+            {error}
+          </Text>
+        )}
+      </View>
 
-                return (
-                  <TouchableOpacity
-                    key={option.value}
-                    onPress={() => handleSelect(option)}
-                    className="flex-row items-center justify-between rounded-xl px-4 py-4"
+      <CustomModal
+        visible={visible}
+        handleClose={() => setVisible(false)}
+      >
+        <CustomModalContent>
+          <CustomModalHeader>
+            <CustomModalTitle>{label ?? 'Select option'}</CustomModalTitle>
+          </CustomModalHeader>
+
+          <CustomModalBody>
+            {options.map((option) => {
+              const isSelected = option.value === value;
+
+              return (
+                <TouchableOpacity
+                  key={option.value}
+                  onPress={() => handleSelect(option)}
+                  className="flex-row items-center justify-between rounded-xl px-4 py-4"
+                  style={{
+                    backgroundColor: isSelected
+                      ? colors.surfaceTint
+                      : 'transparent',
+                  }}
+                >
+                  <Text
+                    className="text-base"
                     style={{
-                      backgroundColor: isSelected
-                        ? colors.surfaceTint
-                        : 'transparent',
+                      color: isSelected ? colors.tint : colors.text,
+                      fontWeight: isSelected ? '600' : '400',
                     }}
                   >
-                    <Text
-                      className="text-base"
-                      style={{
-                        color: isSelected ? colors.tint : colors.text,
-                        fontWeight: isSelected ? '600' : '400',
-                      }}
-                    >
-                      {option.label}
-                    </Text>
+                    {option.label}
+                  </Text>
 
-                    {isSelected && (
-                      <Check size={20} color={colors.tint} />
-                    )}
-                  </TouchableOpacity>
-                );
-              })}
-            </ScrollView>
-          </Pressable>
-        </Pressable>
-      </Modal>
+                  {isSelected && (
+                    <Check size={20} color={colors.tint} />
+                  )}
+                </TouchableOpacity>
+              );
+            })}
+          </CustomModalBody>
+        </CustomModalContent>
+      </CustomModal>
     </>
   );
 }

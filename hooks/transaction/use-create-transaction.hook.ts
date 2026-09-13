@@ -4,15 +4,15 @@ import { useToastStore } from "@/lib/store/toastStore";
 import { useMutation } from "@tanstack/react-query";
 import z from "zod";
 
-type CreateWalletDto = z.infer<typeof schemas.CreateWalletDto>;
+type CreateTransactionDto = z.infer<typeof schemas.CreateTransactionDto>;
 
-const createWallet = (data: CreateWalletDto) => api.post("/wallet", data);
+const createTransaction = (data: CreateTransactionDto) => api.post("/transaction", data);
 
-export default function useCreateWallet() {
+export default function useCreateTransaction() {
     const { showToast } = useToastStore();
 
     return useMutation({
-        mutationFn: createWallet,
+        mutationFn: createTransaction,
         onSuccess: (data) => {
             showToast(data.message, "success");
         },

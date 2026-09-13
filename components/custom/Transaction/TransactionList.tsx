@@ -1,7 +1,7 @@
 import { View, Text, useColorScheme, TouchableOpacity } from 'react-native';
 import { ArrowDownLeft, ArrowUpRight, Search } from 'lucide-react-native';
 import { Colors } from '@/constants/theme';
-import { formatCurrency } from '@/utils/utils';
+import { formatCurrency, formatDateOnly } from '@/utils/utils';
 import Pagination from '@/components/ui/Pagination';
 import { Transaction } from '@/types/transaction.type';
 
@@ -100,7 +100,7 @@ export default function TransactionList({ transactions, page, totalPages }: Tran
                   </Text>
 
                   <Text className="mt-1 text-[10px]" style={{ color: colors.icon }}>
-                    {transaction.date}
+                    {formatDateOnly(transaction.date)}
                   </Text>
                 </View>
               </View>

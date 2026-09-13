@@ -1,46 +1,43 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { create } from 'zustand';
 import { createJSONStorage, persist } from 'zustand/middleware';
-import { z } from 'zod';
 
-import { schemas } from '@/lib/api/openapi';
-import { Platform } from 'react-native';
-
-type LoginResponse = z.infer<typeof schemas.AuthResponseDto>;
+type User = {
+  id: string;
+  firstName: string;
+  lastName: string;
+  email: string;
+};
 
 type AuthState = {
   accessToken: string | null;
-  user: LoginResponse['user'] | null;
-  login: (data: LoginResponse) => void;
+  user: User | null;
+  login: (data: {
+    accessToken: string;
+    user: User;
+  }) => void;
   logout: () => void;
 };
-
-const storage =
-  Platform.OS === "web"
-    ? createJSONStorage(() => localStorage)
-    : createJSONStorage(() => AsyncStorage);
 
 export const useAuthStore = create<AuthState>()(
     persist(
         (set) => ({
             accessToken: null,
             user: null,
-
             login: (data) =>
                 set({
                 accessToken: data.accessToken,
                 user: data.user,
                 }),
-
             logout: () =>
                 set({
-                    accessToken: null,
-                    user: null,
+                accessToken: null,
+                user: null,
                 }),
-        }),
-        {
-        name: 'auth-storage',
-        storage,
+            }),
+            {
+            name: 'auth-storage',
+            storage: createJSONStorage(() => AsyncStorage),
         },
     ),
 );

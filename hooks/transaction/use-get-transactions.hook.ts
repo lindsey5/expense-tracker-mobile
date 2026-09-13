@@ -17,7 +17,7 @@ export type GetTransactionsResponse = PaginationResponse & z.infer<typeof schema
 
 const getTransactions = (params: GetTransactionsParams) => api.get('/transaction', { queries: params });
 
-export default function useGetTransactions(params: GetTransactionsParams) {
+export default function useGetTransactions(params: Partial<GetTransactionsParams> = {}) {
     const apiParams: GetTransactionsParams = {
         page: params.page ? Number(params.page) : 1,
         limit: params.limit ? Number(params.limit) : 10,
@@ -27,11 +27,9 @@ export default function useGetTransactions(params: GetTransactionsParams) {
         category: params.category,
         search: params.search
     };
-    const result = useQuery<GetTransactionsResponse>({
+    return useQuery<GetTransactionsResponse>({
         queryKey: ['transactions', apiParams],
         queryFn: () => getTransactions(apiParams),
         refetchOnWindowFocus: false
     })
-
-    return result
 }

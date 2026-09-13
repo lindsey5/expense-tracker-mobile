@@ -1,24 +1,25 @@
-import { useEffect, useMemo, useState } from 'react';
-import { ScrollView, Text, TouchableOpacity, View } from 'react-native';
-import { Plus } from 'lucide-react-native';
+import { useEffect, useMemo, useRef, useState } from 'react';
+import { ActivityIndicator, RefreshControl, ScrollView, Text, TouchableOpacity, View } from 'react-native';
 import { useColorScheme } from '@/hooks/use-color-scheme';
 import { Colors } from '@/constants/theme';
 import Header from '@/components/custom/Header';
 import Summary from '@/components/custom/Transaction/Summary';
-import NetBalance from '@/components/custom/Transaction/NetBalance';
 import SearchField from '@/components/ui/SearchField';
 import Tabs from '@/components/ui/Tabs';
 import TransactionList from '@/components/custom/Transaction/TransactionList';
 import { useQuery } from '@/hooks/useQuery';
 import useGetTransactions, { GetTransactionsParams } from '@/hooks/transaction/use-get-transactions.hook';
 import { useDebounce } from '@/hooks/useDebounce';
-import { ExpenseCategories, IncomeCategories, TransactionCategories } from '@/constants/transaction';
+import { ExpenseCategories, IncomeCategories, TransactionCategories, TransactionTypeOptions } from '@/constants/transaction';
 import Select from '@/components/ui/Select';
+import CreateTransaction from '@/components/custom/Transaction/CreateTransaction';
+import DateFilter from '@/components/custom/DateFilter';
+import useGetExpenses from '@/hooks/transaction/use-get-expenses.hook';
+import useGetIncomes from '@/hooks/transaction/use-get-incomes.hook';
 
 const filters = [
   { label: 'All', value: 'all' },
-  { label: 'Expense', value: 'EXPENSE' },
-  { label: 'Income', value: 'INCOME' },
+  ...TransactionTypeOptions
 ];
 
 export default function Transactions() {
@@ -29,7 +30,12 @@ export default function Transactions() {
 
   const { query, pushQuery } = useQuery<GetTransactionsParams>();
 
-  const { data } = useGetTransactions({ ...query, search: debouncedSearch });
+  const { data, isLoading, refetch } = useGetTransactions(query);
+
+  const { data: expensesData, isLoading: isExpensesLoading, refetch: expenseRefetch } = useGetExpenses();
+  const { data: incomesData, isLoading: isIncomesLoading, refetch: incomeRefetch } = useGetIncomes();
+
+  const isFirstRender = useRef(true);
 
   const setActiveType = (value: string) => {
     pushQuery({
@@ -66,6 +72,18 @@ export default function Transactions() {
   }, [query.type]);
 
   useEffect(() => {
+    if (isFirstRender.current) {
+      isFirstRender.current = false;
+      return;
+    }
+
+    pushQuery({
+      search: debouncedSearch.trim() || undefined,
+      page: 1,
+    });
+  }, [debouncedSearch]);
+
+  useEffect(() => {
     if (
       query.category &&
       !categoryOptions.some((option) => option.value === query.category)
@@ -77,10 +95,23 @@ export default function Transactions() {
     }
   }, [query.category, categoryOptions]);
 
+  const handleRefresh = () => {
+    refetch();
+    expenseRefetch();
+    incomeRefetch();
+  }
+
   return (
     <View className="flex-1" style={{ backgroundColor: colors.background }}>
       <ScrollView
         showsVerticalScrollIndicator={false}
+         refreshControl={
+          <RefreshControl
+            refreshing={isLoading || isExpensesLoading || isIncomesLoading}
+            onRefresh={handleRefresh}
+            tintColor={colors.tint}
+          />
+        }
         contentContainerStyle={{
           paddingHorizontal: 18,
           paddingTop: 58,
@@ -88,7 +119,7 @@ export default function Transactions() {
         }}
       >
         <Header title="Transactions" description="Track your income and expenses" />
-
+        <DateFilter />
         <View className="mb-4 flex-row items-center justify-between">
           <Text className="text-base font-bold" style={{ color: colors.text }}>
             Overview
@@ -103,13 +134,21 @@ export default function Transactions() {
             }}
           >
             <Text className="text-xs font-semibold" style={{ color: colors.tint }}>
-              This month
+              {query.year ?? new Date().getFullYear()}-{query.month ?? new Date().getMonth() + 1}
             </Text>
           </TouchableOpacity>
         </View>
 
-        <Summary />
-        <NetBalance />
+        <Summary 
+          isLoading={isExpensesLoading || isIncomesLoading}
+          expenseChange={expensesData?.change ?? 0}
+          incomeChange={incomesData?.change ?? 0}
+          totalExpenses={expensesData?.amount ?? 0}
+          totalIncome={incomesData?.amount ?? 0}
+          expenseHasPreviousAmount={expensesData?.hasPreviousAmount ?? false}
+          incomeHasPreviousAmount={incomesData?.hasPreviousAmount ?? false}
+          
+        />
 
         <View className="mt-6 mb-3 flex-row items-center justify-between">
           <Text className="text-base font-bold" style={{ color: colors.text }}>
@@ -135,7 +174,6 @@ export default function Transactions() {
           </Text>
 
           <Select
-            className="w-[52%]"
             placeholder="Select Category"
             value={query.category}
             onChange={setCategory}
@@ -143,28 +181,17 @@ export default function Transactions() {
           />
         </View>
 
-        <TransactionList
-          transactions={data?.transactions || []}
-          page={data?.pagination.page}
-          totalPages={data?.pagination.totalPages}
-        />
+        {isLoading ? (
+          <ActivityIndicator color={colors.text} size={30}/>
+        ) : (
+          <TransactionList
+            transactions={data?.transactions || []}
+            page={data?.pagination.page}
+            totalPages={data?.pagination.totalPages}
+          />
+        )}
       </ScrollView>
-
-      <TouchableOpacity
-        className="absolute bottom-6 right-5 flex-row items-center rounded-full px-5 py-4"
-        style={{
-          backgroundColor: colors.tint,
-          elevation: 6,
-          shadowColor: '#000',
-          shadowOffset: { width: 0, height: 3 },
-          shadowOpacity: 0.2,
-          shadowRadius: 6,
-        }}
-      >
-        <Plus size={20} color="#FFFFFF" />
-
-        <Text className="ml-2 font-bold text-white">Add Transaction</Text>
-      </TouchableOpacity>
+      <CreateTransaction refetch={handleRefresh}/>
     </View>
   );
 }

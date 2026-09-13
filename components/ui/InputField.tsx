@@ -65,7 +65,7 @@ export default function InputField({
 
       {/* Input */}
       <View
-        className="h-[54px] flex-row items-center rounded-2xl border"
+        className="flex-row items-center rounded-2xl border"
         style={{
           borderColor: error ? ERROR_COLOR : colors.border,
           backgroundColor: colors.input,
@@ -81,9 +81,9 @@ export default function InputField({
           {...props}
           secureTextEntry={isPassword && !showPassword}
           placeholderTextColor={colors.placeholder}
-          className="h-full flex-1 pl-4"
+          className="h-full flex-1 pl-4 text-sm"
           style={[
-            { color: colors.text, fontSize: 16 },
+            { color: colors.text },
             !isPassword && { paddingRight: 16 },
           ]}
         />

@@ -9,11 +9,11 @@ import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import Toast from '@/components/Toast';
 import { Colors } from '@/constants/theme';
 
+const queryClient = new QueryClient();
+
 export default function RootLayout() {
     const colorScheme = useColorScheme() === 'dark' ? 'dark' : 'light';
     const colors = Colors[colorScheme];
-    
-    const queryClient = new QueryClient();
 
     useEffect(() => {
         if (Platform.OS === 'android') {

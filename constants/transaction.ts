@@ -35,3 +35,18 @@ export const TransactionCategories = [
   ...IncomeCategories.filter((category) => category !== 'OTHER'),
   'OTHER',
 ] as const;
+
+import { ArrowDownLeft, ArrowUpRight } from 'lucide-react-native';
+
+export const TransactionTypeOptions = [
+  {
+    label: 'Expense',
+    value: 'EXPENSE',
+    icon: ArrowUpRight,
+  },
+  {
+    label: 'Income',
+    value: 'INCOME',
+    icon: ArrowDownLeft,
+  },
+];

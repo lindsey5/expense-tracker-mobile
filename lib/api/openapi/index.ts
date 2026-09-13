@@ -133,39 +133,22 @@ const GetTransactionsResponseDto = z
     pagination: PaginationResponseDto,
   })
   .passthrough();
-const UpdateTransactionDto = z
+const GetIncomesResponseDto = z
   .object({
-    walletId: z.string(),
-    type: z.enum(["INCOME", "EXPENSE"]),
-    category: z.enum([
-      "FOOD",
-      "TRANSPORTATION",
-      "BILLS",
-      "SHOPPING",
-      "ENTERTAINMENT",
-      "HEALTHCARE",
-      "EDUCATION",
-      "TRAVEL",
-      "HOUSING",
-      "PERSONAL_CARE",
-      "SUBSCRIPTIONS",
-      "GROCERIES",
-      "GIFTS_DONATIONS",
-      "INSURANCE",
-      "SALARY",
-      "BUSINESS",
-      "FREELANCE",
-      "INVESTMENT",
-      "ALLOWANCE",
-      "GIFT",
-      "BONUS",
-      "OTHER",
-    ]),
     amount: z.number(),
-    title: z.string(),
-    date: z.string(),
+    change: z.number(),
+    hasPreviousAmount: z.boolean(),
   })
-  .partial()
+  .passthrough();
+const GetExpensesResponseDto = z
+  .object({
+    amount: z.number(),
+    change: z.number(),
+    hasPreviousAmount: z.boolean(),
+  })
+  .passthrough();
+const GetTransactionMonths = z
+  .object({ month: z.number(), year: z.number(), monthName: z.string() })
   .passthrough();
 const CreateWalletDto = z
   .object({
@@ -213,7 +196,9 @@ export const schemas = {
   CreateUpdateTransactionResponse,
   PaginationResponseDto,
   GetTransactionsResponseDto,
-  UpdateTransactionDto,
+  GetIncomesResponseDto,
+  GetExpensesResponseDto,
+  GetTransactionMonths,
   CreateWalletDto,
   CreateWalletResponseDto,
   GetWalletsResponseDto,
@@ -300,6 +285,16 @@ const endpoints = makeApi([
     requestFormat: "json",
     parameters: [
       {
+        name: "month",
+        type: "Query",
+        schema: z.number().optional(),
+      },
+      {
+        name: "year",
+        type: "Query",
+        schema: z.number().optional(),
+      },
+      {
         name: "page",
         type: "Query",
         schema: z.number().optional(),
@@ -345,16 +340,6 @@ const endpoints = makeApi([
           .optional(),
       },
       {
-        name: "month",
-        type: "Query",
-        schema: z.number().optional(),
-      },
-      {
-        name: "year",
-        type: "Query",
-        schema: z.number().optional(),
-      },
-      {
         name: "search",
         type: "Query",
         schema: z.string().optional(),
@@ -364,47 +349,45 @@ const endpoints = makeApi([
   },
   {
     method: "get",
-    path: "/transaction/:id",
+    path: "/transaction/expenses",
     requestFormat: "json",
     parameters: [
       {
-        name: "id",
-        type: "Path",
-        schema: z.string(),
+        name: "month",
+        type: "Query",
+        schema: z.number().optional(),
+      },
+      {
+        name: "year",
+        type: "Query",
+        schema: z.number().optional(),
       },
     ],
-    response: z.void(),
+    response: GetExpensesResponseDto,
   },
   {
-    method: "patch",
-    path: "/transaction/:id",
+    method: "get",
+    path: "/transaction/incomes",
     requestFormat: "json",
     parameters: [
       {
-        name: "body",
-        type: "Body",
-        schema: UpdateTransactionDto,
+        name: "month",
+        type: "Query",
+        schema: z.number().optional(),
       },
       {
-        name: "id",
-        type: "Path",
-        schema: z.string(),
+        name: "year",
+        type: "Query",
+        schema: z.number().optional(),
       },
     ],
-    response: z.void(),
+    response: GetIncomesResponseDto,
   },
   {
-    method: "delete",
-    path: "/transaction/:id",
+    method: "get",
+    path: "/transaction/months",
     requestFormat: "json",
-    parameters: [
-      {
-        name: "id",
-        type: "Path",
-        schema: z.string(),
-      },
-    ],
-    response: z.void(),
+    response: z.array(GetTransactionMonths),
   },
   {
     method: "post",

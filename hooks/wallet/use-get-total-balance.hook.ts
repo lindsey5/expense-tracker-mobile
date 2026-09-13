@@ -9,7 +9,7 @@ const getTotalBalance = () => api.get("/wallet/total-balance");
 
 export default function useGetTotalBalance() {
     return useQuery<GetTotalBalanceResponse>({
-        queryKey: ['wallets'],
+        queryKey: ['total-balance'],
         queryFn: getTotalBalance,
         refetchOnWindowFocus: false
     })

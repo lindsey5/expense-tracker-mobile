@@ -1,4 +1,4 @@
-import { ScrollView, Text, TouchableOpacity, View } from 'react-native';
+import { ActivityIndicator, ScrollView, Text, TouchableOpacity, View } from 'react-native';
 import {
   Plus,
 } from 'lucide-react-native';
@@ -15,7 +15,7 @@ export default function Wallets() {
     const colorScheme = useColorScheme() === 'dark' ? 'dark' : 'light';
     const colors = Colors[colorScheme];
 
-    const { data, refetch } = useGetWallets();
+    const { data, refetch, isLoading } = useGetWallets();
 
     const [selectedWallet, setSelectedWallet] = useState<Wallet>();
 
@@ -59,10 +59,14 @@ export default function Wallets() {
                 </View>
             </View>
 
-            <WalletList 
-                wallets={data?.wallets ?? []}
-                handleEdit={handleEdit}
-            />
+            {isLoading ? (
+                <ActivityIndicator color={colors.text} size={30} />
+            ) : (
+                <WalletList 
+                    wallets={data?.wallets ?? []}
+                    handleEdit={handleEdit}
+                />
+            )}
             <WalletModal
                 wallet={selectedWallet} 
                 visible={showModal}

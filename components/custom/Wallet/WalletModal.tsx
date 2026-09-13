@@ -8,7 +8,6 @@ import {
   CreditCard,
   Ellipsis,
   WalletCards,
-  X,
 } from 'lucide-react-native';
 import { WalletType } from "@/types/wallet.type";
 import z from "zod";
@@ -22,6 +21,7 @@ import useUpdateWallet from "@/hooks/wallet/use-update-wallet.hook";
 import Error from "../Error";
 import { useEffect } from "react";
 import { useErrorStore } from "@/lib/store/errorStore";
+import { CustomModal, CustomModalBody, CustomModalContent, CustomModalHeader, CustomModalTitle } from "../../ui/Modal";
 
 type Wallet = z.infer<typeof schemas.WalletDto>;
 
@@ -125,136 +125,105 @@ export default function WalletModal({
     }
     
     return (
-        <Modal
+        <CustomModal
             visible={visible}
-            transparent
-            animationType="fade"
-            onRequestClose={handleClose}
+            handleClose={handleClose}
         >
-            <Pressable
-                className="flex-1 justify-end bg-black/50"
-                onPress={handleClose}
-            >
-                <Pressable
-                    className="max-h-[90%] rounded-t-3xl px-5 pt-5 pb-20"
-                    style={{ backgroundColor: colors.background }}
-                >
-                    <View className="mb-5 flex-row items-center justify-between">
+            <CustomModalContent>
+                <CustomModalHeader>
+                    <CustomModalTitle>{wallet ? "Update" : "Create"} Wallet</CustomModalTitle>
+                </CustomModalHeader>
+                <CustomModalBody>
+                    <Error />
+                    <InputField 
+                        label="Wallet Name"
+                        placeholder="e.g GCash"
+                        value={watch('name')}
+                        onChangeText={(text) => setValue('name', text)}
+                        error={errors.name?.message}
+                    />
+                    <View className="gap-2">
                         <Text
-                            className="text-xl font-bold"
+                            className="text-sm font-medium"
                             style={{ color: colors.text }}
                         >
-                            Add Wallet
+                            Wallet Type
                         </Text>
 
-                        <TouchableOpacity
-                            onPress={handleClose}
-                            className="rounded-full p-2"
-                            style={{ backgroundColor: colors.card }}
-                        >
-                            <X size={22} color={colors.icon} />
-                        </TouchableOpacity>
-                    </View>
-                    <ScrollView
-                        contentContainerClassName="gap-4"
-                        showsVerticalScrollIndicator={false}
-                        keyboardShouldPersistTaps="handled"
-                    >
-                        <Error />
-                        <InputField 
-                            label="Wallet Name"
-                            placeholder="e.g GCash"
-                            value={watch('name')}
-                            onChangeText={(text) => setValue('name', text)}
-                            error={errors.name?.message}
-                        />
+                        <View className="flex-row flex-wrap gap-2">
+                            {walletOptions.map((option) => {
+                            const Icon = option.icon;
+                            const selected = watch('type') === option.value;
 
-                        <View className="gap-2">
-                            <Text
-                                className="text-sm font-medium"
-                                style={{ color: colors.text }}
-                            >
-                                Wallet Type
-                            </Text>
-
-                            <View className="flex-row flex-wrap gap-2">
-                                {walletOptions.map((option) => {
-                                const Icon = option.icon;
-                                const selected = watch('type') === option.value;
-
-                                return (
-                                    <TouchableOpacity
-                                        key={option.value}
-                                        onPress={() => setValue('type', option.value)}
-                                        className="min-h-[52px] flex-row items-center rounded-xl border p-3"
-                                        style={{
-                                            width: '48%',
-                                            backgroundColor: selected
-                                            ? colors.surfaceTint[0]
-                                            : colors.input,
-                                            borderColor: selected
-                                            ? colors.tint
-                                            : colors.border,
-                                        }}
-                                        activeOpacity={0.7}
-                                    >
-                                        <Icon
-                                            size={20}
-                                            color={selected ? colors.tint : colors.icon}
-                                        />
-
-                                        <Text
-                                            className="ml-2 flex-1 text-sm font-medium"
-                                            numberOfLines={1}
-                                            style={{
-                                            color: selected ? colors.tint : colors.text,
-                                            }}
-                                        >
-                                            {option.label}
-                                        </Text>
-
-                                        {selected && (
-                                            <Check
-                                            size={18}
-                                            color={colors.tint}
-                                            />
-                                        )}
-                                    </TouchableOpacity>
-                                );
-                                })}
-                            </View>
-
-                            {errors.type && (
-                                <Text
-                                    className="text-xs"
-                                    style={{ color: '#EF4444' }}
+                            return (
+                                <TouchableOpacity
+                                    key={option.value}
+                                    onPress={() => setValue('type', option.value)}
+                                    className="min-h-[52px] flex-row items-center rounded-xl border p-3"
+                                    style={{
+                                        width: '48%',
+                                        backgroundColor: selected
+                                        ? colors.surfaceTint[0]
+                                        : colors.input,
+                                        borderColor: selected
+                                        ? colors.tint
+                                        : colors.border,
+                                    }}
+                                    activeOpacity={0.7}
                                 >
-                                {errors.type.message}
-                                </Text>
-                            )}
+                                    <Icon
+                                        size={20}
+                                        color={selected ? colors.tint : colors.icon}
+                                    />
+
+                                    <Text
+                                        className="ml-2 flex-1 text-sm font-medium"
+                                        numberOfLines={1}
+                                        style={{
+                                        color: selected ? colors.tint : colors.text,
+                                        }}
+                                    >
+                                        {option.label}
+                                    </Text>
+
+                                    {selected && (
+                                        <Check
+                                        size={18}
+                                        color={colors.tint}
+                                        />
+                                    )}
+                                </TouchableOpacity>
+                            );
+                            })}
                         </View>
-                        <InputField 
-                            label="Initial Balance (Optional)"
-                            placeholder="0.00"
-                            keyboardType="number-pad"
-                            onChangeText={(text) => setValue('balance', Number(text))}
-                            error={errors.balance?.message}
-                        />
-                        {(createWalletMutation.isPending || updateWalletMutation.isPending) ? (
-                            <ActivityIndicator color={colors.text}/>
-                        ) : (
-                            <Button
-                                className="mt-5"
-                                title={wallet ? "Update" : "Create"}
-                                onPress={handleSubmit(onSubmit)}
-                            />
+
+                        {errors.type && (
+                            <Text
+                                className="text-xs"
+                                style={{ color: '#EF4444' }}
+                            >
+                            {errors.type.message}
+                            </Text>
                         )}
-                    </ScrollView>
-
-                </Pressable>
-
-            </Pressable>
-
-        </Modal>
+                    </View>
+                    <InputField 
+                        label="Initial Balance (Optional)"
+                        placeholder="0.00"
+                        keyboardType="number-pad"
+                        onChangeText={(text) => setValue('balance', Number(text))}
+                        error={errors.balance?.message}
+                    />
+                    {(createWalletMutation.isPending || updateWalletMutation.isPending) ? (
+                        <ActivityIndicator color={colors.text}/>
+                    ) : (
+                        <Button
+                            className="mt-5"
+                            title={wallet ? "Update" : "Create"}
+                            onPress={handleSubmit(onSubmit)}
+                        />
+                    )}
+                </CustomModalBody>
+            </CustomModalContent>
+        </CustomModal>
     )
 }
