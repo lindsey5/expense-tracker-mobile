@@ -112,19 +112,19 @@ export default function Login() {
 
             <Error />
 
-            <InputField
-              label="Email"
-              type="email"
-              value={watch('email')}
-              onChangeText={(text: string) => setValue('email', text)}
-              placeholder="Enter your email address"
-              keyboardType="email-address"
-              autoCapitalize="none"
-              error={errors.email?.message}
-              autoCorrect={false}
-            />
+            <View className='gap-3'>
+              <InputField
+                label="Email"
+                type="email"
+                value={watch('email')}
+                onChangeText={(text: string) => setValue('email', text)}
+                placeholder="Enter your email address"
+                keyboardType="email-address"
+                autoCapitalize="none"
+                error={errors.email?.message}
+                autoCorrect={false}
+              />
 
-            <View className="mt-1">
               <InputField
                 label="Password"
                 type="password"

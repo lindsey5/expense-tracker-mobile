@@ -3,12 +3,16 @@ import { Platform } from 'react-native';
 const tintColorLight = '#7C3AED';
 const tintColorDark = '#A78BFA';
 
+const accentColorLight = '#A855F7';
+const accentColorDark = '#C084FC';
+
 export const Colors = {
   light: {
     // Main
     text: '#18181B',
     background: '#F5F3FF',
     tint: tintColorLight,
+    accent: accentColorLight,
 
     // UI
     icon: '#71717A',
@@ -34,6 +38,7 @@ export const Colors = {
     text: '#F4F4F5',
     background: '#121216',
     tint: tintColorDark,
+    accent: accentColorDark,
 
     // UI
     icon: '#A1A1AA',

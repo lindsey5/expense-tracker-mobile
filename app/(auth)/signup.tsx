@@ -31,6 +31,7 @@ import useSignup from '@/hooks/auth/use-signup.hook';
 import useVerify from '@/hooks/auth/use-verify.hook';
 import useResendVerification from '@/hooks/auth/use-resend-verification-code.hook';
 import Error from '@/components/custom/Error';
+import useIsEmailExist from '@/hooks/user/use-user-lookup.hook';
 
 const steps = ['Personal', 'Security', 'Verification'];
 
@@ -40,12 +41,15 @@ export default function Signup() {
 
   const [step, setStep] = useState(1);
 
+  const isEmailExistMutation = useIsEmailExist();
+
   const {
     handleSubmit,
     formState: { errors },
     watch,
     setValue,
     trigger,
+    setError
   } = useForm<SignupFormData>({
     resolver: zodResolver(signupSchema),
     defaultValues: {
@@ -81,6 +85,15 @@ export default function Signup() {
 
   const handleNext = async () => {
     const valid = await trigger(['firstname', 'lastname', 'email']);
+
+    if(!valid) return;
+
+    const result = await isEmailExistMutation.mutateAsync(watch('email'));
+
+    if(result.message) {
+        setError('email', { message: result.message });
+        return;
+   }    
 
     if (valid) setStep(2);
   };

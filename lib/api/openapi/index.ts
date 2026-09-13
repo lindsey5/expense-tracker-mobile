@@ -1,8 +1,8 @@
 import { makeApi, Zodios, type ZodiosOptions } from "@zodios/core";
 import { z } from "zod";
 
-const CreateUserDto = z.object({}).partial().passthrough();
-const UpdateUserDto = z.object({}).partial().passthrough();
+const UserLookupDto = z.object({ email: z.string() }).passthrough();
+const UserLookupResponse = z.object({ message: z.string() }).passthrough();
 const SignupUserDTO = z
   .object({
     email: z.string(),
@@ -68,7 +68,7 @@ const CreateTransactionDto = z
     date: z.string(),
   })
   .passthrough();
-const WalletResponseDto = z
+const WalletDto = z
   .object({
     id: z.string(),
     userId: z.string(),
@@ -113,7 +113,7 @@ const TransactionResponseDto = z
     date: z.string().datetime({ offset: true }),
     createdAt: z.string().datetime({ offset: true }),
     updatedAt: z.string().datetime({ offset: true }),
-    wallet: WalletResponseDto,
+    wallet: WalletDto,
   })
   .passthrough();
 const CreateUpdateTransactionResponse = z
@@ -167,12 +167,37 @@ const UpdateTransactionDto = z
   })
   .partial()
   .passthrough();
-const CreateWalletDto = z.object({}).partial().passthrough();
-const UpdateWalletDto = z.object({}).partial().passthrough();
+const CreateWalletDto = z
+  .object({
+    name: z.string(),
+    type: z.enum(["CASH", "BANK", "E_WALLET", "CREDIT_CARD", "OTHER"]),
+    balance: z.number().optional(),
+  })
+  .passthrough();
+const CreateWalletResponseDto = z
+  .object({ wallet: WalletDto, message: z.string() })
+  .passthrough();
+const GetWalletsResponseDto = z
+  .object({ wallets: z.array(WalletDto) })
+  .passthrough();
+const GetTotalBalance = z
+  .object({ totalBalance: z.number(), totalWallets: z.number() })
+  .passthrough();
+const UpdateWalletDto = z
+  .object({
+    name: z.string(),
+    type: z.enum(["CASH", "BANK", "E_WALLET", "CREDIT_CARD", "OTHER"]),
+    balance: z.number(),
+  })
+  .partial()
+  .passthrough();
+const UpdateWalletResponseDto = z
+  .object({ wallet: WalletDto, message: z.string() })
+  .passthrough();
 
 export const schemas = {
-  CreateUserDto,
-  UpdateUserDto,
+  UserLookupDto,
+  UserLookupResponse,
   SignupUserDTO,
   SignupResponse,
   VerifyDTO,
@@ -183,14 +208,18 @@ export const schemas = {
   UserResponseDto,
   AuthResponseDto,
   CreateTransactionDto,
-  WalletResponseDto,
+  WalletDto,
   TransactionResponseDto,
   CreateUpdateTransactionResponse,
   PaginationResponseDto,
   GetTransactionsResponseDto,
   UpdateTransactionDto,
   CreateWalletDto,
+  CreateWalletResponseDto,
+  GetWalletsResponseDto,
+  GetTotalBalance,
   UpdateWalletDto,
+  UpdateWalletResponseDto,
 };
 
 const endpoints = makeApi([
@@ -198,69 +227,6 @@ const endpoints = makeApi([
     method: "get",
     path: "/",
     requestFormat: "json",
-    response: z.void(),
-  },
-  {
-    method: "post",
-    path: "/api/users",
-    requestFormat: "json",
-    parameters: [
-      {
-        name: "body",
-        type: "Body",
-        schema: z.object({}).partial().passthrough(),
-      },
-    ],
-    response: z.void(),
-  },
-  {
-    method: "get",
-    path: "/api/users",
-    requestFormat: "json",
-    response: z.void(),
-  },
-  {
-    method: "get",
-    path: "/api/users/:id",
-    requestFormat: "json",
-    parameters: [
-      {
-        name: "id",
-        type: "Path",
-        schema: z.string(),
-      },
-    ],
-    response: z.void(),
-  },
-  {
-    method: "patch",
-    path: "/api/users/:id",
-    requestFormat: "json",
-    parameters: [
-      {
-        name: "body",
-        type: "Body",
-        schema: z.object({}).partial().passthrough(),
-      },
-      {
-        name: "id",
-        type: "Path",
-        schema: z.string(),
-      },
-    ],
-    response: z.void(),
-  },
-  {
-    method: "delete",
-    path: "/api/users/:id",
-    requestFormat: "json",
-    parameters: [
-      {
-        name: "id",
-        type: "Path",
-        schema: z.string(),
-      },
-    ],
     response: z.void(),
   },
   {
@@ -442,35 +408,35 @@ const endpoints = makeApi([
   },
   {
     method: "post",
+    path: "/user/lookup",
+    requestFormat: "json",
+    parameters: [
+      {
+        name: "body",
+        type: "Body",
+        schema: z.object({ email: z.string() }).passthrough(),
+      },
+    ],
+    response: z.object({ message: z.string() }).passthrough(),
+  },
+  {
+    method: "post",
     path: "/wallet",
     requestFormat: "json",
     parameters: [
       {
         name: "body",
         type: "Body",
-        schema: z.object({}).partial().passthrough(),
+        schema: CreateWalletDto,
       },
     ],
-    response: z.void(),
+    response: CreateWalletResponseDto,
   },
   {
     method: "get",
     path: "/wallet",
     requestFormat: "json",
-    response: z.void(),
-  },
-  {
-    method: "get",
-    path: "/wallet/:id",
-    requestFormat: "json",
-    parameters: [
-      {
-        name: "id",
-        type: "Path",
-        schema: z.string(),
-      },
-    ],
-    response: z.void(),
+    response: GetWalletsResponseDto,
   },
   {
     method: "patch",
@@ -480,7 +446,7 @@ const endpoints = makeApi([
       {
         name: "body",
         type: "Body",
-        schema: z.object({}).partial().passthrough(),
+        schema: UpdateWalletDto,
       },
       {
         name: "id",
@@ -488,7 +454,7 @@ const endpoints = makeApi([
         schema: z.string(),
       },
     ],
-    response: z.void(),
+    response: UpdateWalletResponseDto,
   },
   {
     method: "delete",
@@ -502,6 +468,12 @@ const endpoints = makeApi([
       },
     ],
     response: z.void(),
+  },
+  {
+    method: "get",
+    path: "/wallet/total-balance",
+    requestFormat: "json",
+    response: GetTotalBalance,
   },
 ]);
 

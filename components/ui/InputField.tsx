@@ -13,7 +13,7 @@ import { useColorScheme } from '@/hooks/use-color-scheme';
 
 interface InputFieldProps extends TextInputProps {
   label: string;
-  type?: 'text' | 'email' | 'password';
+  type?: 'text' | 'email' | 'password' | 'number';
   error?: string;
 }
 
@@ -54,7 +54,7 @@ export default function InputField({
         };
 
   return (
-    <View className="mb-5">
+    <View>
       {/* Label */}
       <Text
         className="mb-2 text-sm font-semibold"

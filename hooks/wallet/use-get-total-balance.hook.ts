@@ -1,0 +1,16 @@
+import { api } from "@/lib/api";
+import { schemas } from "@/lib/api/openapi";
+import { useQuery } from "@tanstack/react-query";
+import z from "zod";
+
+export type GetTotalBalanceResponse = z.infer<typeof schemas.GetTotalBalance>;
+
+const getTotalBalance = () => api.get("/wallet/total-balance");
+
+export default function useGetTotalBalance() {
+    return useQuery<GetTotalBalanceResponse>({
+        queryKey: ['wallets'],
+        queryFn: getTotalBalance,
+        refetchOnWindowFocus: false
+    })
+}

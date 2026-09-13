@@ -13,7 +13,7 @@ export type GetTransactionsParams = PaginationParams & {
     search?: string;
 }
 
-export type GetTransactionsResponse = PaginationResponse & z.infer<typeof schemas.GetTransactionsResponseDto> & { }
+export type GetTransactionsResponse = PaginationResponse & z.infer<typeof schemas.GetTransactionsResponseDto> & {}
 
 const getTransactions = (params: GetTransactionsParams) => api.get('/transaction', { queries: params });
 
