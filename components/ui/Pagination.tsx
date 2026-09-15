@@ -17,10 +17,6 @@ export default function Pagination({
     const colorScheme = useColorScheme() === 'dark' ? 'dark' : 'light';
     const colors = Colors[colorScheme];
 
-    if (totalPages <= 1) {
-        return null;
-    }
-
     const goToPrevious = () => {
         if (page > 1) {
             pushQuery({ page: page - 1 })
