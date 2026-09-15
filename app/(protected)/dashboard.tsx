@@ -1,15 +1,23 @@
-import { ScrollView, Text, TouchableOpacity, View } from 'react-native';
+import { RefreshControl, ScrollView, Text, TouchableOpacity, View } from 'react-native';
 import {
   ArrowDownLeft,
   ArrowUpRight,
   BarChart3,
-  Bell,
   ChevronRight,
   Plus,
-  Wallet,
 } from 'lucide-react-native';
 import { useColorScheme } from '@/hooks/use-color-scheme';
 import { Colors } from '@/constants/theme';
+import { formatCurrency } from '@/utils/utils';
+import useGetExpenses from '@/hooks/transaction/use-get-expenses.hook';
+import useGetIncomes from '@/hooks/transaction/use-get-incomes.hook';
+import useGetTotalBalance from '@/hooks/wallet/use-get-total-balance.hook';
+import DashboardHeader from '@/components/custom/Dashboard/DashboardHeader';
+import BalanceCard from '@/components/custom/Dashboard/BalanceCard';
+import WalletCard from '@/components/custom/Dashboard/WalletCard';
+import useGetWallets from '@/hooks/wallet/use-get-wallets.hook';
+import ActionButtons from '@/components/custom/Dashboard/ActionButtons';
+import { useRouter } from 'expo-router';
 
 const mockData = {
   balance: 24580.5,
@@ -87,208 +95,52 @@ const mockData = {
 };
 
 export default function Dashboard() {
+  const router = useRouter();
   const colorScheme = useColorScheme() === 'dark' ? 'dark' : 'light';
   const colors = Colors[colorScheme];
 
-  const formatCurrency = (amount: number) =>
-    `₱${amount.toLocaleString('en-PH', {
-      minimumFractionDigits: 2,
-      maximumFractionDigits: 2,
-    })}`;
+  const { data: totalBalanceData, isLoading: totalBalanceLoading, refetch: totalBalanceRefetch } = useGetTotalBalance();
+  const { data: walletData, isLoading: isWalletLoading, refetch: walletRefetch } = useGetWallets();
+
+  const { data: expensesData, isLoading: isExpensesLoading, refetch: expenseRefetch } = useGetExpenses({});
+  const { data: incomesData, isLoading: isIncomesLoading, refetch: incomeRefetch } = useGetIncomes({});
+
+  const isBalanceCardLoading = totalBalanceLoading || isExpensesLoading || isIncomesLoading;
+
+  const handleRefresh = () => {
+    totalBalanceRefetch();
+    expenseRefetch();
+    incomeRefetch();
+    walletRefetch();
+  }
 
   return (
     <View className="flex-1" style={{ backgroundColor: colors.background }}>
       <ScrollView
         showsVerticalScrollIndicator={false}
+        refreshControl={
+          <RefreshControl
+            refreshing={isBalanceCardLoading}
+            onRefresh={handleRefresh}
+            tintColor={colors.tint}
+          />
+        }
         contentContainerStyle={{
           paddingHorizontal: 18,
           paddingTop: 58,
           paddingBottom: 40,
         }}
       >
-        <View className="mb-5 flex-row items-center justify-between">
-          <View>
-            <Text className="text-sm" style={{ color: colors.icon }}>
-              Welcome back
-            </Text>
+        <DashboardHeader />
+        <BalanceCard 
+          expenses={expensesData?.amount ?? 0}
+          incomes={incomesData?.amount ?? 0}
+          totalBalance={totalBalanceData?.totalBalance ?? 0}
+          isLoading={isBalanceCardLoading}
+        />
 
-            <Text className="mt-1 text-[30px] font-bold tracking-tight" style={{ color: colors.text }}>
-              Lindsey 👋
-            </Text>
-          </View>
-
-          <TouchableOpacity
-            className="h-11 w-11 items-center justify-center rounded-2xl border"
-            style={{
-              backgroundColor: colors.card,
-              borderColor: colors.border,
-              shadowColor: '#000',
-              shadowOffset: { width: 0, height: 6 },
-              shadowOpacity: 0.06,
-              shadowRadius: 12,
-              elevation: 2,
-            }}
-          >
-            <Bell size={20} color={colors.text} />
-          </TouchableOpacity>
-        </View>
-
-        <View
-          className="overflow-hidden rounded-[26px] border p-5"
-          style={{
-            backgroundColor: colors.card,
-            borderColor: colors.border,
-            shadowColor: '#000',
-            shadowOffset: { width: 0, height: 10 },
-            shadowOpacity: 0.06,
-            shadowRadius: 18,
-            elevation: 3,
-          }}
-        >
-          <View className="mb-4 flex-row items-center justify-between">
-            <Text className="text-sm font-medium" style={{ color: colors.icon }}>
-              Total Balance
-            </Text>
-
-            <View className="rounded-full border px-2.5 py-1" style={{ borderColor: colors.border, backgroundColor: colors.soft }}>
-              <Text className="text-[10px] font-semibold" style={{ color: colors.tint }}>
-                Sep 2026
-              </Text>
-            </View>
-          </View>
-
-          <Text className="text-[34px] font-bold tracking-tight" style={{ color: colors.text }}>
-            {formatCurrency(mockData.balance)}
-          </Text>
-
-          <View className="mt-5 flex-row gap-3">
-            <View className="flex-1 rounded-2xl p-3" style={{ backgroundColor: colors.soft }}>
-              <View className="flex-row items-center">
-                <View className="mr-2 rounded-full bg-emerald-100 p-1.5">
-                  <ArrowDownLeft size={12} color="#16A34A" />
-                </View>
-
-                <Text className="text-[11px] font-medium" style={{ color: colors.icon }}>
-                  Income
-                </Text>
-              </View>
-
-              <Text className="mt-2 text-base font-bold" style={{ color: colors.text }}>
-                {formatCurrency(mockData.income)}
-              </Text>
-            </View>
-
-            <View className="flex-1 rounded-2xl p-3" style={{ backgroundColor: colors.soft }}>
-              <View className="flex-row items-center">
-                <View className="mr-2 rounded-full bg-rose-100 p-1.5">
-                  <ArrowUpRight size={12} color="#DC2626" />
-                </View>
-
-                <Text className="text-[11px] font-medium" style={{ color: colors.icon }}>
-                  Expenses
-                </Text>
-              </View>
-
-              <Text className="mt-2 text-base font-bold" style={{ color: colors.text }}>
-                {formatCurrency(mockData.expenses)}
-              </Text>
-            </View>
-          </View>
-        </View>
-
-        <View className="mt-7">
-          <View className="mb-3 flex-row items-center justify-between">
-            <Text className="text-lg font-bold" style={{ color: colors.text }}>
-              Wallets
-            </Text>
-
-            <TouchableOpacity className="flex-row items-center">
-              <Text className="mr-1 text-sm font-semibold" style={{ color: colors.tint }}>
-                Manage
-              </Text>
-              <ChevronRight size={16} color={colors.tint} />
-            </TouchableOpacity>
-          </View>
-
-          <ScrollView
-            horizontal
-            showsHorizontalScrollIndicator={false}
-            snapToInterval={300}
-            decelerationRate="fast"
-            contentContainerStyle={{ gap: 12 }}
-          >
-            {mockData.wallets.map((wallet) => (
-              <TouchableOpacity
-                key={wallet.id}
-                activeOpacity={0.9}
-                className="h-44 w-[288px] justify-between rounded-[24px] border p-4"
-                style={{
-                  backgroundColor: colors.card,
-                  borderColor: colors.border,
-                  shadowColor: '#000',
-                  shadowOffset: { width: 0, height: 8 },
-                  shadowOpacity: 0.05,
-                  shadowRadius: 14,
-                  elevation: 2,
-                }}
-              >
-                <View className="flex-row items-start justify-between">
-                  <View>
-                    <Text className="text-[11px] font-medium" style={{ color: colors.icon }}>
-                      {wallet.type}
-                    </Text>
-
-                    <Text className="mt-1 text-lg font-bold" style={{ color: colors.text }}>
-                      {wallet.name}
-                    </Text>
-                  </View>
-
-                  <View className="rounded-xl p-2.5" style={{ backgroundColor: colors.softTint }}>
-                    <Wallet size={18} color={colors.tint} />
-                  </View>
-                </View>
-
-                <View>
-                  <Text className="text-[11px]" style={{ color: colors.icon }}>
-                    {wallet.number}
-                  </Text>
-
-                  <Text className="mt-1 text-2xl font-bold" style={{ color: colors.text }}>
-                    {formatCurrency(wallet.balance)}
-                  </Text>
-                </View>
-              </TouchableOpacity>
-            ))}
-          </ScrollView>
-        </View>
-
-        <View className="mt-6 flex-row gap-3">
-          <TouchableOpacity
-            className="flex-1 flex-row items-center justify-center rounded-2xl border py-3.5"
-            style={{
-              backgroundColor: colors.card,
-              borderColor: colors.border,
-            }}
-          >
-            <Plus size={18} color={colors.tint} />
-            <Text className="ml-2 text-sm font-semibold" style={{ color: colors.text }}>
-              Add Expense
-            </Text>
-          </TouchableOpacity>
-
-          <TouchableOpacity
-            className="flex-1 flex-row items-center justify-center rounded-2xl border py-3.5"
-            style={{
-              backgroundColor: colors.card,
-              borderColor: colors.border,
-            }}
-          >
-            <ArrowDownLeft size={18} color={colors.tint} />
-            <Text className="ml-2 text-sm font-semibold" style={{ color: colors.text }}>
-              Add Income
-            </Text>
-          </TouchableOpacity>
-        </View>
+        <WalletCard wallets={walletData?.wallets ?? []} isLoading={isWalletLoading}/>
+        <ActionButtons refresh={handleRefresh}/>
 
         <View className="mt-7">
           <View className="mb-3 flex-row items-center justify-between">
@@ -301,7 +153,7 @@ export default function Dashboard() {
               </Text>
             </View>
 
-            <TouchableOpacity className="flex-row items-center">
+            <TouchableOpacity className="flex-row items-center" onPress={() => router.push('/wallets')}>
               <Text className="mr-1 text-sm font-semibold" style={{ color: colors.tint }}>
                 Manage
               </Text>

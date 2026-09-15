@@ -24,6 +24,7 @@ export const Colors = {
     panel: '#F8F7FF',
     soft: '#F4F4F5',
     softTint: '#F1E9FF',
+    skeleton: '#E4E4E7',
 
     // Button
     buttonText: '#FFFFFF',
@@ -50,6 +51,7 @@ export const Colors = {
     panel: '#17171C',
     soft: '#202027',
     softTint: '#2A2142',
+    skeleton: '#27272A',
 
     // Button
     buttonText: '#FFFFFF',

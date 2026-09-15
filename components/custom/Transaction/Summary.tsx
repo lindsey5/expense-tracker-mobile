@@ -11,8 +11,8 @@ type SummaryProps = {
   incomeChange: number;
   totalExpenses: number;
   expenseChange: number;
-  incomeHasPreviousAmount: boolean;
-  expenseHasPreviousAmount: boolean;
+  incomeHasPreviousMonth: boolean;
+  expenseHasPreviousMonth: boolean;
   isLoading: boolean;
 }
 
@@ -22,8 +22,8 @@ export default function Summary({
     totalExpenses,
     totalIncome,
     isLoading,
-    expenseHasPreviousAmount,
-    incomeHasPreviousAmount
+    expenseHasPreviousMonth,
+    incomeHasPreviousMonth
  } : SummaryProps) {
   const colorScheme = useColorScheme() === 'dark' ? 'dark' : 'light';
   const colors = Colors[colorScheme];
@@ -60,7 +60,7 @@ export default function Summary({
           {formatCurrency(totalIncome)}
         </Text>
 
-        {incomeHasPreviousAmount && (
+        {incomeHasPreviousMonth && (
           <Text
             className="mt-2 text-[10px] font-medium"
             style={{
@@ -94,7 +94,7 @@ export default function Summary({
           {formatCurrency(totalExpenses)}
         </Text>
 
-        {expenseHasPreviousAmount && (
+        {expenseHasPreviousMonth && (
           <Text
             className="mt-2 text-[10px] font-medium"
             style={{

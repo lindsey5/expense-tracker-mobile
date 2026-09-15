@@ -27,7 +27,6 @@ async function generateApi() {
 
         const openApiDoc = await response.json();
 
-        // Create output directory if it doesn't exist
         const outputDir = path.dirname(outputPath);
 
         fs.mkdirSync(outputDir, {
@@ -40,6 +39,9 @@ async function generateApi() {
         await generateZodClientFromOpenAPI({
             openApiDoc,
             distPath: outputPath,
+            options: {
+                withAlias: true,
+            },
         });
 
         console.log('Zod client generated successfully.');

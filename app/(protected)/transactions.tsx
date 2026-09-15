@@ -16,6 +16,7 @@ import CreateTransaction from '@/components/custom/Transaction/CreateTransaction
 import DateFilter from '@/components/custom/DateFilter';
 import useGetExpenses from '@/hooks/transaction/use-get-expenses.hook';
 import useGetIncomes from '@/hooks/transaction/use-get-incomes.hook';
+import { MONTH_SHORT_MAP } from '@/constants/month';
 
 const filters = [
   { label: 'All', value: 'all' },
@@ -32,8 +33,11 @@ export default function Transactions() {
 
   const { data, isLoading, refetch } = useGetTransactions(query);
 
-  const { data: expensesData, isLoading: isExpensesLoading, refetch: expenseRefetch } = useGetExpenses();
-  const { data: incomesData, isLoading: isIncomesLoading, refetch: incomeRefetch } = useGetIncomes();
+  const { month, year } = query;
+  const dateQuery = { month, year }
+
+  const { data: expensesData, isLoading: isExpensesLoading, refetch: expenseRefetch } = useGetExpenses(dateQuery);
+  const { data: incomesData, isLoading: isIncomesLoading, refetch: incomeRefetch } = useGetIncomes(dateQuery);
 
   const isFirstRender = useRef(true);
 
@@ -105,7 +109,7 @@ export default function Transactions() {
     <View className="flex-1" style={{ backgroundColor: colors.background }}>
       <ScrollView
         showsVerticalScrollIndicator={false}
-         refreshControl={
+        refreshControl={
           <RefreshControl
             refreshing={isLoading || isExpensesLoading || isIncomesLoading}
             onRefresh={handleRefresh}
@@ -134,7 +138,7 @@ export default function Transactions() {
             }}
           >
             <Text className="text-xs font-semibold" style={{ color: colors.tint }}>
-              {query.year ?? new Date().getFullYear()}-{query.month ?? new Date().getMonth() + 1}
+              {query.year ?? new Date().getFullYear()}-{MONTH_SHORT_MAP[(query.month ?? new Date().getMonth() + 1) as keyof typeof MONTH_SHORT_MAP]}
             </Text>
           </TouchableOpacity>
         </View>
@@ -145,8 +149,8 @@ export default function Transactions() {
           incomeChange={incomesData?.change ?? 0}
           totalExpenses={expensesData?.amount ?? 0}
           totalIncome={incomesData?.amount ?? 0}
-          expenseHasPreviousAmount={expensesData?.hasPreviousAmount ?? false}
-          incomeHasPreviousAmount={incomesData?.hasPreviousAmount ?? false}
+          expenseHasPreviousMonth={expensesData?.hasPreviousMonth ?? false}
+          incomeHasPreviousMonth={incomesData?.hasPreviousMonth ?? false}
           
         />
 

@@ -1,18 +1,13 @@
 import { TransactionCategory } from "@/types/transaction.type";
 import { api } from "@/lib/api";
 import { schemas } from "@/lib/api/openapi";
-import { PaginationParams, PaginationResponse } from "@/types/pagination.type";
+import {  PaginationResponse } from "@/types/pagination.type";
 import { useQuery } from "@tanstack/react-query";
 import z from "zod";
+import type { ZodiosQueryParamsByAlias } from "@zodios/core";
+import { ApiType } from "@/types/api.type";
 
-export type GetTransactionsParams = PaginationParams & {
-    type?: "INCOME" | "EXPENSE";
-    category?: TransactionCategory
-    month?: number;
-    year?: number;
-    search?: string;
-}
-
+export type GetTransactionsParams = ZodiosQueryParamsByAlias<ApiType, "list_get_transactions">;
 export type GetTransactionsResponse = PaginationResponse & z.infer<typeof schemas.GetTransactionsResponseDto> & {}
 
 const getTransactions = (params: GetTransactionsParams) => api.get('/transaction', { queries: params });

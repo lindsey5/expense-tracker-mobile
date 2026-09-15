@@ -137,14 +137,14 @@ const GetIncomesResponseDto = z
   .object({
     amount: z.number(),
     change: z.number(),
-    hasPreviousAmount: z.boolean(),
+    hasPreviousMonth: z.boolean(),
   })
   .passthrough();
 const GetExpensesResponseDto = z
   .object({
     amount: z.number(),
     change: z.number(),
-    hasPreviousAmount: z.boolean(),
+    hasPreviousMonth: z.boolean(),
   })
   .passthrough();
 const GetTransactionMonths = z
@@ -211,12 +211,14 @@ const endpoints = makeApi([
   {
     method: "get",
     path: "/",
+    alias: "AppController_getHello",
     requestFormat: "json",
     response: z.void(),
   },
   {
     method: "post",
     path: "/auth/login",
+    alias: "login",
     requestFormat: "json",
     parameters: [
       {
@@ -230,6 +232,7 @@ const endpoints = makeApi([
   {
     method: "post",
     path: "/auth/resend",
+    alias: "resend_verification",
     requestFormat: "json",
     parameters: [
       {
@@ -243,6 +246,7 @@ const endpoints = makeApi([
   {
     method: "post",
     path: "/auth/signup",
+    alias: "signup",
     requestFormat: "json",
     parameters: [
       {
@@ -256,6 +260,7 @@ const endpoints = makeApi([
   {
     method: "post",
     path: "/auth/verify",
+    alias: "verify_email",
     requestFormat: "json",
     parameters: [
       {
@@ -269,6 +274,7 @@ const endpoints = makeApi([
   {
     method: "post",
     path: "/transaction",
+    alias: "create_transaction",
     requestFormat: "json",
     parameters: [
       {
@@ -282,6 +288,7 @@ const endpoints = makeApi([
   {
     method: "get",
     path: "/transaction",
+    alias: "list_get_transactions",
     requestFormat: "json",
     parameters: [
       {
@@ -350,6 +357,7 @@ const endpoints = makeApi([
   {
     method: "get",
     path: "/transaction/expenses",
+    alias: "get_transaction_expenses",
     requestFormat: "json",
     parameters: [
       {
@@ -368,6 +376,7 @@ const endpoints = makeApi([
   {
     method: "get",
     path: "/transaction/incomes",
+    alias: "get_transaction_incomes",
     requestFormat: "json",
     parameters: [
       {
@@ -386,12 +395,14 @@ const endpoints = makeApi([
   {
     method: "get",
     path: "/transaction/months",
+    alias: "get_transaction_months",
     requestFormat: "json",
     response: z.array(GetTransactionMonths),
   },
   {
     method: "post",
     path: "/user/lookup",
+    alias: "UserController_userLookup",
     requestFormat: "json",
     parameters: [
       {
@@ -405,6 +416,7 @@ const endpoints = makeApi([
   {
     method: "post",
     path: "/wallet",
+    alias: "create_wallet",
     requestFormat: "json",
     parameters: [
       {
@@ -418,12 +430,14 @@ const endpoints = makeApi([
   {
     method: "get",
     path: "/wallet",
+    alias: "list_wallets",
     requestFormat: "json",
     response: GetWalletsResponseDto,
   },
   {
     method: "patch",
     path: "/wallet/:id",
+    alias: "update_wallet",
     requestFormat: "json",
     parameters: [
       {
@@ -442,6 +456,7 @@ const endpoints = makeApi([
   {
     method: "delete",
     path: "/wallet/:id",
+    alias: "delete_wallet",
     requestFormat: "json",
     parameters: [
       {
@@ -455,6 +470,7 @@ const endpoints = makeApi([
   {
     method: "get",
     path: "/wallet/total-balance",
+    alias: "get_total_balance",
     requestFormat: "json",
     response: GetTotalBalance,
   },
