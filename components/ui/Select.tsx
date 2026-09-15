@@ -28,6 +28,7 @@ type SelectProps = {
   placeholder?: string;
   error?: string;
   className?: string;
+  width?: number | `${number}%`;
 };
 
 export default function Select({
@@ -38,6 +39,7 @@ export default function Select({
   placeholder = 'Select option',
   error,
   className,
+  width,
 }: SelectProps) {
   const [visible, setVisible] = useState(false);
   const colorScheme = useColorScheme() === 'dark' ? 'dark' : 'light';
@@ -52,7 +54,7 @@ export default function Select({
 
   return (
     <>
-      <View>
+      <View style={{ width }}>
         {label && (
           <Text
             className="mb-2 text-sm font-medium"
@@ -72,7 +74,8 @@ export default function Select({
           }}
         >
           <Text
-            className="text-sm"
+            className="flex-1 text-sm"
+            numberOfLines={1}
             style={{
               color: selected ? colors.text : colors.placeholder,
             }}
@@ -80,11 +83,17 @@ export default function Select({
             {selected?.label ?? placeholder}
           </Text>
 
-          <ChevronDown size={20} color={error ? '#EF4444' : colors.icon} />
+          <ChevronDown
+            size={20}
+            color={error ? '#EF4444' : colors.icon}
+          />
         </TouchableOpacity>
 
         {error && (
-          <Text className="mt-1.5 text-xs" style={{ color: '#EF4444' }}>
+          <Text
+            className="mt-1.5 text-xs"
+            style={{ color: '#EF4444' }}
+          >
             {error}
           </Text>
         )}
@@ -96,7 +105,9 @@ export default function Select({
       >
         <CustomModalContent>
           <CustomModalHeader>
-            <CustomModalTitle>{label ?? 'Select option'}</CustomModalTitle>
+            <CustomModalTitle>
+              {label ?? 'Select option'}
+            </CustomModalTitle>
           </CustomModalHeader>
 
           <CustomModalBody>
@@ -117,7 +128,9 @@ export default function Select({
                   <Text
                     className="text-base"
                     style={{
-                      color: isSelected ? colors.tint : colors.text,
+                      color: isSelected
+                        ? colors.tint
+                        : colors.text,
                       fontWeight: isSelected ? '600' : '400',
                     }}
                   >

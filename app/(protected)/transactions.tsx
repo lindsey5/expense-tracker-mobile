@@ -1,5 +1,12 @@
 import { useEffect, useMemo, useRef, useState } from 'react';
-import { ActivityIndicator, RefreshControl, ScrollView, Text, TouchableOpacity, View } from 'react-native';
+import {
+  ActivityIndicator,
+  RefreshControl,
+  ScrollView,
+  Text,
+  TouchableOpacity,
+  View,
+} from 'react-native';
 import { useColorScheme } from '@/hooks/use-color-scheme';
 import { Colors } from '@/constants/theme';
 import Header from '@/components/custom/Header';
@@ -8,9 +15,16 @@ import SearchField from '@/components/ui/SearchField';
 import Tabs from '@/components/ui/Tabs';
 import TransactionList from '@/components/custom/Transaction/TransactionList';
 import { useQuery } from '@/hooks/useQuery';
-import useGetTransactions, { GetTransactionsParams } from '@/hooks/transaction/use-get-transactions.hook';
+import useGetTransactions, {
+  GetTransactionsParams,
+} from '@/hooks/transaction/use-get-transactions.hook';
 import { useDebounce } from '@/hooks/useDebounce';
-import { ExpenseCategories, IncomeCategories, TransactionCategories, TransactionTypeOptions } from '@/constants/transaction';
+import {
+  ExpenseCategories,
+  IncomeCategories,
+  TransactionCategories,
+  TransactionTypeOptions,
+} from '@/constants/transaction';
 import Select from '@/components/ui/Select';
 import CreateTransaction from '@/components/custom/Transaction/CreateTransaction';
 import DateFilter from '@/components/custom/DateFilter';
@@ -20,13 +34,17 @@ import { MONTH_SHORT_MAP } from '@/constants/month';
 
 const filters = [
   { label: 'All', value: 'all' },
-  ...TransactionTypeOptions
+  ...TransactionTypeOptions,
 ];
 
 export default function Transactions() {
   const colorScheme = useColorScheme() === 'dark' ? 'dark' : 'light';
   const colors = Colors[colorScheme];
+
   const [search, setSearch] = useState('');
+  const [selectedType, setSelectedType] = useState('all');
+  const [selectedCategory, setSelectedCategory] = useState('all');
+
   const debouncedSearch = useDebounce(search);
 
   const { query, pushQuery } = useQuery<GetTransactionsParams>();
@@ -34,23 +52,45 @@ export default function Transactions() {
   const { data, isLoading, refetch } = useGetTransactions(query);
 
   const { month, year } = query;
-  const dateQuery = { month, year }
+  const dateQuery = { month, year };
 
-  const { data: expensesData, isLoading: isExpensesLoading, refetch: expenseRefetch } = useGetExpenses(dateQuery);
-  const { data: incomesData, isLoading: isIncomesLoading, refetch: incomeRefetch } = useGetIncomes(dateQuery);
+  const {
+    data: expensesData,
+    isLoading: isExpensesLoading,
+    refetch: expenseRefetch,
+  } = useGetExpenses(dateQuery);
+
+  const {
+    data: incomesData,
+    isLoading: isIncomesLoading,
+    refetch: incomeRefetch,
+  } = useGetIncomes(dateQuery);
 
   const isFirstRender = useRef(true);
 
   const setActiveType = (value: string) => {
+    setSelectedType(value);
+
     pushQuery({
-      type: value === 'all' ? undefined : (value as GetTransactionsParams['type']),
+      type:
+        value === 'all'
+          ? undefined
+          : (value as GetTransactionsParams['type']),
+      category: undefined,
       page: 1,
     });
+
+    setSelectedCategory('all');
   };
 
   const setCategory = (value: string) => {
+    setSelectedCategory(value);
+
     pushQuery({
-      category: !value ? undefined : (value as GetTransactionsParams['category']),
+      category:
+        value === 'all'
+          ? undefined
+          : (value as GetTransactionsParams['category']),
       page: 1,
     });
   };
@@ -58,22 +98,22 @@ export default function Transactions() {
   const categoryOptions = useMemo(() => {
     let categories = TransactionCategories;
 
-    if (query.type === 'EXPENSE') {
+    if (selectedType === 'EXPENSE') {
       categories = ExpenseCategories;
     }
 
-    if (query.type === 'INCOME') {
+    if (selectedType === 'INCOME') {
       categories = IncomeCategories;
     }
 
     return [
-      { label: 'All', value: '' },
+      { label: 'All', value: 'all' },
       ...categories.map((category) => ({
         label: category.replace(/_/g, ' '),
         value: category,
       })),
     ];
-  }, [query.type]);
+  }, [selectedType]);
 
   useEffect(() => {
     if (isFirstRender.current) {
@@ -88,30 +128,46 @@ export default function Transactions() {
   }, [debouncedSearch]);
 
   useEffect(() => {
+    setSelectedType(query.type ?? 'all');
+    setSelectedCategory(query.category ?? 'all');
+  }, [query.type, query.category]);
+
+  useEffect(() => {
     if (
-      query.category &&
-      !categoryOptions.some((option) => option.value === query.category)
+      selectedCategory !== 'all' &&
+      !categoryOptions.some(
+        (option) => option.value === selectedCategory,
+      )
     ) {
+      setSelectedCategory('all');
+
       pushQuery({
         category: undefined,
         page: 1,
       });
     }
-  }, [query.category, categoryOptions]);
+  }, [selectedCategory, categoryOptions]);
 
   const handleRefresh = () => {
     refetch();
     expenseRefetch();
     incomeRefetch();
-  }
+  };
 
   return (
-    <View className="flex-1" style={{ backgroundColor: colors.background }}>
+    <View
+      className="flex-1"
+      style={{ backgroundColor: colors.background }}
+    >
       <ScrollView
         showsVerticalScrollIndicator={false}
         refreshControl={
           <RefreshControl
-            refreshing={isLoading || isExpensesLoading || isIncomesLoading}
+            refreshing={
+              isLoading ||
+              isExpensesLoading ||
+              isIncomesLoading
+            }
             onRefresh={handleRefresh}
             tintColor={colors.tint}
           />
@@ -122,10 +178,18 @@ export default function Transactions() {
           paddingBottom: 110,
         }}
       >
-        <Header title="Transactions" description="Track your income and expenses" />
+        <Header
+          title="Transactions"
+          description="Track your income and expenses"
+        />
+
         <DateFilter />
+
         <View className="mb-4 flex-row items-center justify-between">
-          <Text className="text-base font-bold" style={{ color: colors.text }}>
+          <Text
+            className="text-base font-bold"
+            style={{ color: colors.text }}
+          >
             Overview
           </Text>
 
@@ -137,56 +201,94 @@ export default function Transactions() {
               borderColor: colors.border,
             }}
           >
-            <Text className="text-xs font-semibold" style={{ color: colors.tint }}>
-              {query.year ?? new Date().getFullYear()}-{MONTH_SHORT_MAP[(query.month ?? new Date().getMonth() + 1) as keyof typeof MONTH_SHORT_MAP]}
+            <Text
+              className="text-xs font-semibold"
+              style={{ color: colors.tint }}
+            >
+              {query.year ?? new Date().getFullYear()}-
+              {
+                MONTH_SHORT_MAP[
+                  (query.month ?? new Date().getMonth() + 1) as keyof typeof MONTH_SHORT_MAP
+                ]
+              }
             </Text>
           </TouchableOpacity>
         </View>
 
-        <Summary 
+        <Summary
           isLoading={isExpensesLoading || isIncomesLoading}
           expenseChange={expensesData?.change ?? 0}
           incomeChange={incomesData?.change ?? 0}
           totalExpenses={expensesData?.amount ?? 0}
           totalIncome={incomesData?.amount ?? 0}
-          expenseHasPreviousMonth={expensesData?.hasPreviousMonth ?? false}
-          incomeHasPreviousMonth={incomesData?.hasPreviousMonth ?? false}
-          
+          expenseHasPreviousMonth={
+            expensesData?.hasPreviousMonth ?? false
+          }
+          incomeHasPreviousMonth={
+            incomesData?.hasPreviousMonth ?? false
+          }
         />
 
-        <View className="mt-6 mb-3 flex-row items-center justify-between">
-          <Text className="text-base font-bold" style={{ color: colors.text }}>
+        <View className="mb-3 mt-6 flex-row items-center justify-between">
+          <Text
+            className="text-base font-bold"
+            style={{ color: colors.text }}
+          >
             Activity
           </Text>
 
-          <View className="rounded-full border px-2.5 py-1.5" style={{ backgroundColor: colors.soft, borderColor: colors.border }}>
-            <Text className="text-[10px] font-semibold" style={{ color: colors.icon }}>
+          <View
+            className="rounded-full border px-2.5 py-1.5"
+            style={{
+              backgroundColor: colors.soft,
+              borderColor: colors.border,
+            }}
+          >
+            <Text
+              className="text-[10px] font-semibold"
+              style={{ color: colors.icon }}
+            >
               {data?.transactions?.length ?? 0} entries
             </Text>
           </View>
         </View>
 
-        <SearchField search={search} setSearch={setSearch} className="mt-0" />
+        <SearchField
+          search={search}
+          setSearch={setSearch}
+          className="mt-0"
+        />
 
         <View className="mt-5">
-          <Tabs activeTab={query.type ?? 'all'} setActiveTab={setActiveType} tabs={filters} />
+          <Tabs
+            activeTab={selectedType}
+            setActiveTab={setActiveType}
+            tabs={filters}
+          />
         </View>
 
         <View className="mb-3 mt-6 flex-row items-center justify-between">
-          <Text className="text-lg font-bold" style={{ color: colors.text }}>
+          <Text
+            className="text-lg font-bold"
+            style={{ color: colors.text }}
+          >
             All Transactions
           </Text>
 
           <Select
             placeholder="Select Category"
-            value={query.category}
+            value={selectedCategory}
             onChange={setCategory}
             options={categoryOptions}
+            width="48%"
           />
         </View>
 
         {isLoading ? (
-          <ActivityIndicator color={colors.text} size={30}/>
+          <ActivityIndicator
+            color={colors.text}
+            size={30}
+          />
         ) : (
           <TransactionList
             transactions={data?.transactions || []}
@@ -195,7 +297,8 @@ export default function Transactions() {
           />
         )}
       </ScrollView>
-      <CreateTransaction refetch={handleRefresh}/>
+
+      <CreateTransaction refetch={handleRefresh} />
     </View>
   );
 }
