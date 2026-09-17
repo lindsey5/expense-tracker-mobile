@@ -3,8 +3,9 @@ import { BarChart3, ChartNoAxesColumnIncreasing, Home, LogOut, Menu, Wallet, Wal
 import { useColorScheme } from '@/hooks/use-color-scheme';
 import { Colors } from '@/constants/theme';
 import Sidebar from '../ui/Sidebar';
+import ThemeToggle from '../ui/ThemeToggle';
 import { useMemo, useState } from 'react';
-import { TouchableOpacity } from 'react-native';
+import { TouchableOpacity, View } from 'react-native';
 import { useAuthStore } from '@/lib/store/authStore';
 
 export default function UserSidebar() {
@@ -56,21 +57,26 @@ export default function UserSidebar() {
 
     return (
         <>
-        <TouchableOpacity
-            onPress={() => setSidebarOpen(true)}
-            className="absolute right-5 top-14 z-40 rounded-2xl border p-2"
-            style={{
-                backgroundColor: colors.card,
-                borderColor: colors.border,
-                shadowColor: '#000',
-                shadowOffset: { width: 0, height: 6 },
-                shadowOpacity: 0.06,
-                shadowRadius: 12,
-                elevation: 2,
-            }}
-        >
-            <Menu size={24} color={colors.text} />
-        </TouchableOpacity>
+        <View className="absolute right-5 top-14 z-40 flex-row gap-2">
+            <ThemeToggle />
+            <TouchableOpacity
+                accessibilityLabel="Open navigation menu"
+                accessibilityRole="button"
+                onPress={() => setSidebarOpen(true)}
+                className="h-11 w-11 items-center justify-center rounded-2xl border"
+                style={{
+                    backgroundColor: colors.card,
+                    borderColor: colors.border,
+                    shadowColor: '#000',
+                    shadowOffset: { width: 0, height: 6 },
+                    shadowOpacity: 0.06,
+                    shadowRadius: 12,
+                    elevation: 2,
+                }}
+            >
+                <Menu size={24} color={colors.text} />
+            </TouchableOpacity>
+        </View>
 
         <Sidebar
             items={sidebarItems}

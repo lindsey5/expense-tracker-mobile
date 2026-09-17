@@ -1,7 +1,5 @@
 import Card from '@/components/ui/Card';
 import { Colors } from '@/constants/theme';
-import useGetExpenses from '@/hooks/transaction/use-get-expenses.hook';
-import useGetIncomes from '@/hooks/transaction/use-get-incomes.hook';
 import { formatCurrency } from '@/utils/utils';
 import { ArrowDownLeft, ArrowUpRight } from 'lucide-react-native';
 import { View, Text, useColorScheme } from 'react-native';
@@ -14,23 +12,23 @@ type SummaryProps = {
   incomeHasPreviousMonth: boolean;
   expenseHasPreviousMonth: boolean;
   isLoading: boolean;
-}
+};
 
-export default function Summary({ 
-    expenseChange,
-    incomeChange,
-    totalExpenses,
-    totalIncome,
-    isLoading,
-    expenseHasPreviousMonth,
-    incomeHasPreviousMonth
- } : SummaryProps) {
+export default function Summary({
+  expenseChange,
+  incomeChange,
+  totalExpenses,
+  totalIncome,
+  isLoading,
+  expenseHasPreviousMonth,
+  incomeHasPreviousMonth,
+}: SummaryProps) {
   const colorScheme = useColorScheme() === 'dark' ? 'dark' : 'light';
   const colors = Colors[colorScheme];
 
   if (isLoading) {
     return (
-      <View className="mt-1 flex-row gap-3">
+      <View className="mt-1 gap-3">
         <SummarySkeleton />
         <SummarySkeleton />
       </View>
@@ -38,15 +36,15 @@ export default function Summary({
   }
 
   return (
-    <View className="mt-1 flex-row gap-3">
-      <Card className="flex-1 rounded-[24px] border p-4">
-        <View className="mb-4 flex-row items-center justify-between">
+    <View className="mt-1 gap-3">
+      <Card className="rounded-[24px] border p-4">
+        <View className="mb-4 flex-row items-center">
           <View className="h-10 w-10 items-center justify-center rounded-2xl bg-emerald-100">
             <ArrowDownLeft size={16} color="#16A34A" />
           </View>
 
           <Text
-            className="text-xs font-semibold"
+            className="ml-3 text-xs font-semibold"
             style={{ color: colors.icon }}
           >
             Income
@@ -73,14 +71,14 @@ export default function Summary({
         )}
       </Card>
 
-      <Card className="flex-1 rounded-[24px] border p-4">
-        <View className="mb-4 flex-row items-center justify-between">
+      <Card className="rounded-[24px] border p-4">
+        <View className="mb-4 flex-row items-center">
           <View className="h-10 w-10 items-center justify-center rounded-2xl bg-rose-100">
             <ArrowUpRight size={16} color="#DC2626" />
           </View>
 
           <Text
-            className="text-xs font-semibold"
+            className="ml-3 text-xs font-semibold"
             style={{ color: colors.icon }}
           >
             Expenses
@@ -115,15 +113,15 @@ function SummarySkeleton() {
   const colors = Colors[colorScheme];
 
   return (
-    <Card className="flex-1 rounded-[24px] border p-4">
-      <View className="mb-4 flex-row items-center justify-between">
+    <Card className="rounded-[24px] border p-4">
+      <View className="mb-4 flex-row items-center">
         <View
           className="h-10 w-10 rounded-2xl"
           style={{ backgroundColor: colors.border }}
         />
 
         <View
-          className="h-3 w-12 rounded-full"
+          className="ml-3 h-3 w-12 rounded-full"
           style={{ backgroundColor: colors.border }}
         />
       </View>

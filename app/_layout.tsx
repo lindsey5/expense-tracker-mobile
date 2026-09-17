@@ -2,41 +2,62 @@ import '../global.css';
 import 'react-native-reanimated';
 
 import { useEffect } from 'react';
-import { KeyboardAvoidingView, Platform, useColorScheme } from 'react-native';
+import {
+  Appearance,
+  KeyboardAvoidingView,
+  Platform,
+  useColorScheme,
+} from 'react-native';
 import { Slot } from 'expo-router';
 import * as NavigationBar from 'expo-navigation-bar';
-import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
+import {
+  QueryClient,
+  QueryClientProvider,
+} from '@tanstack/react-query';
+
 import Toast from '@/components/Toast';
 import { Colors } from '@/constants/theme';
+import { useThemeStore } from '@/lib/store/themeStore';
 
 const queryClient = new QueryClient();
 
 export default function RootLayout() {
-    const colorScheme = useColorScheme() === 'dark' ? 'dark' : 'light';
-    const colors = Colors[colorScheme];
+  const theme = useThemeStore((state) => state.theme);
+  const deviceTheme = useColorScheme() === 'dark' ? 'dark' : 'light';
+  const activeTheme = theme === 'system' ? deviceTheme : theme;
+  const colors = Colors[activeTheme];
 
-    useEffect(() => {
-        if (Platform.OS === 'android') {
-            NavigationBar.setVisibilityAsync('hidden');
-        }
+  useEffect(() => {
+    if (Platform.OS !== 'web') {
+      Appearance.setColorScheme(theme === 'system' ? 'unspecified' : theme);
+    }
+  }, [theme]);
 
-        return () => {
-            if (Platform.OS === 'android') {
-                NavigationBar.setVisibilityAsync('visible');
-            }
-        };
-    }, []);
+  useEffect(() => {
+    if (Platform.OS === 'android') {
+      NavigationBar.setVisibilityAsync('hidden');
+    }
 
-    return (
-        <QueryClientProvider client={queryClient}>
-            <Toast />
-            <KeyboardAvoidingView
-                behavior={Platform.OS === 'ios' ? 'padding' : undefined}
-                className="flex-1"
-                style={{ backgroundColor: colors.background }}
-            >
-                <Slot />
-            </KeyboardAvoidingView>
-        </QueryClientProvider>
-    );
+    return () => {
+      if (Platform.OS === 'android') {
+        NavigationBar.setVisibilityAsync('visible');
+      }
+    };
+  }, []);
+
+  return (
+    <QueryClientProvider client={queryClient}>
+      <Toast />
+
+      <KeyboardAvoidingView
+        behavior={Platform.OS === 'ios' ? 'padding' : undefined}
+        className="flex-1"
+        style={{
+          backgroundColor: colors.background,
+        }}
+      >
+        <Slot />
+      </KeyboardAvoidingView>
+    </QueryClientProvider>
+  );
 }
