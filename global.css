@@ -1,3 +1,19 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+html, body, #root {
+  min-height: 100%;
+  height: 100%;
+}
+
+body {
+  margin: 0;
+  overflow: auto;
+  overscroll-behavior-y: contain;
+}
+
+#root {
+  display: flex;
+  min-height: 100vh;
+}
