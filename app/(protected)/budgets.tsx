@@ -9,8 +9,6 @@ import {
 import {
   AlertTriangle,
   ArrowLeft,
-  CalendarDays,
-  ChevronDown,
   CircleDollarSign,
   Plus,
   Search,
@@ -22,6 +20,7 @@ import { useRouter } from 'expo-router';
 
 import { useColorScheme } from '@/hooks/use-color-scheme';
 import { Colors } from '@/constants/theme';
+import DateFilter from '@/components/custom/DateFilter';
 
 type Budget = {
   id: string;
@@ -134,19 +133,7 @@ export default function Budgets() {
             </Pressable>
           </View>
 
-          <Pressable
-            className="mb-5 flex-row items-center justify-between rounded-[20px] border px-4 py-3.5"
-            style={{ backgroundColor: colors.card, borderColor: colors.border }}
-          >
-            <View className="flex-row items-center">
-              <CalendarDays size={19} color={colors.tint} />
-              <Text className="ml-3 font-semibold" style={{ color: colors.text }}>
-                September 2026
-              </Text>
-            </View>
-
-            <ChevronDown size={19} color={colors.icon} />
-          </Pressable>
+          <DateFilter />
 
           <View
             className="rounded-[26px] border p-5"
