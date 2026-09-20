@@ -57,12 +57,6 @@ export default function CreateBudget({
         });
     }
 
-    const handleClose = () => {
-        if(createBudgetMutation.isPending) return;
-
-        setVisible(false);
-    }
-
     return (
         <>
         <Pressable onPress={() => setVisible(true)} className="flex-row items-center">
@@ -72,7 +66,7 @@ export default function CreateBudget({
             </Text>
         </Pressable>
         <CustomModal
-            handleClose={handleClose}
+            handleClose={() => setVisible(false)}
             visible={visible}
         >
             <CustomModalContent>
