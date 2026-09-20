@@ -90,10 +90,15 @@ export default function TransactionForm({
         });
     }
 
+    const close = () => {
+        if(createTransactionMutation.isPending) return;
+        handleClose();
+    }
+
     return (
         <CustomModal
             visible={visible}
-            handleClose={handleClose}
+            handleClose={close}
         >
             <CustomModalContent>
                 <CustomModalHeader>
