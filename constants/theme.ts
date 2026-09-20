@@ -1,29 +1,32 @@
 import { Platform } from 'react-native';
 
-const tintColorLight = '#7C3AED';
-const tintColorDark = '#A78BFA';
+// Gastador brand colors
+const tintColorLight = '#6D28D9';
+const tintColorDark = '#8B5CF6';
 
-const accentColorLight = '#A855F7';
-const accentColorDark = '#C084FC';
+const accentColorLight = '#8B5CF6';
+const accentColorDark = '#A78BFA';
 
 export const Colors = {
   light: {
     // Main
     text: '#18181B',
-    background: '#F5F3FF',
+    background: '#F7F5FF',
     tint: tintColorLight,
     accent: accentColorLight,
 
     // UI
     icon: '#71717A',
-    border: '#E4E4E7',
+    border: '#E7E2F3',
     input: '#FFFFFF',
     card: '#FFFFFF',
     placeholder: '#A1A1AA',
-    surfaceTint: '#FFFFFF',
-    panel: '#F8F7FF',
+
+    // Surfaces
+    surfaceTint: '#F3E8FF',
+    panel: '#FAF8FF',
     soft: '#F4F4F5',
-    softTint: '#F1E9FF',
+    softTint: '#F1EAFE',
     skeleton: '#E4E4E7',
 
     // Button
@@ -36,28 +39,30 @@ export const Colors = {
 
   dark: {
     // Main
-    text: '#F4F4F5',
-    background: '#121216',
+    text: '#F8F7FC',
+    background: '#0B0712',
     tint: tintColorDark,
     accent: accentColorDark,
 
     // UI
-    icon: '#A1A1AA',
-    border: '#2C2C33',
-    input: '#1D1D23',
-    card: '#1A1A20',
-    placeholder: '#71717A',
-    surfaceTint: '#2E2148',
-    panel: '#17171C',
-    soft: '#202027',
-    softTint: '#2A2142',
-    skeleton: '#27272A',
+    icon: '#9B97A3',
+    border: '#292231',
+    input: '#15101D',
+    card: '#1C1229',
+    placeholder: '#716B79',
+
+    // Surfaces
+    surfaceTint: '#1C1229',
+    panel: '#100B17',
+    soft: '#1B1720',
+    softTint: '#241633',
+    skeleton: '#29232F',
 
     // Button
     buttonText: '#FFFFFF',
 
     // Tabs
-    tabIconDefault: '#A1A1AA',
+    tabIconDefault: '#77717F',
     tabIconSelected: tintColorDark,
   },
 };

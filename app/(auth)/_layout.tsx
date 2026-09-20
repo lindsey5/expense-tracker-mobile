@@ -3,6 +3,7 @@ import { View } from 'react-native';
 import { useAuthStore } from '@/lib/store/authStore';
 import { useColorScheme } from '@/hooks/use-color-scheme';
 import { Colors } from '@/constants/theme';
+import ThemeToggle from '@/components/ui/ThemeToggle';
 
 export default function UnprotectedLayout() {
   const accessToken = useAuthStore((state) => state.accessToken);
@@ -29,7 +30,9 @@ export default function UnprotectedLayout() {
           style={{ backgroundColor: colors.surfaceTint }}
         />
       </View>
-
+      <View className='absolute right-5 top-5 z-40'>
+        <ThemeToggle />
+      </View>
       <Slot />
     </View>
   );

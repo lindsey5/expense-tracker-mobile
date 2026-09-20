@@ -30,7 +30,7 @@ export default function BudgetSummary({
   const percentage = Math.min(data?.percentage ?? 0, 100);
 
   return (
-    <Card variant='surfaceTint'>
+    <Card>
       <View className="flex-row items-center">
         <View
           className="h-11 w-11 items-center justify-center rounded-2xl"

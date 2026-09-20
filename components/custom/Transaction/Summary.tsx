@@ -37,7 +37,7 @@ export default function Summary({
   return (
     <View className="mt-1 flex-row gap-3">
       {/* Income */}
-      <Card className="flex-1" variant='surfaceTint'>
+      <Card className="flex-1">
         <Text
           className="mb-3 text-xs font-semibold"
           style={{ color: colors.icon }}
@@ -69,7 +69,7 @@ export default function Summary({
       </Card>
 
       {/* Expenses */}
-      <Card className="flex-1" variant='surfaceTint'>
+      <Card className="flex-1">
         <Text
           className="mb-3 text-xs font-semibold"
           style={{ color: colors.icon }}
