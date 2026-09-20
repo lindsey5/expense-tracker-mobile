@@ -32,6 +32,7 @@ export default function InputField({
 
   const isPassword = type === 'password';
   const isEmail = type === 'email';
+  const isNumber = type === 'number';
 
   const typeDefaults: Partial<TextInputProps> = isPassword
     ? {
@@ -48,10 +49,14 @@ export default function InputField({
           autoComplete: 'email',
           textContentType: 'emailAddress',
         }
-      : {
-          autoCapitalize: 'sentences',
-          autoCorrect: true,
-        };
+      : isNumber
+        ? {
+            keyboardType: 'numeric',
+          }
+        : {
+            autoCapitalize: 'sentences',
+            autoCorrect: true,
+          };
 
   return (
     <View>
@@ -63,14 +68,17 @@ export default function InputField({
         {label}
       </Text>
 
-      {/* Input */}
+      {/* Input Container */}
       <View
-        className="flex-row items-center rounded-xl border"
+        className="h-14 flex-row items-center rounded-xl border"
         style={{
           borderColor: error ? ERROR_COLOR : colors.border,
           backgroundColor: colors.input,
           shadowColor: '#000',
-          shadowOffset: { width: 0, height: 4 },
+          shadowOffset: {
+            width: 0,
+            height: 4,
+          },
           shadowOpacity: 0.04,
           shadowRadius: 8,
           elevation: 2,
@@ -81,10 +89,15 @@ export default function InputField({
           {...props}
           secureTextEntry={isPassword && !showPassword}
           placeholderTextColor={colors.placeholder}
-          className="h-full flex-1 pl-4 text-sm py-4"
+          className="h-full flex-1 pl-4 text-sm"
           style={[
-            { color: colors.text },
-            !isPassword && { paddingRight: 16 },
+            {
+              color: colors.text,
+              paddingVertical: 0,
+            },
+            !isPassword && {
+              paddingRight: 16,
+            },
           ]}
         />
 
@@ -94,12 +107,25 @@ export default function InputField({
             onPress={() => setShowPassword((prev) => !prev)}
             className="h-full w-12 items-center justify-center"
             activeOpacity={0.7}
-            hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}
+            hitSlop={{
+              top: 8,
+              bottom: 8,
+              left: 8,
+              right: 8,
+            }}
           >
             {showPassword ? (
-              <EyeOff size={20} color={colors.icon} strokeWidth={2} />
+              <EyeOff
+                size={20}
+                color={colors.icon}
+                strokeWidth={2}
+              />
             ) : (
-              <Eye size={20} color={colors.icon} strokeWidth={2} />
+              <Eye
+                size={20}
+                color={colors.icon}
+                strokeWidth={2}
+              />
             )}
           </TouchableOpacity>
         )}
@@ -107,7 +133,10 @@ export default function InputField({
 
       {/* Error */}
       {error && (
-        <Text className="mt-1 text-xs" style={{ color: ERROR_COLOR }}>
+        <Text
+          className="mt-1 text-xs"
+          style={{ color: ERROR_COLOR }}
+        >
           {error}
         </Text>
       )}

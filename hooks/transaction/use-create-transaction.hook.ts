@@ -6,7 +6,10 @@ import z from "zod";
 
 type CreateTransactionDto = z.infer<typeof schemas.CreateTransactionDto>;
 
-const createTransaction = (data: CreateTransactionDto) => api.post("/transaction", data);
+const createTransaction = (data: CreateTransactionDto) => {
+    console.log(data)
+    return api.post("/transaction", data);
+}
 
 export default function useCreateTransaction() {
     const { showToast } = useToastStore();

@@ -20,7 +20,7 @@ export const Colors = {
     input: '#FFFFFF',
     card: '#FFFFFF',
     placeholder: '#A1A1AA',
-    surfaceTint: '#F3E8FF',
+    surfaceTint: '#FFFFFF',
     panel: '#F8F7FF',
     soft: '#F4F4F5',
     softTint: '#F1E9FF',

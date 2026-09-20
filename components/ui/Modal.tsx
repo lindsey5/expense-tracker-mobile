@@ -71,7 +71,7 @@ function CustomModalContent({
       />
 
       <View
-        className="max-h-[90%] rounded-t-3xl px-5 pb-20 pt-5"
+        className="max-h-[90%] rounded-t-3xl"
         style={{ backgroundColor: colors.background }}
       >
         {children}
@@ -90,10 +90,8 @@ function CustomModalHeader({
   const colors = Colors[colorScheme];
 
   return (
-    <View className="mb-5 flex-row items-center justify-between">
-      <View className="flex-1">
-        {children}
-      </View>
+    <View className="flex-row items-center justify-between p-5">
+      <View className="flex-1">{children}</View>
 
       <TouchableOpacity
         onPress={handleClose}
@@ -131,12 +129,34 @@ function CustomModalBody({
 }) {
   return (
     <ScrollView
-      contentContainerClassName="gap-4"
+      className="px-5"
+      contentContainerClassName="gap-4 pb-5"
       showsVerticalScrollIndicator
       keyboardShouldPersistTaps="handled"
     >
       {children}
     </ScrollView>
+  );
+}
+
+function CustomModalFooter({
+  children,
+}: {
+  children: ReactNode;
+}) {
+  const colorScheme = useColorScheme() === 'dark' ? 'dark' : 'light';
+  const colors = Colors[colorScheme];
+
+  return (
+    <View
+      className="border-t px-5 py-8"
+      style={{
+        borderTopColor: colors.border,
+        backgroundColor: colors.background,
+      }}
+    >
+      {children}
+    </View>
   );
 }
 
@@ -160,5 +180,6 @@ export {
   CustomModalHeader,
   CustomModalTitle,
   CustomModalBody,
+  CustomModalFooter,
   CustomModalClose,
 };

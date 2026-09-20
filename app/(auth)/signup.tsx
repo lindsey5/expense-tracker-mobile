@@ -32,6 +32,7 @@ import useVerify from '@/hooks/auth/use-verify.hook';
 import useResendVerification from '@/hooks/auth/use-resend-verification-code.hook';
 import Error from '@/components/custom/Error';
 import useIsEmailExist from '@/hooks/user/use-user-lookup.hook';
+import Separator from '@/components/ui/Separator';
 
 const steps = ['Personal', 'Security', 'Verification'];
 
@@ -90,7 +91,7 @@ export default function Signup() {
 
     const result = await isEmailExistMutation.mutateAsync(watch('email'));
 
-    if(result.message) {
+    if(result.message !== "User not found.") {
         setError('email', { message: result.message });
         return;
    }    
@@ -146,137 +147,91 @@ export default function Signup() {
           }}
         >
           <View className="pt-16 pb-8">
-            <View
-              className="rounded-[30px] border p-6"
-              style={{
-                backgroundColor: colors.card,
-                borderColor: colors.border,
-                shadowColor: '#000',
-                shadowOffset: { width: 0, height: 16 },
-                shadowOpacity: 0.09,
-                shadowRadius: 22,
-                elevation: 6,
-              }}
-            >
-              <View className="mb-6 flex-row items-center justify-between">
-                <View className="h-14 w-14 items-center justify-center rounded-2xl" style={{ backgroundColor: colors.softTint }}>
-                  <PiggyBank size={26} color={colors.tint} strokeWidth={1.5} />
-                </View>
+            <Text className="text-[32px] font-bold tracking-tight" style={{ color: colors.text }}>
+              Create account
+            </Text>
 
-                <View className="rounded-full border px-3 py-1.5" style={{ backgroundColor: colors.soft, borderColor: colors.border }}>
-                  <Text className="text-[11px] font-semibold" style={{ color: colors.tint }}>
-                    New account
-                  </Text>
-                </View>
-              </View>
+            <Text className="mt-2 text-[15px]" style={{ color: colors.icon }}>
+              Sign up to get started with Gastador.
+            </Text>
 
-              <Text className="text-[32px] font-bold tracking-tight" style={{ color: colors.text }}>
-                Create account
-              </Text>
-
-              <Text className="mt-2 text-[15px]" style={{ color: colors.icon }}>
-                Sign up to get started with Expense Tracker.
-              </Text>
-
-              <View className="mt-6 flex-row gap-2">
-                {['Easy setup', 'Secure', 'Insights'].map((item) => (
-                  <View key={item} className="rounded-full border px-2.5 py-1.5" style={{ backgroundColor: colors.soft, borderColor: colors.border }}>
-                    <Text className="text-[10px] font-semibold uppercase" style={{ color: colors.tint }}>
-                      {item}
-                    </Text>
-                  </View>
-                ))}
-              </View>
-            </View>
+            <Separator className='my-4'/>
 
             <View className="mt-6">
               <Stepper steps={steps} currentStep={step} colors={colors} />
             </View>
 
-            <View
-              className="mt-6 rounded-[26px] border p-5"
-              style={{
-                backgroundColor: colors.card,
-                borderColor: colors.border,
-                shadowColor: '#000',
-                shadowOffset: { width: 0, height: 8 },
-                shadowOpacity: 0.06,
-                shadowRadius: 16,
-                elevation: 4,
-              }}
-            >
-              <Error />
+            <Error />
 
-              {step === 1 && (
-                <>
-                  <PersonalStep
-                    firstname={watch('firstname')}
-                    lastname={watch('lastname')}
-                    email={watch('email')}
-                    errors={errors}
-                    setValue={setValue}
-                  />
-
-                  <View className="mt-8">
-                    <Button title="Continue" onPress={handleNext} />
-                  </View>
-                </>
-              )}
-
-              {step === 2 && (
-                <>
-                  <SecurityStep
-                    password={watch('password')}
-                    confirmPassword={watch('confirmPassword')}
-                    errors={errors}
-                    setValue={setValue}
-                  />
-
-                  <View className="mt-8 flex-row gap-3">
-                    <View className="flex-1">
-                      <Button title="Back" variant="secondary" onPress={handleBack} />
-                    </View>
-
-                    <View className="flex-1">
-                      <Button
-                        title="Create account"
-                        disabled={signupMutation.isPending}
-                        onPress={handleSubmit(onSubmit)}
-                      />
-                    </View>
-                  </View>
-                </>
-              )}
-
-              {step === 3 && (
-                <VerificationStep
+            {step === 1 && (
+              <>
+                <PersonalStep
+                  firstname={watch('firstname')}
+                  lastname={watch('lastname')}
                   email={watch('email')}
-                  colors={colors}
-                  onVerify={handleVerify}
-                  onResend={handleResend}
-                  loading={verifyMutation.isPending}
-                  resendLoading={resendMutation.isPending}
-                  onBack={handleBack}
+                  errors={errors}
+                  setValue={setValue}
                 />
-              )}
-            </View>
 
-            {step !== 3 && (
-              <View className="mb-10 mt-8 flex-row justify-center">
-                <Text className="text-[13px]" style={{ color: colors.icon }}>
-                  Already have an account?{' '}
-                </Text>
+                <View className="mt-8">
+                  <Button title="Continue" onPress={handleNext} />
+                </View>
+              </>
+            )}
 
-                <Link href="/" asChild>
-                  <TouchableOpacity activeOpacity={0.6}>
-                    <Text className="text-[13px] font-semibold" style={{ color: colors.text }}>
-                      Login
-                    </Text>
-                  </TouchableOpacity>
-                </Link>
-              </View>
+            {step === 2 && (
+              <>
+                <SecurityStep
+                  password={watch('password')}
+                  confirmPassword={watch('confirmPassword')}
+                  errors={errors}
+                  setValue={setValue}
+                />
+
+                <View className="mt-8 flex-row gap-3">
+                  <View className="flex-1">
+                    <Button title="Back" variant="secondary" onPress={handleBack} />
+                  </View>
+
+                  <View className="flex-1">
+                    <Button
+                      title="Create account"
+                      disabled={signupMutation.isPending}
+                      onPress={handleSubmit(onSubmit)}
+                    />
+                  </View>
+                </View>
+              </>
+            )}
+
+            {step === 3 && (
+              <VerificationStep
+                email={watch('email')}
+                colors={colors}
+                onVerify={handleVerify}
+                onResend={handleResend}
+                loading={verifyMutation.isPending}
+                resendLoading={resendMutation.isPending}
+                onBack={handleBack}
+              />
             )}
           </View>
+
+          {step !== 3 && (
+            <View className="mb-10 mt-8 flex-row justify-center">
+              <Text className="text-[13px]" style={{ color: colors.icon }}>
+                Already have an account?{' '}
+              </Text>
+
+              <Link href="/" asChild>
+                <TouchableOpacity activeOpacity={0.6}>
+                  <Text className="text-[13px] font-semibold" style={{ color: colors.text }}>
+                    Login
+                  </Text>
+                </TouchableOpacity>
+              </Link>
+            </View>
+          )}
         </Animated.View>
       </ScrollView>
     </View>

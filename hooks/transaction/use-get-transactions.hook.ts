@@ -7,7 +7,7 @@ import z from "zod";
 import type { ZodiosQueryParamsByAlias } from "@zodios/core";
 import { ApiType } from "@/types/api.type";
 
-export type GetTransactionsParams = ZodiosQueryParamsByAlias<ApiType, "list_get_transactions">;
+export type GetTransactionsParams = ZodiosQueryParamsByAlias<ApiType, "list_transactions">;
 export type GetTransactionsResponse = PaginationResponse & z.infer<typeof schemas.GetTransactionsResponseDto> & {}
 
 const getTransactions = (params: GetTransactionsParams) => api.get('/transaction', { queries: params });
