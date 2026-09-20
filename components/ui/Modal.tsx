@@ -67,11 +67,11 @@ function CustomModalContent({
     <View className="flex-1 justify-end">
       <Pressable
         className="absolute inset-0"
-        style={{ backgroundColor: 'rgba(0,0,0,0.35)' }}
+        style={{ backgroundColor: 'rgba(0,0,0,0.80)' }}
       />
 
       <View
-        className="max-h-[90%] rounded-t-3xl"
+        className="max-h-[90%] min-h-[300px] rounded-t-3xl"
         style={{ backgroundColor: colors.background }}
       >
         {children}

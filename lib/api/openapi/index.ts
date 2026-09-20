@@ -147,7 +147,7 @@ const GetExpensesResponseDto = z
     hasPreviousMonth: z.boolean(),
   })
   .passthrough();
-const GetTransactionMonths = z
+const GetMonths = z
   .object({ month: z.number(), year: z.number(), monthName: z.string() })
   .passthrough();
 const CreateWalletDto = z
@@ -243,6 +243,51 @@ const BudgetResponseDto = z
     updatedAt: z.string().datetime({ offset: true }),
   })
   .passthrough();
+const CreateBudgetResponse = z
+  .object({ message: z.string(), budget: BudgetResponseDto })
+  .passthrough();
+const GetBudgetDto = z
+  .object({
+    id: z.string(),
+    userId: z.string(),
+    amount: z.number(),
+    spent: z.number(),
+    remaining: z.number(),
+    percentage: z.number(),
+    status: z.enum(["ON_TRACK", "WARNING", "EXCEEDED"]),
+    month: z.number(),
+    year: z.number(),
+    category: z.enum([
+      "FOOD",
+      "TRANSPORTATION",
+      "BILLS",
+      "SHOPPING",
+      "ENTERTAINMENT",
+      "HEALTHCARE",
+      "EDUCATION",
+      "TRAVEL",
+      "HOUSING",
+      "PERSONAL_CARE",
+      "SUBSCRIPTIONS",
+      "GROCERIES",
+      "GIFTS_DONATIONS",
+      "INSURANCE",
+      "SALARY",
+      "BUSINESS",
+      "FREELANCE",
+      "INVESTMENT",
+      "ALLOWANCE",
+      "GIFT",
+      "BONUS",
+      "OTHER",
+    ]),
+    createdAt: z.string().datetime({ offset: true }),
+    updatedAt: z.string().datetime({ offset: true }),
+  })
+  .passthrough();
+const GetBudgetsResponse = z
+  .object({ budgets: z.array(GetBudgetDto) })
+  .passthrough();
 const UpdateBudgetDto = z
   .object({
     category: z.enum([
@@ -275,6 +320,16 @@ const UpdateBudgetDto = z
   })
   .partial()
   .passthrough();
+const GetMonthlyBudgetResponse = z
+  .object({
+    month: z.number(),
+    year: z.number(),
+    totalBudget: z.number(),
+    spending: z.number(),
+    remaining: z.number(),
+    percentage: z.number(),
+  })
+  .passthrough();
 
 export const schemas = {
   UserLookupDto,
@@ -296,7 +351,7 @@ export const schemas = {
   GetTransactionsResponseDto,
   GetIncomesResponseDto,
   GetExpensesResponseDto,
-  GetTransactionMonths,
+  GetMonths,
   CreateWalletDto,
   CreateWalletResponseDto,
   GetWalletsResponseDto,
@@ -305,7 +360,11 @@ export const schemas = {
   UpdateWalletResponseDto,
   CreateBudgetDto,
   BudgetResponseDto,
+  CreateBudgetResponse,
+  GetBudgetDto,
+  GetBudgetsResponse,
   UpdateBudgetDto,
+  GetMonthlyBudgetResponse,
 };
 
 const endpoints = makeApi([
@@ -384,7 +443,7 @@ const endpoints = makeApi([
         schema: CreateBudgetDto,
       },
     ],
-    response: BudgetResponseDto,
+    response: CreateBudgetResponse,
   },
   {
     method: "get",
@@ -405,10 +464,10 @@ const endpoints = makeApi([
       {
         name: "status",
         type: "Query",
-        schema: z.union([z.literal(0), z.literal(1), z.literal(2)]).optional(),
+        schema: z.enum(["ON_TRACK", "WARNING", "EXCEEDED"]).optional(),
       },
     ],
-    response: z.void(),
+    response: GetBudgetsResponse,
   },
   {
     method: "patch",
@@ -442,6 +501,32 @@ const endpoints = makeApi([
       },
     ],
     response: z.void(),
+  },
+  {
+    method: "get",
+    path: "/budget/monthly-budget",
+    alias: "monthly_budget",
+    requestFormat: "json",
+    parameters: [
+      {
+        name: "month",
+        type: "Query",
+        schema: z.number().gte(1).lte(12).optional(),
+      },
+      {
+        name: "year",
+        type: "Query",
+        schema: z.number().gte(2000).optional(),
+      },
+    ],
+    response: GetMonthlyBudgetResponse,
+  },
+  {
+    method: "get",
+    path: "/budget/months",
+    alias: "budget_months",
+    requestFormat: "json",
+    response: z.array(GetMonths),
   },
   {
     method: "post",
@@ -569,14 +654,14 @@ const endpoints = makeApi([
     path: "/transaction/months",
     alias: "list_transaction_months",
     requestFormat: "json",
-    response: z.array(GetTransactionMonths),
+    response: z.array(GetMonths),
   },
   {
     method: "get",
     path: "/transaction/recent",
     alias: "list_transaction_recent",
     requestFormat: "json",
-    response: z.void(),
+    response: z.array(TransactionResponseDto),
   },
   {
     method: "post",
