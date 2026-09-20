@@ -57,7 +57,7 @@ export default function UserSidebar() {
 
     return (
         <>
-        <View className="absolute right-5 top-14 z-40 flex-row gap-2">
+        <View className="absolute right-5 top-5 z-40 flex-row gap-2">
             <ThemeToggle />
             <TouchableOpacity
                 accessibilityLabel="Open navigation menu"

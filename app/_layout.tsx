@@ -14,6 +14,10 @@ import {
   QueryClient,
   QueryClientProvider,
 } from '@tanstack/react-query';
+import {
+  SafeAreaProvider,
+  SafeAreaView,
+} from 'react-native-safe-area-context';
 
 import Toast from '@/components/Toast';
 import { Colors } from '@/constants/theme';
@@ -23,41 +27,60 @@ const queryClient = new QueryClient();
 
 export default function RootLayout() {
   const theme = useThemeStore((state) => state.theme);
-  const deviceTheme = useColorScheme() === 'dark' ? 'dark' : 'light';
-  const activeTheme = theme === 'system' ? deviceTheme : theme;
+
+  const deviceTheme =
+    useColorScheme() === 'dark' ? 'dark' : 'light';
+
+  const activeTheme =
+    theme === 'system' ? deviceTheme : theme;
+
   const colors = Colors[activeTheme];
 
   useEffect(() => {
     if (Platform.OS !== 'web') {
-      Appearance.setColorScheme(theme === 'system' ? 'unspecified' : theme);
+      Appearance.setColorScheme(
+        theme === 'system' ? 'unspecified' : theme,
+      );
     }
   }, [theme]);
 
   useEffect(() => {
     if (Platform.OS === 'android') {
-      NavigationBar.setVisibilityAsync('hidden');
+      void NavigationBar.setVisibilityAsync('hidden');
     }
 
     return () => {
       if (Platform.OS === 'android') {
-        NavigationBar.setVisibilityAsync('visible');
+        void NavigationBar.setVisibilityAsync('visible');
       }
     };
   }, []);
 
   return (
-    <QueryClientProvider client={queryClient}>
-      <Toast />
+    <SafeAreaProvider>
+      <QueryClientProvider client={queryClient}>
+        <SafeAreaView
+          className="flex-1 py-3"
+          style={{
+            backgroundColor: colors.background,
+          }}
+          edges={['top', 'left', 'right']}
+        >
+          <KeyboardAvoidingView
+            behavior={
+              Platform.OS === 'ios' ? 'padding' : undefined
+            }
+            className="flex-1"
+            style={{
+              backgroundColor: colors.background,
+            }}
+          >
+            <Slot />
 
-      <KeyboardAvoidingView
-        behavior={Platform.OS === 'ios' ? 'padding' : undefined}
-        className="flex-1"
-        style={{
-          backgroundColor: colors.background,
-        }}
-      >
-        <Slot />
-      </KeyboardAvoidingView>
-    </QueryClientProvider>
+            <Toast />
+          </KeyboardAvoidingView>
+        </SafeAreaView>
+      </QueryClientProvider>
+    </SafeAreaProvider>
   );
 }

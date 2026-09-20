@@ -19,12 +19,16 @@ type BalanceStatProps = {
   icon: React.ReactNode;
 };
 
-function BalanceStat({ label, amount, icon }: BalanceStatProps) {
+function BalanceStat({
+  label,
+  amount,
+  icon,
+}: BalanceStatProps) {
   const colorScheme = useColorScheme() === 'dark' ? 'dark' : 'light';
   const colors = Colors[colorScheme];
 
   return (
-    <Card variant='surfaceTint'>
+    <Card variant="surfaceTint" className="flex-1">
       <View className="flex-row items-center">
         {icon}
 
@@ -46,34 +50,60 @@ function BalanceStat({ label, amount, icon }: BalanceStatProps) {
   );
 }
 
+function BalanceStatSkeleton() {
+  return (
+    <Card variant="surfaceTint" className="flex-1">
+      <View className="flex-row items-center">
+        <Skeleton
+          width={26}
+          height={26}
+          className="rounded-full"
+        />
+
+        <Skeleton
+          width={52}
+          height={12}
+          className="ml-2 rounded-full"
+        />
+      </View>
+
+      <Skeleton
+        width={96}
+        height={20}
+        className="mt-2 rounded-md"
+      />
+    </Card>
+  );
+}
+
 function BalanceSkeleton() {
   return (
     <>
-      <View className="mb-4 flex-row items-center justify-between">
-        <Skeleton width={82} height={14} />
-        <Skeleton width={62} height={22} className="rounded-full" />
-      </View>
+      <Card variant="surfaceTint">
+        <View className="mb-4 flex-row items-center justify-between">
+          <Skeleton
+            width={82}
+            height={14}
+            className="rounded-full"
+          />
 
-      <Skeleton width={190} height={40} className="rounded-lg" />
+          <Skeleton
+            width={62}
+            height={22}
+            className="rounded-full"
+          />
+        </View>
+
+        <Skeleton
+          width={190}
+          height={40}
+          className="rounded-lg"
+        />
+      </Card>
 
       <View className="mt-5 flex-row gap-3">
-        <View className="flex-1 rounded-2xl p-3">
-          <View className="flex-row items-center">
-            <Skeleton width={26} height={26} className="rounded-full" />
-            <Skeleton width={45} height={12} className="ml-2" />
-          </View>
-
-          <Skeleton width={90} height={20} className="mt-2" />
-        </View>
-
-        <View className="flex-1 rounded-2xl p-3">
-          <View className="flex-row items-center">
-            <Skeleton width={26} height={26} className="rounded-full" />
-            <Skeleton width={55} height={12} className="ml-2" />
-          </View>
-
-          <Skeleton width={90} height={20} className="mt-2" />
-        </View>
+        <BalanceStatSkeleton />
+        <BalanceStatSkeleton />
       </View>
     </>
   );
@@ -91,68 +121,73 @@ export default function BalanceCard({
   const month = new Date().getMonth() + 1;
   const year = new Date().getFullYear();
 
+  if (isLoading) {
+    return <BalanceSkeleton />;
+  }
+
   return (
     <>
-      {isLoading ? (
-        <BalanceSkeleton />
-      ) : (
-        <>
-          <Card variant='surfaceTint'>
-            <View className="mb-4 flex-row items-center justify-between">
-              <Text
-                className="text-sm font-medium"
-                style={{ color: colors.icon }}
-              >
-                Total Balance
-              </Text>
+      <Card variant="surfaceTint">
+        <View className="mb-4 flex-row items-center justify-between">
+          <Text
+            className="text-sm font-medium"
+            style={{ color: colors.icon }}
+          >
+            Total Balance
+          </Text>
 
-              <View
-                className="rounded-full border px-2.5 py-1"
-                style={{
-                  borderColor: colors.border,
-                  backgroundColor: colors.soft,
-                }}
-              >
-                <Text
-                  className="text-[10px] font-semibold"
-                  style={{ color: colors.tint }}
-                >
-                  {MONTH_SHORT_MAP[month as keyof typeof MONTH_SHORT_MAP]} {year}
-                </Text>
-              </View>
-            </View>
-
+          <View
+            className="rounded-full border px-2.5 py-1"
+            style={{
+              borderColor: colors.border,
+              backgroundColor: colors.soft,
+            }}
+          >
             <Text
-              className="text-[34px] font-bold tracking-tight"
-              style={{ color: colors.text }}
+              className="text-[10px] font-semibold"
+              style={{ color: colors.tint }}
             >
-              {formatCurrency(totalBalance)}
+              {
+                MONTH_SHORT_MAP[
+                  month as keyof typeof MONTH_SHORT_MAP
+                ]
+              }{' '}
+              {year}
             </Text>
-          </Card>
-
-          <View className="mt-5 flex-row gap-3">
-            <BalanceStat
-              label="Income"
-              amount={incomes}
-              icon={
-                <View className="rounded-full bg-emerald-100 p-1.5">
-                  <ArrowDownLeft size={12} color="#16A34A" />
-                </View>
-              }
-            />
-
-            <BalanceStat
-              label="Expenses"
-              amount={expenses}
-              icon={
-                <View className="rounded-full bg-rose-100 p-1.5">
-                  <ArrowUpRight size={12} color="#DC2626" />
-                </View>
-              }
-            />
           </View>
-        </>
-      )}
+        </View>
+
+        <Text
+          className="text-[34px] font-bold tracking-tight"
+          style={{ color: colors.text }}
+          numberOfLines={1}
+          adjustsFontSizeToFit
+        >
+          {formatCurrency(totalBalance)}
+        </Text>
+      </Card>
+
+      <View className="mt-5 flex-row gap-3">
+        <BalanceStat
+          label="Income"
+          amount={incomes}
+          icon={
+            <View className="rounded-full bg-emerald-100 p-1.5">
+              <ArrowDownLeft size={12} color="#16A34A" />
+            </View>
+          }
+        />
+
+        <BalanceStat
+          label="Expenses"
+          amount={expenses}
+          icon={
+            <View className="rounded-full bg-rose-100 p-1.5">
+              <ArrowUpRight size={12} color="#DC2626" />
+            </View>
+          }
+        />
+      </View>
     </>
   );
 }

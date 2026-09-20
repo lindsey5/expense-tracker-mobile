@@ -61,7 +61,7 @@ export default function Sidebar({
       </Animated.View>
 
       <Animated.View
-        className="absolute right-0 h-full w-[72vw] px-5 pt-14"
+        className="absolute right-0 h-full w-[72vw] px-5 pt-5"
         style={{
           backgroundColor: colors.card,
           transform: [{ translateX }],

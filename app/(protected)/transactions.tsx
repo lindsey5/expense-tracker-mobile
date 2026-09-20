@@ -68,8 +68,8 @@ export default function Transactions() {
 
   const isFirstRender = useRef(true);
 
-  const setActiveType = (value: string) => {
-    setSelectedType(value);
+  const setActiveType = (value: string | number) => {
+    setSelectedType(value as string);
 
     pushQuery({
       type:
@@ -205,12 +205,13 @@ export default function Transactions() {
               className="text-xs font-semibold"
               style={{ color: colors.tint }}
             >
-              {query.year ?? new Date().getFullYear()}-
               {
                 MONTH_SHORT_MAP[
                   (query.month ?? new Date().getMonth() + 1) as keyof typeof MONTH_SHORT_MAP
                 ]
               }
+              {" "}
+              {query.year ?? new Date().getFullYear()}
             </Text>
           </TouchableOpacity>
         </View>
@@ -257,6 +258,7 @@ export default function Transactions() {
           search={search}
           setSearch={setSearch}
           className="mt-0"
+          placeholder='Search transactions'
         />
 
         <View className="mt-5">

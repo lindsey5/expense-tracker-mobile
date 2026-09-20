@@ -1,5 +1,5 @@
 import { Colors } from "@/constants/theme";
-import useGetMonths from "@/hooks/transaction/use-get-months.hook";
+import useGetMonths from "@/hooks/use-get-months.hook";
 import { useQuery } from "@/hooks/useQuery";
 import { CalendarDays, Check, ChevronDown } from "lucide-react-native";
 import { useColorScheme, Pressable, View, Text } from "react-native";
@@ -12,7 +12,11 @@ import {
 } from "../ui/Modal";
 import { useState } from "react";
 
-export default function DateFilter() {
+export default function DateFilter({
+    url
+} : {
+    url?: "/transaction/months" | "/budget/months"
+}) {
     const colorScheme = useColorScheme() === "dark" ? "dark" : "light";
     const colors = Colors[colorScheme];
 
@@ -23,7 +27,7 @@ export default function DateFilter() {
     }>();
 
     const [visible, setVisible] = useState(false);
-    const { data } = useGetMonths();
+    const { data } = useGetMonths(url);
 
     const now = new Date();
     const currentMonth = now.getMonth() + 1;

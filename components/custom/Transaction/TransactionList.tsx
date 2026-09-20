@@ -92,7 +92,7 @@ export default function TransactionList({ transactions, page, totalPages }: Tran
                   <Text
                     className="text-sm font-bold"
                     style={{
-                      color: isIncome ? '#16A34A' : colors.text,
+                      color: isIncome ? '#16A34A' : "#DC2626",
                     }}
                   >
                     {isIncome ? '+' : '-'}
