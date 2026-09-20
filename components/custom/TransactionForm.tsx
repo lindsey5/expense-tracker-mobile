@@ -3,7 +3,7 @@ import Select from "@/components/ui/Select";
 import DateInput from "@/components/ui/DateInput";
 import WalletSelect from "./WalletSelect";
 import Button from "@/components/ui/Button";
-import { CustomModal, CustomModalBody, CustomModalContent, CustomModalHeader, CustomModalTitle } from "../ui/Modal";
+import { CustomModal, CustomModalBody, CustomModalContent, CustomModalFooter, CustomModalHeader, CustomModalTitle } from "../ui/Modal";
 import Error from "./Error";
 
 import { View, TouchableOpacity, useColorScheme, Text, ActivityIndicator } from "react-native";
@@ -181,18 +181,17 @@ export default function TransactionForm({
                         value={watch('walletId')}
                         error={errors.walletId?.message}
                     />
-
+                </CustomModalBody>
+                <CustomModalFooter>
                     {createTransactionMutation.isPending ? (
                         <ActivityIndicator color={colors.text}/>
                     ) : (
                         <Button 
-                            className="mt-5"
                             title="Create Transaction"
                             onPress={handleSubmit(onSubmit)}
                         />
                     )}
-                    
-                </CustomModalBody>
+                </CustomModalFooter>
             </CustomModalContent>
         </CustomModal>
     )

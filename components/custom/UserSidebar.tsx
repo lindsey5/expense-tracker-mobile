@@ -83,7 +83,7 @@ export default function UserSidebar() {
             onClose={() => setSidebarOpen(false)}
             visible={sidebarOpen}
             logo={<Wallet size={26} color={colors.text} strokeWidth={1.5} />}
-            title="Expense Tracker"
+            title="Gastador"
         />
         </>
     );

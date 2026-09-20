@@ -1,8 +1,7 @@
 import Card from '@/components/ui/Card';
 import { Colors } from '@/constants/theme';
 import { formatCurrency } from '@/utils/utils';
-import { ArrowDownLeft, ArrowUpRight } from 'lucide-react-native';
-import { View, Text, useColorScheme } from 'react-native';
+import { Text, useColorScheme, View } from 'react-native';
 
 type SummaryProps = {
   totalIncome: number;
@@ -28,7 +27,7 @@ export default function Summary({
 
   if (isLoading) {
     return (
-      <View className="mt-1 gap-3">
+      <View className="mt-1 flex-row gap-3">
         <SummarySkeleton />
         <SummarySkeleton />
       </View>
@@ -36,24 +35,21 @@ export default function Summary({
   }
 
   return (
-    <View className="mt-1 gap-3">
-      <Card className="rounded-[24px] border p-4">
-        <View className="mb-4 flex-row items-center">
-          <View className="h-10 w-10 items-center justify-center rounded-2xl bg-emerald-100">
-            <ArrowDownLeft size={16} color="#16A34A" />
-          </View>
-
-          <Text
-            className="ml-3 text-xs font-semibold"
-            style={{ color: colors.icon }}
-          >
-            Income
-          </Text>
-        </View>
+    <View className="mt-1 flex-row gap-3">
+      {/* Income */}
+      <Card className="flex-1" variant='surfaceTint'>
+        <Text
+          className="mb-3 text-xs font-semibold"
+          style={{ color: colors.icon }}
+        >
+          Income
+        </Text>
 
         <Text
-          className="text-[26px] font-bold tracking-tight"
+          className="text-xl font-bold tracking-tight"
           style={{ color: colors.text }}
+          numberOfLines={1}
+          adjustsFontSizeToFit
         >
           {formatCurrency(totalIncome)}
         </Text>
@@ -64,6 +60,7 @@ export default function Summary({
             style={{
               color: incomeChange >= 0 ? '#16A34A' : '#DC2626',
             }}
+            numberOfLines={1}
           >
             {incomeChange >= 0 ? '+' : ''}
             {incomeChange}% vs last month
@@ -71,23 +68,20 @@ export default function Summary({
         )}
       </Card>
 
-      <Card className="rounded-[24px] border p-4">
-        <View className="mb-4 flex-row items-center">
-          <View className="h-10 w-10 items-center justify-center rounded-2xl bg-rose-100">
-            <ArrowUpRight size={16} color="#DC2626" />
-          </View>
-
-          <Text
-            className="ml-3 text-xs font-semibold"
-            style={{ color: colors.icon }}
-          >
-            Expenses
-          </Text>
-        </View>
+      {/* Expenses */}
+      <Card className="flex-1" variant='surfaceTint'>
+        <Text
+          className="mb-3 text-xs font-semibold"
+          style={{ color: colors.icon }}
+        >
+          Expenses
+        </Text>
 
         <Text
-          className="text-[26px] font-bold tracking-tight"
+          className="text-xl font-bold tracking-tight"
           style={{ color: colors.text }}
+          numberOfLines={1}
+          adjustsFontSizeToFit
         >
           {formatCurrency(totalExpenses)}
         </Text>
@@ -98,6 +92,7 @@ export default function Summary({
             style={{
               color: expenseChange <= 0 ? '#16A34A' : '#DC2626',
             }}
+            numberOfLines={1}
           >
             {expenseChange >= 0 ? '+' : ''}
             {expenseChange}% vs last month
@@ -113,26 +108,19 @@ function SummarySkeleton() {
   const colors = Colors[colorScheme];
 
   return (
-    <Card className="rounded-[24px] border p-4">
-      <View className="mb-4 flex-row items-center">
-        <View
-          className="h-10 w-10 rounded-2xl"
-          style={{ backgroundColor: colors.border }}
-        />
-
-        <View
-          className="ml-3 h-3 w-12 rounded-full"
-          style={{ backgroundColor: colors.border }}
-        />
-      </View>
-
+    <Card className="flex-1 rounded-[24px] border p-4">
       <View
-        className="h-8 w-28 rounded-lg"
+        className="mb-3 h-3 w-14 rounded-full"
         style={{ backgroundColor: colors.border }}
       />
 
       <View
-        className="mt-3 h-3 w-24 rounded-full"
+        className="h-8 w-28 max-w-full rounded-lg"
+        style={{ backgroundColor: colors.border }}
+      />
+
+      <View
+        className="mt-3 h-3 w-24 max-w-full rounded-full"
         style={{ backgroundColor: colors.border }}
       />
     </Card>

@@ -65,7 +65,7 @@ const CreateTransactionDto = z
     ]),
     amount: z.number(),
     title: z.string(),
-    date: z.string().datetime({ offset: true }),
+    date: z.string(),
   })
   .passthrough();
 const WalletDto = z
@@ -411,20 +411,6 @@ const endpoints = makeApi([
     response: z.void(),
   },
   {
-    method: "get",
-    path: "/budget/:id",
-    alias: "BudgetController_findOne",
-    requestFormat: "json",
-    parameters: [
-      {
-        name: "id",
-        type: "Path",
-        schema: z.string(),
-      },
-    ],
-    response: z.void(),
-  },
-  {
     method: "patch",
     path: "/budget/:id",
     alias: "update_budget",
@@ -584,6 +570,13 @@ const endpoints = makeApi([
     alias: "list_transaction_months",
     requestFormat: "json",
     response: z.array(GetTransactionMonths),
+  },
+  {
+    method: "get",
+    path: "/transaction/recent",
+    alias: "list_transaction_recent",
+    requestFormat: "json",
+    response: z.void(),
   },
   {
     method: "post",

@@ -24,10 +24,7 @@ function BalanceStat({ label, amount, icon }: BalanceStatProps) {
   const colors = Colors[colorScheme];
 
   return (
-    <View
-      className="flex-1 rounded-2xl p-3"
-      style={{ backgroundColor: colors.soft }}
-    >
+    <Card variant='surfaceTint'>
       <View className="flex-row items-center">
         {icon}
 
@@ -45,7 +42,7 @@ function BalanceStat({ label, amount, icon }: BalanceStatProps) {
       >
         {formatCurrency(amount)}
       </Text>
-    </View>
+    </Card>
   );
 }
 
@@ -95,41 +92,43 @@ export default function BalanceCard({
   const year = new Date().getFullYear();
 
   return (
-    <Card>
+    <>
       {isLoading ? (
         <BalanceSkeleton />
       ) : (
         <>
-          <View className="mb-4 flex-row items-center justify-between">
-            <Text
-              className="text-sm font-medium"
-              style={{ color: colors.icon }}
-            >
-              Total Balance
-            </Text>
-
-            <View
-              className="rounded-full border px-2.5 py-1"
-              style={{
-                borderColor: colors.border,
-                backgroundColor: colors.soft,
-              }}
-            >
+          <Card variant='surfaceTint'>
+            <View className="mb-4 flex-row items-center justify-between">
               <Text
-                className="text-[10px] font-semibold"
-                style={{ color: colors.tint }}
+                className="text-sm font-medium"
+                style={{ color: colors.icon }}
               >
-                {MONTH_SHORT_MAP[month as keyof typeof MONTH_SHORT_MAP]} {year}
+                Total Balance
               </Text>
-            </View>
-          </View>
 
-          <Text
-            className="text-[34px] font-bold tracking-tight"
-            style={{ color: colors.text }}
-          >
-            {formatCurrency(totalBalance)}
-          </Text>
+              <View
+                className="rounded-full border px-2.5 py-1"
+                style={{
+                  borderColor: colors.border,
+                  backgroundColor: colors.soft,
+                }}
+              >
+                <Text
+                  className="text-[10px] font-semibold"
+                  style={{ color: colors.tint }}
+                >
+                  {MONTH_SHORT_MAP[month as keyof typeof MONTH_SHORT_MAP]} {year}
+                </Text>
+              </View>
+            </View>
+
+            <Text
+              className="text-[34px] font-bold tracking-tight"
+              style={{ color: colors.text }}
+            >
+              {formatCurrency(totalBalance)}
+            </Text>
+          </Card>
 
           <View className="mt-5 flex-row gap-3">
             <BalanceStat
@@ -154,6 +153,6 @@ export default function BalanceCard({
           </View>
         </>
       )}
-    </Card>
+    </>
   );
 }
