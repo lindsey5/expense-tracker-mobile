@@ -74,9 +74,7 @@ export default function Sidebar({
       >
         <View className="mb-8 flex-row items-center justify-between">
           <View className="flex-row items-center gap-3">
-            <View className="h-11 w-11 items-center justify-center rounded-2xl" style={{ backgroundColor: colors.softTint }}>
-              {logo}
-            </View>
+            {logo}
             <Text className="text-xl font-bold" style={{ color: colors.text }}>
               {title}
             </Text>

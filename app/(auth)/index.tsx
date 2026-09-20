@@ -1,6 +1,5 @@
 import { useEffect, useRef } from 'react';
-import { Animated, KeyboardAvoidingView, Platform, Text, TouchableOpacity, useColorScheme, View } from 'react-native';
-import { PiggyBank } from 'lucide-react-native';
+import { Animated, Image, ScrollView, Text, TouchableOpacity, useColorScheme, View } from 'react-native';
 import Button from '@/components/ui/Button';
 import InputField from '@/components/ui/InputField';
 import { LoginFormData, loginSchema } from '@/schemas/auth.schema';
@@ -44,42 +43,42 @@ export default function Login() {
 
   return (
     <View className="flex-1" style={{ backgroundColor: colors.background }}>
-      <Animated.View
-        className="flex-1 px-6"
-        style={{
-          opacity: contentOpacity,
-          transform: [{ translateY: contentTranslate }],
+      <ScrollView
+        className="flex-1"
+        contentContainerStyle={{
+          flexGrow: 1,
+          paddingHorizontal: 24,
+          paddingBottom: 32,
         }}
+        keyboardShouldPersistTaps="handled"
+        showsVerticalScrollIndicator={false}
       >
-        <View className="pt-16">
-          <View className="mb-8 flex-row items-center justify-between">
-            <View className="h-14 w-14 items-center justify-center rounded-2xl" style={{ backgroundColor: colors.softTint }}>
-              <PiggyBank size={26} color={colors.tint} strokeWidth={1.5} />
-            </View>
+        <Animated.View
+          className="flex-1"
+          style={{
+            opacity: contentOpacity,
+            transform: [{ translateY: contentTranslate }],
+          }}
+        >
+          <View className="pt-10 text-center">
+            <Image
+              source={require('@/assets/logo.png')}
+              resizeMode="contain"
+              style={{ width: '100%', maxWidth: 300, height: 200 }}
+            />
 
-            <View className="rounded-full border px-3 py-1.5" style={{ backgroundColor: colors.soft, borderColor: colors.border }}>
-              <Text className="text-[11px] font-semibold" style={{ color: colors.tint }}>
-                Expense Tracker
-              </Text>
-            </View>
-          </View>
-
-          <Text className="text-[32px] font-bold tracking-tight" style={{ color: colors.text }}>
-            Welcome back
-          </Text>
-
-          <Text className="mt-2 text-[15px]" style={{ color: colors.icon }}>
-            Sign in to continue to your finance workspace.
-          </Text>
-            <View className="mt-6 flex-row gap-2">
-              {['Secure', 'Fast', 'Smart'].map((item) => (
-                <View key={item} className="rounded-full border px-2.5 py-1.5" style={{ backgroundColor: colors.soft, borderColor: colors.border }}>
-                  <Text className="text-[10px] font-semibold uppercase" style={{ color: colors.tint }}>
-                    {item}
-                  </Text>
-                </View>
-              ))}
-            </View>
+            <Text
+              className="mt-6 text-[32px] font-bold tracking-tight"
+              style={{ color: colors.text }}
+            >
+              Sign In
+            </Text>
+            <Text
+              className="mt-2 text-[15px]"
+              style={{ color: colors.icon }}
+            >
+              Take control of your spending, one peso at a time.
+            </Text>
           </View>
 
           <Separator className='my-6' />
@@ -124,9 +123,9 @@ export default function Login() {
 
           <View className="mt-8 flex-row justify-center">
             <Text className="text-[13px]" style={{ color: colors.icon }}>
-              Don't have an account?{' '}
+              Don&apos;t have an account?{' '}
             </Text>
-            <Link href="/signup" asChild>
+            <Link href="/signup" asChild disabled={loginMutation.isPending}>
               <TouchableOpacity activeOpacity={0.6}>
                 <Text className="text-[13px] font-semibold" style={{ color: colors.text }}>
                   Sign up
@@ -134,7 +133,8 @@ export default function Login() {
               </TouchableOpacity>
             </Link>
           </View>
-      </Animated.View>
+        </Animated.View>
+      </ScrollView>
     </View>
   );
 }

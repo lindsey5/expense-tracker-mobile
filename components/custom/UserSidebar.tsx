@@ -5,7 +5,7 @@ import { Colors } from '@/constants/theme';
 import Sidebar from '../ui/Sidebar';
 import ThemeToggle from '../ui/ThemeToggle';
 import { useMemo, useState } from 'react';
-import { TouchableOpacity, View } from 'react-native';
+import { Image, TouchableOpacity, View } from 'react-native';
 import { useAuthStore } from '@/lib/store/authStore';
 
 export default function UserSidebar() {
@@ -82,7 +82,13 @@ export default function UserSidebar() {
             items={sidebarItems}
             onClose={() => setSidebarOpen(false)}
             visible={sidebarOpen}
-            logo={<Wallet size={26} color={colors.text} strokeWidth={1.5} />}
+            logo={
+                <Image
+                    source={require('@/assets/logo.png')}
+                    resizeMode="contain"
+                    style={{ width: 30, height: 30 }}
+                />
+            }
             title="Gastador"
         />
         </>

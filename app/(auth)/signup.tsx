@@ -1,14 +1,12 @@
 import { useEffect, useRef, useState } from 'react';
 import {
   Animated,
-  KeyboardAvoidingView,
-  Platform,
+  Image,
   ScrollView,
   Text,
   TouchableOpacity,
   View,
 } from 'react-native';
-import { PiggyBank } from 'lucide-react-native';
 import { Link } from 'expo-router';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
@@ -147,7 +145,15 @@ export default function Signup() {
           }}
         >
           <View className="pt-16 pb-8">
-            <Text className="text-[32px] font-bold tracking-tight" style={{ color: colors.text }}>
+            <View className="items-center">
+              <Image
+                source={require('@/assets/logo.png')}
+                resizeMode="contain"
+                style={{ width: '100%', maxWidth: 320, height: 180 }}
+              />
+            </View>
+
+            <Text className="mt-4 text-[32px] font-bold tracking-tight" style={{ color: colors.text }}>
               Create account
             </Text>
 
