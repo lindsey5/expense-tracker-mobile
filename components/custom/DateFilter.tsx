@@ -7,10 +7,12 @@ import {
     CustomModal,
     CustomModalBody,
     CustomModalContent,
+    CustomModalFooter,
     CustomModalHeader,
     CustomModalTitle,
 } from "../ui/Modal";
 import { useState } from "react";
+import Button from "../ui/Button";
 
 export default function DateFilter({
     url
@@ -107,7 +109,7 @@ export default function DateFilter({
                         className="flex-row items-center justify-between rounded-2xl border px-4 py-4"
                         style={{
                             backgroundColor: selected
-                            ? colors.tint
+                            ? colors.softTint
                             : colors.card,
                             borderColor: selected
                             ? colors.tint
