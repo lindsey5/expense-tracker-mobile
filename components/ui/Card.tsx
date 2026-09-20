@@ -6,13 +6,11 @@ import { useColorScheme, View } from "react-native";
 type CardProps = {
     children: ReactNode;
     className?: string;
-    variant?: "default" | "surfaceTint";
 };
 
 export default function Card({
     className,
     children,
-    variant = "default",
 }: CardProps) {
     const colorScheme = useColorScheme() === "dark" ? "dark" : "light";
     const colors = Colors[colorScheme];
@@ -24,10 +22,7 @@ export default function Card({
                 className
             )}
             style={{
-                backgroundColor:
-                    variant === "surfaceTint"
-                        ? colors.surfaceTint
-                        : colors.card,
+                backgroundColor: colors.card,
                 borderWidth: 1,
                 borderColor: colors.border,
             }}

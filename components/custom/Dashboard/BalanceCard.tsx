@@ -28,7 +28,7 @@ function BalanceStat({
   const colors = Colors[colorScheme];
 
   return (
-    <Card variant="surfaceTint" className="flex-1">
+    <Card className="flex-1">
       <View className="flex-row items-center">
         {icon}
 
@@ -52,7 +52,7 @@ function BalanceStat({
 
 function BalanceStatSkeleton() {
   return (
-    <Card variant="surfaceTint" className="flex-1">
+    <Card className="flex-1">
       <View className="flex-row items-center">
         <Skeleton
           width={26}
@@ -79,7 +79,7 @@ function BalanceStatSkeleton() {
 function BalanceSkeleton() {
   return (
     <>
-      <Card variant="surfaceTint">
+      <Card>
         <View className="mb-4 flex-row items-center justify-between">
           <Skeleton
             width={82}
@@ -127,7 +127,7 @@ export default function BalanceCard({
 
   return (
     <>
-      <Card variant="surfaceTint">
+      <Card>
         <View className="mb-4 flex-row items-center justify-between">
           <Text
             className="text-sm font-medium"
