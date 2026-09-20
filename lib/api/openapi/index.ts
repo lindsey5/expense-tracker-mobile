@@ -65,7 +65,7 @@ const CreateTransactionDto = z
     ]),
     amount: z.number(),
     title: z.string(),
-    date: z.string(),
+    date: z.string().datetime({ offset: true }),
   })
   .passthrough();
 const WalletDto = z
@@ -177,6 +177,104 @@ const UpdateWalletDto = z
 const UpdateWalletResponseDto = z
   .object({ wallet: WalletDto, message: z.string() })
   .passthrough();
+const CreateBudgetDto = z
+  .object({
+    category: z.enum([
+      "FOOD",
+      "TRANSPORTATION",
+      "BILLS",
+      "SHOPPING",
+      "ENTERTAINMENT",
+      "HEALTHCARE",
+      "EDUCATION",
+      "TRAVEL",
+      "HOUSING",
+      "PERSONAL_CARE",
+      "SUBSCRIPTIONS",
+      "GROCERIES",
+      "GIFTS_DONATIONS",
+      "INSURANCE",
+      "SALARY",
+      "BUSINESS",
+      "FREELANCE",
+      "INVESTMENT",
+      "ALLOWANCE",
+      "GIFT",
+      "BONUS",
+      "OTHER",
+    ]),
+    amount: z.number(),
+    month: z.number().gte(1).lte(12),
+    year: z.number().gte(2000),
+  })
+  .passthrough();
+const BudgetResponseDto = z
+  .object({
+    id: z.string(),
+    userId: z.string(),
+    category: z.enum([
+      "FOOD",
+      "TRANSPORTATION",
+      "BILLS",
+      "SHOPPING",
+      "ENTERTAINMENT",
+      "HEALTHCARE",
+      "EDUCATION",
+      "TRAVEL",
+      "HOUSING",
+      "PERSONAL_CARE",
+      "SUBSCRIPTIONS",
+      "GROCERIES",
+      "GIFTS_DONATIONS",
+      "INSURANCE",
+      "SALARY",
+      "BUSINESS",
+      "FREELANCE",
+      "INVESTMENT",
+      "ALLOWANCE",
+      "GIFT",
+      "BONUS",
+      "OTHER",
+    ]),
+    amount: z.number(),
+    month: z.number(),
+    year: z.number(),
+    createdAt: z.string().datetime({ offset: true }),
+    updatedAt: z.string().datetime({ offset: true }),
+  })
+  .passthrough();
+const UpdateBudgetDto = z
+  .object({
+    category: z.enum([
+      "FOOD",
+      "TRANSPORTATION",
+      "BILLS",
+      "SHOPPING",
+      "ENTERTAINMENT",
+      "HEALTHCARE",
+      "EDUCATION",
+      "TRAVEL",
+      "HOUSING",
+      "PERSONAL_CARE",
+      "SUBSCRIPTIONS",
+      "GROCERIES",
+      "GIFTS_DONATIONS",
+      "INSURANCE",
+      "SALARY",
+      "BUSINESS",
+      "FREELANCE",
+      "INVESTMENT",
+      "ALLOWANCE",
+      "GIFT",
+      "BONUS",
+      "OTHER",
+    ]),
+    amount: z.number(),
+    month: z.number().gte(1).lte(12),
+    year: z.number().gte(2000),
+  })
+  .partial()
+  .passthrough();
 
 export const schemas = {
   UserLookupDto,
@@ -205,6 +303,9 @@ export const schemas = {
   GetTotalBalance,
   UpdateWalletDto,
   UpdateWalletResponseDto,
+  CreateBudgetDto,
+  BudgetResponseDto,
+  UpdateBudgetDto,
 };
 
 const endpoints = makeApi([
@@ -273,6 +374,91 @@ const endpoints = makeApi([
   },
   {
     method: "post",
+    path: "/budget",
+    alias: "create_budget",
+    requestFormat: "json",
+    parameters: [
+      {
+        name: "body",
+        type: "Body",
+        schema: CreateBudgetDto,
+      },
+    ],
+    response: BudgetResponseDto,
+  },
+  {
+    method: "get",
+    path: "/budget",
+    alias: "list_budgets",
+    requestFormat: "json",
+    parameters: [
+      {
+        name: "month",
+        type: "Query",
+        schema: z.number().gte(1).lte(12).optional(),
+      },
+      {
+        name: "year",
+        type: "Query",
+        schema: z.number().gte(2000).optional(),
+      },
+      {
+        name: "status",
+        type: "Query",
+        schema: z.union([z.literal(0), z.literal(1), z.literal(2)]).optional(),
+      },
+    ],
+    response: z.void(),
+  },
+  {
+    method: "get",
+    path: "/budget/:id",
+    alias: "BudgetController_findOne",
+    requestFormat: "json",
+    parameters: [
+      {
+        name: "id",
+        type: "Path",
+        schema: z.string(),
+      },
+    ],
+    response: z.void(),
+  },
+  {
+    method: "patch",
+    path: "/budget/:id",
+    alias: "update_budget",
+    requestFormat: "json",
+    parameters: [
+      {
+        name: "body",
+        type: "Body",
+        schema: UpdateBudgetDto,
+      },
+      {
+        name: "id",
+        type: "Path",
+        schema: z.string(),
+      },
+    ],
+    response: z.void(),
+  },
+  {
+    method: "delete",
+    path: "/budget/:id",
+    alias: "delete_budget",
+    requestFormat: "json",
+    parameters: [
+      {
+        name: "id",
+        type: "Path",
+        schema: z.string(),
+      },
+    ],
+    response: z.void(),
+  },
+  {
+    method: "post",
     path: "/transaction",
     alias: "create_transaction",
     requestFormat: "json",
@@ -288,7 +474,7 @@ const endpoints = makeApi([
   {
     method: "get",
     path: "/transaction",
-    alias: "list_get_transactions",
+    alias: "list_transactions",
     requestFormat: "json",
     parameters: [
       {
@@ -395,7 +581,7 @@ const endpoints = makeApi([
   {
     method: "get",
     path: "/transaction/months",
-    alias: "get_transaction_months",
+    alias: "list_transaction_months",
     requestFormat: "json",
     response: z.array(GetTransactionMonths),
   },
