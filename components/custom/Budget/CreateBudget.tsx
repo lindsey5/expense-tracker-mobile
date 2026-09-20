@@ -13,6 +13,7 @@ import { Plus } from "lucide-react-native";
 import { useMemo, useState } from "react";
 import { useForm } from "react-hook-form";
 import { Pressable, useColorScheme, Text, ActivityIndicator } from "react-native";
+import Error from "../Error";
 
 
 export default function CreateBudget({
@@ -80,6 +81,7 @@ export default function CreateBudget({
                 </CustomModalHeader>
                 <CustomModalBody>
                     <Separator className="mb-5"/>
+                    <Error />
                     <Select 
                         onChange={(value) => setValue('category', value)}
                         options={categoryOptions}
