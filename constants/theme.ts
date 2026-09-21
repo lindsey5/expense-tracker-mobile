@@ -26,7 +26,7 @@ export const Colors = {
     surfaceTint: '#F3E8FF',
     panel: '#FAF8FF',
     soft: '#F4F4F5',
-    softTint: '#F1EAFE',
+    softTint: 'rgb(208, 192, 240)',
     skeleton: '#E4E4E7',
 
     // Button

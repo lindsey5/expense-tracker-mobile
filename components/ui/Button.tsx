@@ -23,16 +23,16 @@ export default function Button({
 
     const variants = {
         primary: {
-        backgroundColor: colors.tint,
-        textColor: '#FFFFFF',
+            backgroundColor: colors.accent,
+            textColor: colors.buttonText,
         },
         secondary: {
-        backgroundColor: colors.input,
-        textColor: colors.text,
+            backgroundColor: colors.input,
+            textColor: colors.text,
         },
         outline: {
-        backgroundColor: 'transparent',
-        textColor: colors.text,
+            backgroundColor: 'transparent',
+            textColor: colors.text,
         },
     };
 
@@ -48,7 +48,8 @@ export default function Button({
             )}
             style={{
                 backgroundColor: current.backgroundColor,
-                borderColor: variant === 'outline' ? colors.border : undefined,
+                borderColor:
+                    variant === 'outline' ? colors.border : undefined,
                 shadowColor: '#000',
                 shadowOffset: { width: 0, height: 8 },
                 shadowOpacity: variant === 'primary' ? 0.18 : 0.06,

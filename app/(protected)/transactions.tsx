@@ -286,18 +286,12 @@ export default function Transactions() {
           />
         </View>
 
-        {isLoading ? (
-          <ActivityIndicator
-            color={colors.text}
-            size={30}
-          />
-        ) : (
-          <TransactionList
-            transactions={data?.transactions || []}
-            page={data?.pagination.page}
-            totalPages={data?.pagination.totalPages}
-          />
-        )}
+        <TransactionList
+          transactions={data?.transactions || []}
+          page={data?.pagination.page}
+          totalPages={data?.pagination.totalPages}
+          isLoading={isLoading}
+        />
       </ScrollView>
 
       <CreateTransaction refetch={handleRefresh} />
