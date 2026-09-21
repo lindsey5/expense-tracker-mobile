@@ -6,6 +6,7 @@ import { useQuery } from "@tanstack/react-query";
 import z from "zod";
 import type { ZodiosQueryParamsByAlias } from "@zodios/core";
 import { ApiType } from "@/types/api.type";
+import useRemoveQueryCache from "../use-remove-query-cache";
 
 export type GetTransactionsParams = ZodiosQueryParamsByAlias<ApiType, "list_transactions">;
 export type GetTransactionsResponse = PaginationResponse & z.infer<typeof schemas.GetTransactionsResponseDto> & {}
@@ -22,6 +23,9 @@ export default function useGetTransactions(params: Partial<GetTransactionsParams
         category: params.category,
         search: params.search
     };
+
+    useRemoveQueryCache(['transactions', apiParams]);
+
     return useQuery<GetTransactionsResponse>({
         queryKey: ['transactions', apiParams],
         queryFn: () => getTransactions(apiParams),

@@ -5,6 +5,7 @@ import z from 'zod';
 import type { ZodiosQueryParamsByAlias } from '@zodios/core';
 
 import { ApiType } from '@/types/api.type';
+import useRemoveQueryCache from '../use-remove-query-cache';
 
 export type GetMonthlyBudgetsQueryParams = ZodiosQueryParamsByAlias<
   ApiType,
@@ -15,8 +16,7 @@ export type GetMonthlyBudgetsResponse = z.infer<
   typeof schemas.GetMonthlyBudgetResponse
 >;
 
-const getMonthlyBudgets = (queries: GetMonthlyBudgetsQueryParams) =>
-  api.get('/budget/monthly-budget', { queries });
+const getMonthlyBudgets = (queries: GetMonthlyBudgetsQueryParams) => api.get('/budget/monthly-budget', { queries });
 
 export default function useGetMonthlyBudgets(
   params: GetMonthlyBudgetsQueryParams,
@@ -33,6 +33,8 @@ export default function useGetMonthlyBudgets(
         ? Number(params.year)
         : new Date().getFullYear(),
   };
+
+  useRemoveQueryCache(['monthly-budgets', apiParams]);
 
   return useQuery<GetMonthlyBudgetsResponse>({
     queryKey: ['monthly-budgets', apiParams],

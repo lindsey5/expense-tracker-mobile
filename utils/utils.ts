@@ -5,9 +5,9 @@ export function cn(...inputs: ClassValue[]) {
 }
 
 export const formatCurrency = (amount: number) =>
-  `₱${Math.abs(amount).toLocaleString('en-PH', {
-      minimumFractionDigits: 2,
-      maximumFractionDigits: 2,
+  `${amount < 0 ? "-₱" : "₱"}${Math.abs(amount).toLocaleString("en-PH", {
+    minimumFractionDigits: 2,
+    maximumFractionDigits: 2,
   })}`;
 
 export const formatDateOnly = (date: Date | string) => {
