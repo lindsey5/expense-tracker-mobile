@@ -24,6 +24,10 @@ function TransactionSkeleton() {
   const colorScheme = useColorScheme() === 'dark' ? 'dark' : 'light';
   const colors = Colors[colorScheme];
 
+  if (isLoading) {
+    return <TransactionSkeleton />;
+  }
+
   return (
     <View className="gap-3">
       {[1, 2, 3, 4, 5].map((item) => (
@@ -140,9 +144,15 @@ export default function TransactionList({
                   }}
                 >
                   {isIncome ? (
-                    <ArrowDownLeft size={19} color="#16A34A" />
+                    <ArrowDownLeft
+                      size={19}
+                      color="#16A34A"
+                    />
                   ) : (
-                    <ArrowUpRight size={19} color="#DC2626" />
+                    <ArrowUpRight
+                      size={19}
+                      color="#DC2626"
+                    />
                   )}
                 </View>
 
@@ -216,7 +226,10 @@ export default function TransactionList({
         })
       )}
 
-      <Pagination page={page || 1} totalPages={totalPages || 0} />
+      <Pagination
+        page={page || 1}
+        totalPages={totalPages || 0}
+      />
     </View>
   );
 }

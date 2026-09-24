@@ -25,6 +25,7 @@ api.axios.interceptors.response.use(
         if (axios.isAxiosError(error)) {
             if (error.response?.status === 401) {
                 useAuthStore.getState().logout();
+                return;
             }
         }
 
