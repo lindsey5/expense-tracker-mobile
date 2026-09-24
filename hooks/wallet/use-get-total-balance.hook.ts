@@ -6,7 +6,7 @@ import useRemoveQueryCache from "../use-remove-query-cache";
 
 export type GetTotalBalanceResponse = z.infer<typeof schemas.GetTotalBalance>;
 
-const getTotalBalance = () => api.get("/wallet/total-balance");
+const getTotalBalance = () => api.get_total_balance();
 
 export default function useGetTotalBalance() {
     

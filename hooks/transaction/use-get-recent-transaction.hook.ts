@@ -8,7 +8,7 @@ import useRemoveQueryCache from "../use-remove-query-cache";
 
 export type GetRecentTransactionsResponse = z.infer<typeof schemas.TransactionResponseDto>[];
 
-const getRecentTransactions = () => api.get('/transaction/recent');
+const getRecentTransactions = () => api.list_transaction_recent();
 
 export default function useGetRecentTransactions() {
 

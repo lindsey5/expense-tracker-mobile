@@ -6,7 +6,7 @@ import useRemoveQueryCache from "../use-remove-query-cache";
 
 export type GetWalletsResponse = z.infer<typeof schemas.GetWalletsResponseDto>;
 
-const getWallets = () => api.get("/wallet");
+const getWallets = () => api.list_wallets();
 
 export default function useGetWallets() {
 

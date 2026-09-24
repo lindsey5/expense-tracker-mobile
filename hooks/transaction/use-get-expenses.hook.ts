@@ -9,7 +9,7 @@ import useRemoveQueryCache from "../use-remove-query-cache";
 export type GetExpensesQueryParams = ZodiosQueryParamsByAlias<ApiType, "get_transaction_expenses">;
 export type GetExpensesResponse = z.infer<typeof schemas.GetExpensesResponseDto>;
 
-const getExpenses = (params: GetExpensesQueryParams) => api.get("/transaction/expenses", { queries: params });
+const getExpenses = (params: GetExpensesQueryParams) => api.get_transaction_expenses({ queries: params });
 
 export default function useGetExpenses(params: GetExpensesQueryParams) {
     const apiParams = {

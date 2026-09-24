@@ -9,7 +9,7 @@ import useRemoveQueryCache from "../use-remove-query-cache";
 export type GetIncomesQueryParams = ZodiosQueryParamsByAlias<ApiType, "get_transaction_incomes">;
 export type GetIncomesResponse = z.infer<typeof schemas.GetIncomesResponseDto>;
 
-const getIncomes = (queries: GetIncomesQueryParams) => api.get("/transaction/incomes", { queries });
+const getIncomes = (queries: GetIncomesQueryParams) => api.get_transaction_incomes({ queries });
 
 export default function useGetIncomes(params: GetIncomesQueryParams) {
     const apiParams = {

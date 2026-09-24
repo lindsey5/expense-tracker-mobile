@@ -11,7 +11,7 @@ import useRemoveQueryCache from "../use-remove-query-cache";
 export type GetTransactionsParams = ZodiosQueryParamsByAlias<ApiType, "list_transactions">;
 export type GetTransactionsResponse = PaginationResponse & z.infer<typeof schemas.GetTransactionsResponseDto> & {}
 
-const getTransactions = (params: GetTransactionsParams) => api.get('/transaction', { queries: params });
+const getTransactions = (params: GetTransactionsParams) => api.list_transactions({ queries: params });
 
 export default function useGetTransactions(params: Partial<GetTransactionsParams> = {}) {
     const apiParams: GetTransactionsParams = {
