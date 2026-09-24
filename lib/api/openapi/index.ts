@@ -116,7 +116,7 @@ const TransactionResponseDto = z
     wallet: WalletDto,
   })
   .passthrough();
-const CreateUpdateTransactionResponse = z
+const CreateTransactionResponse = z
   .object({ message: z.string(), transaction: TransactionResponseDto })
   .passthrough();
 const PaginationResponseDto = z
@@ -149,6 +149,10 @@ const GetExpensesResponseDto = z
   .passthrough();
 const GetMonths = z
   .object({ month: z.number(), year: z.number(), monthName: z.string() })
+  .passthrough();
+const UpdateTransactionDto = z.object({ amount: z.number() }).passthrough();
+const DeleteTransactionResponse = z
+  .object({ message: z.string() })
   .passthrough();
 const CreateWalletDto = z
   .object({
@@ -320,6 +324,9 @@ const UpdateBudgetDto = z
   })
   .partial()
   .passthrough();
+const UpdateBudgetResponse = z
+  .object({ message: z.string(), budget: BudgetResponseDto })
+  .passthrough();
 const GetMonthlyBudgetResponse = z
   .object({
     month: z.number(),
@@ -346,12 +353,14 @@ export const schemas = {
   CreateTransactionDto,
   WalletDto,
   TransactionResponseDto,
-  CreateUpdateTransactionResponse,
+  CreateTransactionResponse,
   PaginationResponseDto,
   GetTransactionsResponseDto,
   GetIncomesResponseDto,
   GetExpensesResponseDto,
   GetMonths,
+  UpdateTransactionDto,
+  DeleteTransactionResponse,
   CreateWalletDto,
   CreateWalletResponseDto,
   GetWalletsResponseDto,
@@ -364,6 +373,7 @@ export const schemas = {
   GetBudgetDto,
   GetBudgetsResponse,
   UpdateBudgetDto,
+  UpdateBudgetResponse,
   GetMonthlyBudgetResponse,
 };
 
@@ -486,7 +496,7 @@ const endpoints = makeApi([
         schema: z.string(),
       },
     ],
-    response: z.void(),
+    response: UpdateBudgetResponse,
   },
   {
     method: "delete",
@@ -540,7 +550,7 @@ const endpoints = makeApi([
         schema: CreateTransactionDto,
       },
     ],
-    response: CreateUpdateTransactionResponse,
+    response: CreateTransactionResponse,
   },
   {
     method: "get",
@@ -610,6 +620,39 @@ const endpoints = makeApi([
       },
     ],
     response: GetTransactionsResponseDto,
+  },
+  {
+    method: "patch",
+    path: "/transaction/:id",
+    alias: "update_transaction",
+    requestFormat: "json",
+    parameters: [
+      {
+        name: "body",
+        type: "Body",
+        schema: z.object({ amount: z.number() }).passthrough(),
+      },
+      {
+        name: "id",
+        type: "Path",
+        schema: z.string(),
+      },
+    ],
+    response: z.object({ amount: z.number() }).passthrough(),
+  },
+  {
+    method: "delete",
+    path: "/transaction/:id",
+    alias: "delete_transaction",
+    requestFormat: "json",
+    parameters: [
+      {
+        name: "id",
+        type: "Path",
+        schema: z.string(),
+      },
+    ],
+    response: z.object({ message: z.string() }).passthrough(),
   },
   {
     method: "get",

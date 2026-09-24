@@ -1,24 +1,20 @@
 import { api } from "@/lib/api";
-import { schemas } from "@/lib/api/openapi";
 import { useToastStore } from "@/lib/store/toastStore";
 import { useMutation } from "@tanstack/react-query";
-import z from "zod";
 import useMutationError from "@/hooks/useMutationError";
 
-type CreateWalletDto = z.infer<typeof schemas.CreateWalletDto>;
+const deleteTransaction = (id: string) => api.delete_transaction(undefined, { params: { id }});
 
-const createWallet = (data: CreateWalletDto) => api.create_wallet(data);
-
-export default function useCreateWallet() {
+export default function useDeleteTransaction() {
     const { showToast } = useToastStore();
     const { clearError, onError } = useMutationError();
 
     return useMutation({
-        mutationFn: createWallet,
+        mutationFn: deleteTransaction,
         onMutate: clearError,
         onError,
         onSuccess: (data) => {
             showToast(data.message, "success");
         },
-    })
+    });
 }

@@ -31,6 +31,8 @@ import DateFilter from '@/components/custom/DateFilter';
 import useGetExpenses from '@/hooks/transaction/use-get-expenses.hook';
 import useGetIncomes from '@/hooks/transaction/use-get-incomes.hook';
 import { MONTH_SHORT_MAP } from '@/constants/month';
+import AlertDialog from '@/components/ui/AlertDialog';
+import useDeleteTransaction from '@/hooks/transaction/use-delete-transaction.hook';
 
 const filters = [
   { label: 'All', value: 'all' },
@@ -53,6 +55,11 @@ export default function Transactions() {
 
   const { month, year } = query;
   const dateQuery = { month, year };
+
+  const [showDeleteDialog, setShowDeleteDialog] = useState(false);
+  const [showEditDialog, setShowEditDialog] = useState(false);
+  const [selectedTransaction, setSelectedTransaction] = useState<string | null>(null);
+  const deleteTransactionMutation = useDeleteTransaction();
 
   const {
     data: expensesData,
@@ -153,6 +160,35 @@ export default function Transactions() {
     expenseRefetch();
     incomeRefetch();
   };
+
+  const handleDelete = () => {
+    if(!selectedTransaction) return;
+    deleteTransactionMutation.mutate(selectedTransaction, {
+      onSuccess
+    });
+  }
+
+  const onSuccess = () => {
+    setSelectedTransaction(null);
+    setShowDeleteDialog(false);
+    setShowEditDialog(false);
+    handleRefresh();
+  }
+
+  const showDelete = (id: string) => {
+    setSelectedTransaction(id);
+    setShowDeleteDialog(true);
+  }
+
+  const showEdit = (id: string) => {
+    setSelectedTransaction(id);
+    setShowEditDialog(true);
+  }
+
+  const onCancel = () => {
+    setShowDeleteDialog(false);
+    setSelectedTransaction(null);
+  }
 
   return (
     <View
@@ -291,10 +327,23 @@ export default function Transactions() {
           page={data?.pagination.page}
           totalPages={data?.pagination.totalPages}
           isLoading={isLoading}
+          handleDelete={showDelete}
+          handleEdit={showEdit}
         />
       </ScrollView>
 
       <CreateTransaction refetch={handleRefresh} />
+      <AlertDialog
+        visible={showDeleteDialog}
+        title="Delete transaction?"
+        description="This action cannot be undone."
+        confirmText="Delete"
+        cancelText="Cancel"
+        variant="destructive"
+        isLoading={deleteTransactionMutation.isPending}
+        onCancel={onCancel}
+        onConfirm={handleDelete}
+      />
     </View>
   );
 }

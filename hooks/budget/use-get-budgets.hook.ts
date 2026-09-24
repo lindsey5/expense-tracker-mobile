@@ -17,7 +17,7 @@ export type GetBudgetsResponse = z.infer<
 >;
 
 const getBudgets = (queries: GetBudgetsQueryParams) =>
-  api.get('/budget', { queries });
+  api.list_budgets({ queries });
 
 export default function useGetBudgets(
   params: GetBudgetsQueryParams,
@@ -40,6 +40,8 @@ export default function useGetBudgets(
   };
 
   useRemoveQueryCache(['budgets', apiParams]);
+
+  console.log(apiParams)
 
   return useQuery<GetBudgetsResponse>({
     queryKey: ['budgets', apiParams],
