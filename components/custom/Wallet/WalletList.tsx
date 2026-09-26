@@ -1,5 +1,4 @@
 import { Colors } from '@/constants/theme';
-import useGetWallets from '@/hooks/wallet/use-get-wallets.hook';
 import { Wallet } from '@/types/wallet.type';
 import { formatCurrency } from '@/utils/utils';
 import {
