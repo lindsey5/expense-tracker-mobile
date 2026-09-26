@@ -18,7 +18,7 @@ type BudgetListProps = {
   isLoading: boolean;
 };
 
-const getBudgetStatus = (budget: Budget) => {
+export const getBudgetStatus = (budget: Budget) => {
   const percentage = budget.percentage;
 
   if (percentage >= 100) {

@@ -41,8 +41,6 @@ export default function useGetBudgets(
 
   useRemoveQueryCache(['budgets', apiParams]);
 
-  console.log(apiParams)
-
   return useQuery<GetBudgetsResponse>({
     queryKey: ['budgets', apiParams],
     queryFn: () => getBudgets(apiParams),

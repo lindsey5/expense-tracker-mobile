@@ -24,10 +24,6 @@ function TransactionSkeleton() {
   const colorScheme = useColorScheme() === 'dark' ? 'dark' : 'light';
   const colors = Colors[colorScheme];
 
-  if (isLoading) {
-    return <TransactionSkeleton />;
-  }
-
   return (
     <View className="gap-3">
       {[1, 2, 3, 4, 5].map((item) => (
