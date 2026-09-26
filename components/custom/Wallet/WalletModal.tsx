@@ -1,6 +1,6 @@
 import InputField from "@/components/ui/InputField";
 import { Colors } from "@/constants/theme";
-import { Modal, Pressable, useColorScheme, View, Text, TouchableOpacity, ScrollView, ActivityIndicator } from "react-native";
+import { useColorScheme, View, Text, TouchableOpacity, ActivityIndicator } from "react-native";
 import {
   Banknote,
   Building2,
