@@ -1,4 +1,3 @@
-import { TransactionCategory } from "@/types/transaction.type";
 import { api } from "@/lib/api";
 import { schemas } from "@/lib/api/openapi";
 import {  PaginationResponse } from "@/types/pagination.type";

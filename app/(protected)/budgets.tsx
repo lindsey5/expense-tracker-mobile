@@ -21,11 +21,11 @@ import CreateBudget from '@/components/custom/Budget/CreateBudget';
 import BudgetSummary from '@/components/custom/Budget/BudgetSummary';
 import { useState } from 'react';
 
-type BudgetStatus = NonNullable<
+export type BudgetStatus = NonNullable<
   GetBudgetsQueryParams['status']
 >;
 
-type BudgetFilter = BudgetStatus | 'all';
+export type BudgetFilter = BudgetStatus | 'all';
 
 type StatusFilter = {
   label: string;
@@ -90,10 +90,18 @@ export default function Budgets() {
     setFilter(value);
 
     pushQuery({
+      month:
+        query.month !== undefined
+          ? Number(query.month)
+          : new Date().getMonth() + 1,
+      year:
+        query.year !== undefined
+          ? Number(query.year)
+          : new Date().getFullYear(),
       status:
         value === 'all'
           ? undefined
-          : value,
+          : (value as BudgetStatus),
     });
   };
 
@@ -106,7 +114,7 @@ export default function Budgets() {
 
   return (
     <View
-      className="flex-1"
+      className="flex-1 pt-14"
       style={{
         backgroundColor: colors.background,
       }}

@@ -154,6 +154,9 @@ const UpdateTransactionDto = z.object({ amount: z.number() }).passthrough();
 const DeleteTransactionResponse = z
   .object({ message: z.string() })
   .passthrough();
+const GetMonthlyTransactionsResponseDto = z
+  .object({ month: z.number(), income: z.number(), expense: z.number() })
+  .passthrough();
 const CreateWalletDto = z
   .object({
     name: z.string(),
@@ -361,6 +364,7 @@ export const schemas = {
   GetMonths,
   UpdateTransactionDto,
   DeleteTransactionResponse,
+  GetMonthlyTransactionsResponseDto,
   CreateWalletDto,
   CreateWalletResponseDto,
   GetWalletsResponseDto,
@@ -464,12 +468,12 @@ const endpoints = makeApi([
       {
         name: "month",
         type: "Query",
-        schema: z.number().gte(1).lte(12).optional(),
+        schema: z.number().gte(1).lte(12),
       },
       {
         name: "year",
         type: "Query",
-        schema: z.number().gte(2000).optional(),
+        schema: z.number().gte(2000),
       },
       {
         name: "status",
@@ -691,6 +695,20 @@ const endpoints = makeApi([
       },
     ],
     response: GetIncomesResponseDto,
+  },
+  {
+    method: "get",
+    path: "/transaction/monthly",
+    alias: "monthly_transactions",
+    requestFormat: "json",
+    parameters: [
+      {
+        name: "year",
+        type: "Query",
+        schema: z.number().gte(2000).optional().default(2026),
+      },
+    ],
+    response: z.array(GetMonthlyTransactionsResponseDto),
   },
   {
     method: "get",
