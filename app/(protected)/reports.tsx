@@ -102,7 +102,13 @@ export default function Reports() {
               className="text-xs"
               style={{ color: colors.icon }}
             >
-              Report generated for 
+              Report generated for {new Date(
+                query.year ?? new Date().getFullYear(),
+                (query.month ?? new Date().getMonth() + 1) - 1,
+              ).toLocaleString("en-US", {
+                month: "long",
+                year: "numeric",
+              })}
             </Text>
           </View>
         </View>

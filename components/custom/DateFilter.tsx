@@ -7,12 +7,10 @@ import {
     CustomModal,
     CustomModalBody,
     CustomModalContent,
-    CustomModalFooter,
     CustomModalHeader,
     CustomModalTitle,
 } from "../ui/Modal";
 import { useState } from "react";
-import Button from "../ui/Button";
 
 export default function DateFilter({
     url
