@@ -12,7 +12,7 @@ const getMonths = (url: "/transaction/months" | "/budget/months" = "/transaction
 };
 
 export default function useGetMonths(url: "/transaction/months" | "/budget/months"= "/transaction/months") {
-     useRemoveQueryCache(["months"]);
+    useRemoveQueryCache(["months"]);
     
     return useQuery<GetMonthsResponse>({
         queryKey: ['months'],
