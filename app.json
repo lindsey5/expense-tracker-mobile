@@ -1,10 +1,10 @@
 {
   "expo": {
-    "name": "gastador",
-    "slug": "expense-tracker",
+    "name": "Gastador",
+    "slug": "gastador",
     "version": "1.0.0",
     "orientation": "portrait",
-    "icon": "./assets/images/icon.png",
+    "icon": "./assets/logo.png",
     "scheme": "gastador",
     "userInterfaceStyle": "automatic",
     "newArchEnabled": true,

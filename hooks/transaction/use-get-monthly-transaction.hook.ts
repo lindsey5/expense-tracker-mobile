@@ -5,7 +5,6 @@ import { useQuery } from "@tanstack/react-query";
 import z from "zod";
 import type { ZodiosQueryParamsByAlias } from "@zodios/core";
 import { ApiType } from "@/types/api.type";
-import useRemoveQueryCache from "../use-remove-query-cache";
 
 export type GetMonthlyTransactionsParams = ZodiosQueryParamsByAlias<ApiType, "monthly_transactions">;
 export type GetMonthlyTransactionsResponse = z.infer<typeof schemas.GetMonthlyTransactionsResponseDto>[];
@@ -17,11 +16,9 @@ export default function useGetMonthlyTransactions(params: Partial<GetMonthlyTran
         year: params.year ? Number(params.year) : new Date().getFullYear(),
     };
 
-    useRemoveQueryCache(['monthly-transactions', apiParams]);
-
     return useQuery<GetMonthlyTransactionsResponse>({
         queryKey: ['monthly-transactions', apiParams],
         queryFn: () => getMonthlyTransactions(apiParams),
-        refetchOnWindowFocus: false
+        refetchOnMount: true
     })
 }

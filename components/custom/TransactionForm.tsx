@@ -9,32 +9,38 @@ import Error from "./Error";
 import { View, TouchableOpacity, useColorScheme, Text, ActivityIndicator } from "react-native";
 import { ExpenseCategories, IncomeCategories, TransactionTypeOptions } from "@/constants/transaction";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { CreateTransactionSchema, TransactionFormData } from "@/schemas/transaction.schema";
+import { TransactionSchema, TransactionFormData } from "@/schemas/transaction.schema";
 import { useForm } from "react-hook-form";
 import useCreateTransaction from "@/hooks/transaction/use-create-transaction.hook";
 import { useEffect, useMemo } from "react";
 import { formatDateOnly } from "@/utils/utils";
-import { TransactionCategory } from "@/types/transaction.type";
+import { Transaction, TransactionCategory } from "@/types/transaction.type";
 import { Colors } from "@/constants/theme";
+import useUpdateTransaction from "@/hooks/transaction/use-update-transaction.hook";
 
 type TransactionFormProps = {
     visible: boolean;
     handleClose: () => void;
     onSuccess?: () => void;
-    type?: "EXPENSE" | "INCOME"
+    type?: "EXPENSE" | "INCOME";
+    transaction?: Transaction | null;
 }
 
 export default function TransactionForm({
     handleClose,
     visible,
     type,
-    onSuccess
+    onSuccess,
+    transaction
 } : TransactionFormProps) {
     const colorScheme = useColorScheme() === 'dark' ? 'dark' : 'light';
     const colors = Colors[colorScheme];
 
+    const createTransactionMutation = useCreateTransaction();
+    const updateTransactionMutation = useUpdateTransaction();
+
     const { handleSubmit, formState: { errors }, watch, setValue, reset } = useForm<TransactionFormData>({
-        resolver: zodResolver(CreateTransactionSchema),
+        resolver: zodResolver(TransactionSchema),
         defaultValues: {
             title: '',
             amount: 0,
@@ -46,12 +52,22 @@ export default function TransactionForm({
     });
 
     useEffect(() => {
-        if(type) {
-            setValue("type", type);
-        }
-    }, [type])
+        if(type) setValue("type", type);
+    }, [type]);
 
-    const createTransactionMutation = useCreateTransaction();
+    useEffect(() => {
+        if(transaction) {
+            reset({
+                amount: transaction.amount,
+                category: transaction.category,
+                date: new Date(transaction.date),
+                title: transaction.title,
+                type: transaction.type,
+                walletId: transaction.walletId
+            })
+        }
+    }, [transaction])
+
 
     const categoryOptions = useMemo(() => {
         const type = watch('type')
@@ -73,25 +89,43 @@ export default function TransactionForm({
 
     }, [watch('type')]);
 
+    const handleSuccess = () => {
+        reset();
+        handleClose();
+        onSuccess?.();
+    }
+
     const onSubmit = (data: TransactionFormData) => {
-        createTransactionMutation.mutateAsync({
-            amount: data.amount,
-            category: data.category as TransactionCategory,
-            date: formatDateOnly(data.date),
-            title: data.title,
-            type: data.type as "INCOME" | "EXPENSE",
-            walletId: data.walletId
-        }, {
-            onSuccess: () => {
-                reset();
-                handleClose();
-                onSuccess?.();
-            }
-        });
+        if(transaction) {
+            updateTransactionMutation.mutateAsync({
+                id: transaction.id,
+                data: {
+                    amount: data.amount,
+                    category: data.category as TransactionCategory,
+                    date: formatDateOnly(data.date),
+                    title: data.title,
+                    type: data.type as "INCOME" | "EXPENSE",
+                    walletId: data.walletId
+                }
+            }, {
+                onSuccess: handleSuccess
+            });
+        }else {
+            createTransactionMutation.mutateAsync({
+                amount: data.amount,
+                category: data.category as TransactionCategory,
+                date: formatDateOnly(data.date),
+                title: data.title,
+                type: data.type as "INCOME" | "EXPENSE",
+                walletId: data.walletId
+            }, {
+                onSuccess: handleSuccess
+            });
+        }
     }
 
     const close = () => {
-        if(createTransactionMutation.isPending) return;
+        if(createTransactionMutation.isPending || updateTransactionMutation.isPending) return;
         handleClose();
     }
 
@@ -103,7 +137,9 @@ export default function TransactionForm({
             <CustomModalContent>
                 <CustomModalHeader>
                     <CustomModalTitle>
-                    {type === 'EXPENSE'
+                    {transaction
+                    ? 'Edit Transaction'
+                    : type === 'EXPENSE'
                         ? 'Add Expense'
                         : type === 'INCOME'
                         ? 'Add Income'
@@ -170,6 +206,7 @@ export default function TransactionForm({
                     <InputField 
                         label="Amount"
                         placeholder="0.00"
+                        value={String(watch('amount'))}
                         keyboardType="number-pad"
                         onChangeText={(text) => setValue('amount', Number(text))}
                         error={errors.amount?.message}
@@ -188,11 +225,11 @@ export default function TransactionForm({
                     />
                 </CustomModalBody>
                 <CustomModalFooter>
-                    {createTransactionMutation.isPending ? (
+                    {createTransactionMutation.isPending || updateTransactionMutation.isPending ? (
                         <ActivityIndicator color={colors.text}/>
                     ) : (
                         <Button 
-                            title="Create Transaction"
+                            title={transaction ? 'Update Transaction' : 'Create Transaction'}
                             onPress={handleSubmit(onSubmit)}
                         />
                     )}

@@ -5,7 +5,6 @@ import z from 'zod';
 import type { ZodiosQueryParamsByAlias } from '@zodios/core';
 
 import { ApiType } from '@/types/api.type';
-import useRemoveQueryCache from '../use-remove-query-cache';
 
 export type GetBudgetsQueryParams = ZodiosQueryParamsByAlias<
   ApiType,
@@ -39,11 +38,9 @@ export default function useGetBudgets(
         : new Date().getFullYear(),
   };
 
-  useRemoveQueryCache(['budgets', apiParams]);
-
   return useQuery<GetBudgetsResponse>({
     queryKey: ['budgets', apiParams],
     queryFn: () => getBudgets(apiParams),
-    refetchOnWindowFocus: false,
+    refetchOnMount: true
   });
 }

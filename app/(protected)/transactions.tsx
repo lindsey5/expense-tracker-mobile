@@ -33,6 +33,8 @@ import useGetIncomes from '@/hooks/transaction/use-get-incomes.hook';
 import { MONTH_SHORT_MAP } from '@/constants/month';
 import AlertDialog from '@/components/ui/AlertDialog';
 import useDeleteTransaction from '@/hooks/transaction/use-delete-transaction.hook';
+import UpdateTransaction from '@/components/custom/Transaction/UpdateTransaction';
+import { Transaction } from '@/types/transaction.type';
 
 const filters = [
   { label: 'All', value: 'all' },
@@ -58,7 +60,7 @@ export default function Transactions() {
 
   const [showDeleteDialog, setShowDeleteDialog] = useState(false);
   const [showEditDialog, setShowEditDialog] = useState(false);
-  const [selectedTransaction, setSelectedTransaction] = useState<string | null>(null);
+  const [selectedTransaction, setSelectedTransaction] = useState<Transaction | null>(null);
   const deleteTransactionMutation = useDeleteTransaction();
 
   const {
@@ -163,7 +165,7 @@ export default function Transactions() {
 
   const handleDelete = () => {
     if(!selectedTransaction) return;
-    deleteTransactionMutation.mutate(selectedTransaction, {
+    deleteTransactionMutation.mutate(selectedTransaction.id, {
       onSuccess
     });
   }
@@ -175,18 +177,19 @@ export default function Transactions() {
     handleRefresh();
   }
 
-  const showDelete = (id: string) => {
-    setSelectedTransaction(id);
+  const showDelete = (transaction: Transaction) => {
+    setSelectedTransaction(transaction);
     setShowDeleteDialog(true);
   }
 
-  const showEdit = (id: string) => {
-    setSelectedTransaction(id);
+  const showEdit = (transaction: Transaction) => {
+    setSelectedTransaction(transaction);
     setShowEditDialog(true);
   }
 
   const onCancel = () => {
     setShowDeleteDialog(false);
+    setShowEditDialog(false);
     setSelectedTransaction(null);
   }
 
@@ -333,6 +336,15 @@ export default function Transactions() {
       </ScrollView>
 
       <CreateTransaction refetch={handleRefresh} />
+
+      <UpdateTransaction 
+        handleClose={onCancel}
+        refetch={handleRefresh}
+        visible={showEditDialog}
+        transaction={selectedTransaction}
+
+      />
+      
       <AlertDialog
         visible={showDeleteDialog}
         title="Delete transaction?"
