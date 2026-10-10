@@ -8,7 +8,7 @@ import {
   Platform,
   useColorScheme,
 } from 'react-native';
-import { Slot } from 'expo-router';
+import { Slot, useSegments } from 'expo-router';
 import * as NavigationBar from 'expo-navigation-bar';
 import {
   QueryClient,
@@ -22,17 +22,19 @@ import {
 import Toast from '@/components/Toast';
 import { Colors } from '@/constants/theme';
 import { useThemeStore } from '@/lib/store/themeStore';
+import { useErrorStore } from '@/lib/store/errorStore';
 
 const queryClient = new QueryClient();
 
 export default function RootLayout() {
+  const segments = useSegments();
+  const clearError = useErrorStore((state) => state.clearError);
+
   const theme = useThemeStore((state) => state.theme);
 
-  const deviceTheme =
-    useColorScheme() === 'dark' ? 'dark' : 'light';
+  const deviceTheme = useColorScheme() === 'dark' ? 'dark' : 'light';
 
-  const activeTheme =
-    theme === 'system' ? deviceTheme : theme;
+  const activeTheme = theme === 'system' ? deviceTheme : theme;
 
   const colors = Colors[activeTheme];
 
@@ -56,6 +58,10 @@ export default function RootLayout() {
     };
   }, []);
 
+  useEffect(() => {
+    clearError();
+  }, [segments.join('/')]);
+
   return (
     <SafeAreaProvider>
       <QueryClientProvider client={queryClient}>
@@ -76,7 +82,6 @@ export default function RootLayout() {
             }}
           >
             <Slot />
-
             <Toast />
           </KeyboardAvoidingView>
         </SafeAreaView>

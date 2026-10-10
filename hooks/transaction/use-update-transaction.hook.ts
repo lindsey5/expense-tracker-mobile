@@ -1,5 +1,5 @@
 
-import { api } from "@/lib/api";
+import { authenticatedClient } from "@/lib/api";
 import { schemas } from "@/lib/api/openapi";
 import { useToastStore } from "@/lib/store/toastStore";
 import { useMutation } from "@tanstack/react-query";
@@ -9,7 +9,7 @@ import useMutationError from "@/hooks/useMutationError";
 type UpdateTransactionDto = z.infer<typeof schemas.UpdateTransactionDto>;
 
 const updateTransaction = (id: string, data: UpdateTransactionDto) => {
-    return api.update_transaction(data, { params: { id } });
+    return authenticatedClient.update_transaction(data, { params: { id } });
 }
 
 export default function useUpdateTransaction() {

@@ -1,4 +1,4 @@
-import { api } from "@/lib/api";
+import { authenticatedClient } from "@/lib/api";
 import { schemas } from "@/lib/api/openapi";
 import { useQuery } from "@tanstack/react-query";
 import z from "zod";
@@ -6,8 +6,8 @@ import z from "zod";
 export type GetMonthsResponse = z.infer<typeof schemas.GetMonths>[];
 
 const getMonths = (url: "/transaction/months" | "/budget/months" = "/transaction/months") => {
-  if (url === "/budget/months") return api.budget_months();
-  return api.list_transaction_months();
+  if (url === "/budget/months") return authenticatedClient.budget_months();
+  return authenticatedClient.list_transaction_months();
 };
 
 export default function useGetMonths(url: "/transaction/months" | "/budget/months"= "/transaction/months") {

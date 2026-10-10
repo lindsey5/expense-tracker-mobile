@@ -1,4 +1,4 @@
-import { api } from "@/lib/api";
+import { authenticatedClient } from "@/lib/api";
 import { schemas } from "@/lib/api/openapi";
 import { useQuery } from "@tanstack/react-query";
 import z from "zod";
@@ -8,7 +8,7 @@ import { ApiType } from "@/types/api.type";
 export type GetExpensesQueryParams = ZodiosQueryParamsByAlias<ApiType, "get_transaction_expenses">;
 export type GetExpensesResponse = z.infer<typeof schemas.GetExpensesResponseDto>;
 
-const getExpenses = (params: GetExpensesQueryParams) => api.get_transaction_expenses({ queries: params });
+const getExpenses = (params: GetExpensesQueryParams) => authenticatedClient.get_transaction_expenses({ queries: params });
 
 export default function useGetExpenses(params: GetExpensesQueryParams) {
     const apiParams = {

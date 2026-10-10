@@ -1,4 +1,4 @@
-import { api } from "@/lib/api";
+import { authenticatedClient } from "@/lib/api";
 import { schemas } from "@/lib/api/openapi";
 import { useToastStore } from "@/lib/store/toastStore";
 import { useMutation } from "@tanstack/react-query";
@@ -7,9 +7,7 @@ import useMutationError from "@/hooks/useMutationError";
 
 type CreateBudgetDto = z.infer<typeof schemas.CreateBudgetDto>;
 
-const createBudget = (data: CreateBudgetDto) => {
-    return api.create_budget(data);
-}
+const createBudget = (data: CreateBudgetDto) => authenticatedClient.create_budget(data);
 
 export default function useCreateBudget() {
     const { showToast } = useToastStore();

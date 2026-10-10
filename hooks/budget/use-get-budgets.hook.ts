@@ -1,4 +1,4 @@
-import { api } from '@/lib/api';
+import { authenticatedClient } from '@/lib/api';
 import { schemas } from '@/lib/api/openapi';
 import { useQuery } from '@tanstack/react-query';
 import z from 'zod';
@@ -15,8 +15,7 @@ export type GetBudgetsResponse = z.infer<
   typeof schemas.GetBudgetsResponse
 >;
 
-const getBudgets = (queries: GetBudgetsQueryParams) =>
-  api.list_budgets({ queries });
+const getBudgets = (queries: GetBudgetsQueryParams) => authenticatedClient.list_budgets({ queries });
 
 export default function useGetBudgets(
   params: GetBudgetsQueryParams,
