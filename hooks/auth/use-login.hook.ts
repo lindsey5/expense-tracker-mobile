@@ -1,5 +1,5 @@
 import { useMutation } from "@tanstack/react-query";
-import { api } from "@/lib/api";
+import { client } from "@/lib/api";
 import { schemas } from "@/lib/api/openapi";
 import z from "zod";
 import { useAuthStore } from "@/lib/store/authStore";
@@ -8,7 +8,7 @@ import useMutationError from "@/hooks/useMutationError";
 
 type LoginData = z.infer<typeof schemas.LoginUserDTO>;
 
-const login = (data: LoginData) => api.post("/auth/login", data);
+const login = (data: LoginData) => client.post("/auth/login", data);
 
 export default function useLogin() {
     const setLogin = useAuthStore((state) => state.login);

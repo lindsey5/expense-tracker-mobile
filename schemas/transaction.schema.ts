@@ -1,6 +1,6 @@
 import { z } from 'zod';
 
-export const CreateTransactionSchema = z.object({
+export const TransactionSchema = z.object({
     walletId: z
         .string()
         .min(1, 'Select a wallet'),
@@ -27,6 +27,4 @@ export const CreateTransactionSchema = z.object({
         .date({ message: 'Transaction date is required' }),
 });
 
-export type TransactionFormData = z.infer<
-  typeof CreateTransactionSchema
->;
+export type TransactionFormData = z.infer<typeof TransactionSchema>;

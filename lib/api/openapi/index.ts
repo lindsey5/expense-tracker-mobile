@@ -113,7 +113,7 @@ const TransactionResponseDto = z
     date: z.string().datetime({ offset: true }),
     createdAt: z.string().datetime({ offset: true }),
     updatedAt: z.string().datetime({ offset: true }),
-    wallet: WalletDto,
+    wallet: WalletDto.nullish(),
   })
   .passthrough();
 const CreateTransactionResponse = z
@@ -151,6 +151,9 @@ const GetMonths = z
   .object({ month: z.number(), year: z.number(), monthName: z.string() })
   .passthrough();
 const UpdateTransactionDto = z.object({ amount: z.number() }).passthrough();
+const UpdateTransactionResponse = z
+  .object({ message: z.string(), transaction: TransactionResponseDto })
+  .passthrough();
 const DeleteTransactionResponse = z
   .object({ message: z.string() })
   .passthrough();
@@ -363,6 +366,7 @@ export const schemas = {
   GetExpensesResponseDto,
   GetMonths,
   UpdateTransactionDto,
+  UpdateTransactionResponse,
   DeleteTransactionResponse,
   GetMonthlyTransactionsResponseDto,
   CreateWalletDto,
@@ -642,7 +646,7 @@ const endpoints = makeApi([
         schema: z.string(),
       },
     ],
-    response: z.object({ amount: z.number() }).passthrough(),
+    response: UpdateTransactionResponse,
   },
   {
     method: "delete",

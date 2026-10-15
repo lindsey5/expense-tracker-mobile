@@ -1,15 +1,14 @@
-import { api } from "@/lib/api";
+import { authenticatedClient } from "@/lib/api";
 import { schemas } from "@/lib/api/openapi";
 import { useQuery } from "@tanstack/react-query";
 import z from "zod";
 import type { ZodiosQueryParamsByAlias } from "@zodios/core";
 import { ApiType } from "@/types/api.type";
-import useRemoveQueryCache from "../use-remove-query-cache";
 
 export type GetIncomesQueryParams = ZodiosQueryParamsByAlias<ApiType, "get_transaction_incomes">;
 export type GetIncomesResponse = z.infer<typeof schemas.GetIncomesResponseDto>;
 
-const getIncomes = (queries: GetIncomesQueryParams) => api.get_transaction_incomes({ queries });
+const getIncomes = (queries: GetIncomesQueryParams) => authenticatedClient.get_transaction_incomes({ queries });
 
 export default function useGetIncomes(params: GetIncomesQueryParams) {
     const apiParams = {
@@ -17,12 +16,10 @@ export default function useGetIncomes(params: GetIncomesQueryParams) {
         year: params.year ? Number(params.year) : new Date().getFullYear(),
     }
 
-    useRemoveQueryCache(['incomes', apiParams]);
-
     const result =  useQuery<GetIncomesResponse>({
         queryKey: ['incomes', apiParams],
         queryFn: () => getIncomes(apiParams),
-        refetchOnWindowFocus: false
+        refetchOnMount: true
     })
 
     return result

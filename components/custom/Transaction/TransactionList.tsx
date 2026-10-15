@@ -16,8 +16,8 @@ type TransactionListProps = {
   page?: number;
   totalPages?: number;
   isLoading: boolean;
-  handleDelete: (id: string) => void;
-  handleEdit: (id: string) => void;
+  handleDelete: (transaction: Transaction) => void;
+  handleEdit: (transaction: Transaction) => void;
 };
 
 function TransactionSkeleton() {
@@ -119,7 +119,10 @@ export default function TransactionList({
             <TouchableOpacity
               key={transaction.id}
               activeOpacity={0.85}
-              onPress={() => handleEdit(transaction.id)}
+              onPress={(event) => {
+                event.stopPropagation();
+                handleEdit(transaction);
+              }}
               className="rounded-[22px] border p-3"
               style={{
                 backgroundColor: colors.card,
@@ -179,7 +182,7 @@ export default function TransactionList({
                       className="text-xs"
                       style={{ color: colors.icon }}
                     >
-                      {transaction.wallet.name}
+                      {transaction?.wallet?.name}
                     </Text>
                   </View>
                 </View>
@@ -207,7 +210,7 @@ export default function TransactionList({
                   className="ml-3 h-9 w-9 items-center justify-center rounded-xl"
                   onPress={(event) => {
                     event.stopPropagation();
-                    handleDelete(transaction.id);
+                    handleDelete(transaction);
                   }}
                   style={{
                     backgroundColor:

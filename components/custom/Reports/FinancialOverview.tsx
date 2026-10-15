@@ -48,8 +48,14 @@ export default function FinancialOverview({
     totalIncome
 } : FinancialOverviewProps) {
     const netSavings = useMemo(() => totalIncome - totalExpenses, [totalExpenses, totalIncome]);
-    const savingsRate = useMemo(() =>  (netSavings / totalIncome) * 100, [totalExpenses, totalIncome]);
+    const savingsRate = useMemo(() => {
+        if (!totalIncome || totalIncome === 0) {
+            return 0;
+        }
 
+        return (netSavings / totalIncome) * 100;
+    }, [netSavings, totalIncome]);
+    
     if (isLoading) {
         return <FinancialOverviewSkeleton />;
     }
@@ -102,7 +108,7 @@ export default function FinancialOverview({
                     </Text>
 
                     <Text className="mt-1 text-base font-bold text-white">
-                        {savingsRate.toFixed(0)}%
+                        {savingsRate.toFixed(2)}%
                     </Text>
                     </View>
                 </View>

@@ -1,16 +1,10 @@
-import { useMemo, useState } from 'react';
+import { useMemo } from 'react';
 import {
-  Pressable,
   RefreshControl,
   ScrollView,
   Text,
   View,
 } from 'react-native';
-import {
-  BarChart3,
-  PieChart,
-} from 'lucide-react-native';
-import { useRouter } from 'expo-router';
 
 import { useColorScheme } from '@/hooks/use-color-scheme';
 import { Colors } from '@/constants/theme';
@@ -27,7 +21,7 @@ import MonthlyData from '@/components/custom/Reports/MonthlyData';
 export default function Reports() {
   const colorScheme = useColorScheme() === 'dark' ? 'dark' : 'light';
   const colors = Colors[colorScheme];
-  const { query, pushQuery } = useQuery<GetBudgetsQueryParams>();
+  const { query } = useQuery<GetBudgetsQueryParams>();
 
   const { data: getBudgetsData, isLoading: isGetBudgetsLoading, refetch: getBudgetsRefetch } = useGetBudgets(query);
   const { data: expensesData, isLoading: isExpensesLoading, refetch: expenseRefetch } = useGetExpenses({});
@@ -108,7 +102,13 @@ export default function Reports() {
               className="text-xs"
               style={{ color: colors.icon }}
             >
-              Report generated for 
+              Report generated for {new Date(
+                query.year ?? new Date().getFullYear(),
+                (query.month ?? new Date().getMonth() + 1) - 1,
+              ).toLocaleString("en-US", {
+                month: "long",
+                year: "numeric",
+              })}
             </Text>
           </View>
         </View>

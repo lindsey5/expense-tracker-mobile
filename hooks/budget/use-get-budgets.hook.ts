@@ -1,11 +1,10 @@
-import { api } from '@/lib/api';
+import { authenticatedClient } from '@/lib/api';
 import { schemas } from '@/lib/api/openapi';
 import { useQuery } from '@tanstack/react-query';
 import z from 'zod';
 import type { ZodiosQueryParamsByAlias } from '@zodios/core';
 
 import { ApiType } from '@/types/api.type';
-import useRemoveQueryCache from '../use-remove-query-cache';
 
 export type GetBudgetsQueryParams = ZodiosQueryParamsByAlias<
   ApiType,
@@ -16,8 +15,7 @@ export type GetBudgetsResponse = z.infer<
   typeof schemas.GetBudgetsResponse
 >;
 
-const getBudgets = (queries: GetBudgetsQueryParams) =>
-  api.list_budgets({ queries });
+const getBudgets = (queries: GetBudgetsQueryParams) => authenticatedClient.list_budgets({ queries });
 
 export default function useGetBudgets(
   params: GetBudgetsQueryParams,
@@ -39,11 +37,9 @@ export default function useGetBudgets(
         : new Date().getFullYear(),
   };
 
-  useRemoveQueryCache(['budgets', apiParams]);
-
   return useQuery<GetBudgetsResponse>({
     queryKey: ['budgets', apiParams],
     queryFn: () => getBudgets(apiParams),
-    refetchOnWindowFocus: false,
+    refetchOnMount: true
   });
 }
