@@ -92,43 +92,27 @@ export default function MonthlyData({
   const colorScheme = useColorScheme() === "dark" ? "dark" : "light";
   const colors = Colors[colorScheme];
 
-  const [chartWidth, setChartWidth] = useState(0);
+  const chartData = useMemo(() => {
+    return monthlyData.flatMap((item) => {
+      const monthLabel = MONTHS[Number(item.month) - 1] ?? "";
 
-  const onLayout = (e: LayoutChangeEvent) =>
-    setChartWidth(e.nativeEvent.layout.width);
-
-  const { totalIncome, totalExpense, net } = useMemo(() => {
-    const income = monthlyData.reduce((sum, m) => sum + Number(m.income), 0);
-    const expense = monthlyData.reduce((sum, m) => sum + Number(m.expense), 0);
-    return { totalIncome: income, totalExpense: expense, net: income - expense };
-  }, [monthlyData]);
-
-  const isPositive = net >= 0;
-  const netColor = isPositive ? INCOME_COLOR : NEGATIVE_COLOR;
-  const NetIcon = isPositive ? TrendingUp : TrendingDown;
-
-  // Grouped bars: income and expense side by side, so each bar reads on its own
-  const { chartData, groupGap, maxValue } = useMemo(() => {
-    const count = monthlyData.length || 1;
-    const available = Math.max(chartWidth - Y_AXIS_WIDTH - 12, 0);
-    const gap = Math.max(10, Math.floor((available - count * GROUP_WIDTH) / count));
-
-    const highest = monthlyData.reduce(
-      (max, m) => Math.max(max, Number(m.income), Number(m.expense)),
-      0,
-    );
-
-    const data = monthlyData.flatMap((item) => [
-      {
-        value: Number(item.income),
-        frontColor: INCOME_COLOR,
-        spacing: INNER_GAP,
-        label: MONTHS[Number(item.month) - 1] ?? "",
-        labelWidth: GROUP_WIDTH + 8,
-        labelTextStyle: {
-          color: colors.icon,
-          fontSize: 10,
-          textAlign: "center" as const,
+      return [
+        {
+          value: Number(item.income),
+          label: monthLabel,
+          frontColor: "#22C55E",
+          spacing: 3,
+          labelTextStyle: {
+            color: colors.icon,
+            fontSize: 10,
+            width: 30,
+            textAlign: "center" as const,
+          },
+        },
+        {
+          value: Number(item.expense),
+          frontColor: colors.tint,
+          spacing: 25,
         },
       },
       {
@@ -144,89 +128,87 @@ export default function MonthlyData({
   return (
     <Card className="mt-5">
       {/* Header */}
-      <View className="flex-row items-start justify-between">
-        <View className="flex-row items-center">
-          <View
-            className="h-10 w-10 items-center justify-center rounded-xl"
-            style={{ backgroundColor: colors.surfaceTint }}
+      <View className="flex-row items-center justify-between">
+        <View>
+          <Text
+            className="text-lg font-bold"
+            style={{ color: colors.text }}
           >
-            <BarChart3 size={20} color={colors.tint} />
-          </View>
-
-          <View className="ml-3">
-            <Text
-              className="text-lg font-bold"
-              style={{ color: colors.text }}
-            >
-              Monthly trend
-            </Text>
-            <Text className="text-xs" style={{ color: colors.icon }}>
-              Income vs expenses
-            </Text>
-          </View>
+            Monthly Trend
+          </Text>
+          <Text
+            className="mt-1 text-xs"
+            style={{ color: colors.icon }}
+          >
+            Income vs expenses
+          </Text>
         </View>
-
-        {!isLoading && monthlyData.length > 0 && (
-          <View
-            className="flex-row items-center rounded-full px-2.5 py-1.5"
-            style={{ backgroundColor: `${netColor}1F` }}
-          >
-            <NetIcon size={13} color={netColor} />
-            <Text
-              className="ml-1 text-xs font-semibold"
-              style={{ color: netColor }}
-            >
-              {money(net)}
-            </Text>
-          </View>
-        )}
-      </View>
-
-      {/* Totals double as the legend */}
-      <View className="mt-5 flex-row gap-3">
-        <StatTile
-          label="Income"
-          amount={totalIncome}
-          dotColor={INCOME_COLOR}
-          borderColor={colors.border}
-          backgroundColor={colors.panel}
-          textColor={colors.text}
-          mutedColor={colors.icon}
-        />
-        <StatTile
-          label="Expenses"
-          amount={totalExpense}
-          dotColor={colors.tint}
-          borderColor={colors.border}
-          backgroundColor={colors.panel}
-          textColor={colors.text}
-          mutedColor={colors.icon}
-        />
+        <BarChart3 size={21} color={colors.tint} />
       </View>
 
       {/* Chart */}
-      <View className="mt-6" onLayout={onLayout}>
+      <View className="mt-6 min-w-full">
         {isLoading ? (
-          <View
-            className="items-center justify-center rounded-2xl"
-            style={{
-              height: CHART_HEIGHT + 30,
-              backgroundColor: colors.skeleton,
-              opacity: 0.5,
-            }}
-          >
-            <Text style={{ color: colors.icon }}>Loading trend…</Text>
+          <View className="h-[180px] items-center justify-center">
+            <Text style={{ color: colors.icon }}>
+              Loading...
+            </Text>
           </View>
         ) : monthlyData.length === 0 ? (
-          <View
-            className="items-center justify-center rounded-2xl px-6"
-            style={{
-              height: CHART_HEIGHT + 30,
-              backgroundColor: colors.panel,
-              borderWidth: 1,
-              borderStyle: "dashed",
-              borderColor: colors.border,
+          <View className="h-[180px] items-center justify-center">
+            <Text style={{ color: colors.icon }}>
+              No transaction data
+            </Text>
+          </View>
+        ) : (
+          <BarChart
+            data={chartData}
+            height={150}
+            barWidth={10}
+            initialSpacing={10}
+            endSpacing={10}
+            roundedTop
+            hideRules={false}
+            rulesColor={colors.border}
+            rulesType="solid"
+            yAxisThickness={0}
+            xAxisThickness={0}
+            yAxisTextStyle={{
+              color: colors.icon,
+              fontSize: 9,
             }}
+            xAxisLabelTextStyle={{
+              color: colors.icon,
+              fontSize: 10,
+            }}
+            noOfSections={4}
+            isAnimated
+            animationDuration={500}
+            disablePress
+          />
+        )}
+      </View>
+
+      {/* Legend */}
+      <View className="mt-5 flex-row gap-5">
+        <View className="flex-row items-center">
+          <View className="h-2.5 w-2.5 rounded-full bg-green-500" />
+          <Text
+            className="ml-2 text-xs"
+            style={{ color: colors.icon }}
+          >
+            Income
+          </Text>
+        </View>
+
+        <View className="flex-row items-center">
+          <View
+            className="h-2.5 w-2.5 rounded-full"
+            style={{ backgroundColor: colors.tint }}
+          />
+          <Text
+            className="ml-2 text-xs"
+            style={{ color: colors.icon }}
           >
             <Text
               className="text-sm font-semibold"
